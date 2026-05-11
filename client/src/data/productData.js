@@ -1,0 +1,140 @@
+export const allProducts = [
+  {
+    id: "men-boxy-tee-pocket",
+    slug: "mens-boxy-tee-with-pocket",
+    name: "Men's Boxy Tee With Pocket",
+    price: 699,
+    category: "Men",
+    type: "Tees",
+    colors: ["Black", "Olive"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    inStock: true,
+    onSale: true,
+    emotional: "The tee you can throw on and still feel sorted.",
+    short: "Relaxed, soft, and easy to repeat. The pocket adds function without making the tee feel busy.",
+    bestFor: "College · errands · casual outings · daily layering",
+    fitTags: ["Boxy fit", "Pocket detail", "Easy fall", "Soft feel"],
+    tile: "charcoal",
+    details: {
+      fit: "Relaxed boxy fit with slightly dropped shoulders.",
+      fabric: "100% premium cotton with a soft, breathable finish.",
+      care: "Machine wash cold. Do not bleach.",
+      sizeAdvice: "True to size for a boxy look. Size down for a regular fit."
+    }
+  },
+  {
+    id: "men-joggers",
+    slug: "mens-joggers",
+    name: "Men's Joggers",
+    price: 999,
+    category: "Men",
+    type: "Joggers",
+    colors: ["Black", "Olive"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    inStock: true,
+    onSale: true,
+    emotional: "For days when jeans feel like too much.",
+    short: "Soft joggers that keep you comfortable without making you look like you gave up.",
+    bestFor: "Travel · college · cafés · lounging · daily movement",
+    fitTags: ["Soft waistband", "Relaxed thigh", "Clean taper", "Everyday comfort"],
+    tile: "olive",
+    details: {
+      fit: "Relaxed through the thigh with a clean taper at the ankle.",
+      fabric: "Premium knit blend with high elasticity.",
+      care: "Machine wash cold. Tumble dry low.",
+      sizeAdvice: "Choose your regular size. If between sizes, size up for extra comfort."
+    }
+  },
+  {
+    id: "men-shorts",
+    slug: "mens-shorts",
+    name: "Men's Shorts",
+    price: 695,
+    category: "Men",
+    type: "Shorts",
+    colors: ["Black", "Olive"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    inStock: true,
+    onSale: true,
+    emotional: "Warm-day comfort without the thigh fight.",
+    short: "Easy shorts for walks, errands, home, and casual days when you want comfort without constant pulling.",
+    bestFor: "Summer · home · walks · errands · college",
+    fitTags: ["Easy thigh room", "Soft waistband", "Clean pocket", "Daily comfort"],
+    tile: "charcoal",
+    details: {
+      fit: "Easy thigh room with a soft, non-restrictive waist.",
+      fabric: "Light, breathable knit for warm-day comfort.",
+      care: "Machine wash cold. Tumble dry low.",
+      sizeAdvice: "If your thighs are fuller, choose the larger size."
+    }
+  },
+  {
+    id: "unisex-boxy-tee",
+    slug: "unisex-boxy-tee",
+    name: "Unisex Boxy Tee",
+    price: 690,
+    category: "Unisex",
+    type: "Tees",
+    colors: ["Black", "Olive"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    inStock: true,
+    onSale: true,
+    emotional: "One easy tee. Many repeat days.",
+    short: "A clean boxy tee that works across moods, routines, and outfits.",
+    bestFor: "Daily wear · layering · college · errands · relaxed fits",
+    fitTags: ["Unisex fit", "Boxy fall", "Soft fabric", "Easy styling"],
+    tile: "sand",
+    details: {
+      fit: "Classic unisex boxy fit.",
+      fabric: "Medium weight premium cotton.",
+      care: "Machine wash cold. Wash dark colors separately.",
+      sizeAdvice: "Unisex sizing. Women may size down for a less oversized look."
+    }
+  },
+  {
+    id: "women-cropped-hoodie",
+    slug: "womens-cropped-hoodie",
+    name: "Women's Cropped Hoodie",
+    price: 799,
+    category: "Women",
+    type: "Hoodies",
+    colors: ["Black", "Olive"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    inStock: true,
+    onSale: true,
+    emotional: "Soft comfort that still feels styled.",
+    short: "A cropped hoodie for days when you want ease without losing shape.",
+    bestFor: "Layering · travel · lounging · cafés · casual outings",
+    fitTags: ["Cropped fit", "Soft feel", "Easy layering", "Clean shape"],
+    tile: "clay",
+    details: {
+      fit: "Boxy cropped fit that hits at the waist.",
+      fabric: "Ultra-soft French Terry blend.",
+      care: "Machine wash cold inside out.",
+      sizeAdvice: "True to size. Choose a larger size for an extra slouchy look."
+    }
+  },
+  {
+    id: "women-harem-pants",
+    slug: "womens-harem-pants",
+    name: "Women's Harem Pants",
+    price: 999,
+    category: "Women",
+    type: "Harem Pants",
+    colors: ["Black", "Olive"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    inStock: true,
+    onSale: true,
+    emotional: "Freedom without the sloppy look.",
+    short: "Relaxed harem pants that move softly, drape cleanly, and let your body breathe.",
+    bestFor: "Travel · home · slow days · creative work · casual outings",
+    fitTags: ["Soft drape", "Roomy rise", "Relaxed movement", "No-cling feel"],
+    tile: "olive",
+    details: {
+      fit: "High-waisted with a relaxed, dropped crotch and tapered ankle.",
+      fabric: "Breathable jersey knit with a fluid drape.",
+      care: "Machine wash cold. Hang to dry.",
+      sizeAdvice: "Choose your regular size. The waist is elastic and very forgiving."
+    }
+  }
+];
