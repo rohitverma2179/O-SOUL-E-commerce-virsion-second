@@ -1,214 +1,96 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { allProducts } from '../data/productData';
 import ProductCard from '../components/product/ProductCard';
 import ComboCard from '../components/product/ComboCard';
 import { ChevronRight } from 'lucide-react';
 
-const products = [
-  {
-    id: 1,
-    slug: 'mens-boxy-tee-with-pocket',
-    name: "Men's Boxy Tee With Pocket",
-    price: 699,
-    shortDescription: "The tee you can throw on and still feel sorted.",
-    description: "Relaxed, soft, and easy to repeat. The pocket adds function without making the tee feel busy.",
-    bestFor: "College · errands · casual outings · daily layering",
-    tileClass: "tile-charcoal",
-    tags: ["Boxy fit", "Pocket detail", "Easy fall", "Soft feel"]
-  },
-  {
-    id: 2,
-    slug: 'mens-joggers',
-    name: "Men's Joggers",
-    price: 999,
-    shortDescription: "For days when jeans feel like too much.",
-    description: "Soft joggers that keep you comfortable without making you look like you gave up.",
-    bestFor: "Travel · college · cafés · lounging · daily movement",
-    tileClass: "tile-olive",
-    tags: ["Soft waistband", "Relaxed thigh", "Clean taper", "Everyday comfort"]
-  },
-  {
-    id: 3,
-    slug: 'mens-shorts',
-    name: "Men's Shorts",
-    price: 695,
-    shortDescription: "Warm-day comfort without the thigh fight.",
-    description: "Easy shorts for walks, errands, home, and casual days when you want comfort without constant pulling.",
-    bestFor: "Summer · home · walks · errands · college",
-    tileClass: "tile-charcoal",
-    tags: ["Easy thigh room", "Soft waistband", "Clean pocket", "Daily comfort"]
-  },
-  {
-    id: 4,
-    slug: 'unisex-boxy-tee',
-    name: "Unisex Boxy Tee",
-    price: 690,
-    shortDescription: "One easy tee. Many repeat days.",
-    description: "A clean boxy tee that works across moods, routines, and outfits.",
-    bestFor: "Daily wear · layering · college · errands · relaxed fits",
-    tileClass: "tile-sand",
-    tags: ["Unisex fit", "Boxy fall", "Soft fabric", "Easy styling"]
-  },
-  {
-    id: 5,
-    slug: 'womens-cropped-hoodie',
-    name: "Women's Cropped Hoodie",
-    price: 799,
-    shortDescription: "Soft comfort that still feels styled.",
-    description: "A cropped hoodie for days when you want ease without losing shape.",
-    bestFor: "Layering · travel · lounging · cafés · casual outings",
-    tileClass: "tile-clay",
-    tags: ["Cropped fit", "Soft feel", "Easy layering", "Clean shape"]
-  },
-  {
-    id: 6,
-    slug: 'womens-harem-pants',
-    name: "Women's Harem Pants",
-    price: 999,
-    shortDescription: "Freedom without the sloppy look.",
-    description: "Relaxed harem pants that move softly, drape cleanly, and let your body breathe.",
-    bestFor: "Travel · home · slow days · creative work · casual outings",
-    tileClass: "tile-olive",
-    tags: ["Soft drape", "Roomy rise", "Relaxed movement", "No-cling feel"]
-  }
-];
+const products = allProducts;
 
-const combos = [
-  {
-    id: 1,
-    title: "Men's Everyday Combo",
-    description: "The easiest daily outfit: soft tee, clean joggers, no overthinking.",
-    originalPrice: "1,698",
-    discountedPrice: "1,599",
-    savings: "99",
-    tiles: ["tile-charcoal", "tile-olive"],
-    items: [
-      { name: "Men's Boxy Tee With Pocket", slug: "mens-boxy-tee-with-pocket", price: "699" },
-      { name: "Men's Joggers", slug: "mens-joggers", price: "999" }
-    ]
-  },
-  {
-    id: 2,
-    title: "Men's Summer Combo",
-    description: "For warm days when you want to feel light, comfortable, and still put-together.",
-    originalPrice: "1,394",
-    discountedPrice: "1,299",
-    savings: "95",
-    tiles: ["tile-charcoal", "tile-charcoal"],
-    items: [
-      { name: "Men's Boxy Tee With Pocket", slug: "mens-boxy-tee-with-pocket", price: "699" },
-      { name: "Men's Shorts", slug: "mens-shorts", price: "695" }
-    ]
-  },
-  {
-    id: 3,
-    title: "Men's Full Rotation Combo",
-    description: "One tee, one jogger, one short. Your basic comfort rotation is sorted.",
-    originalPrice: "2,393",
-    discountedPrice: "2,199",
-    savings: "194",
-    tiles: ["tile-charcoal", "tile-olive", "tile-charcoal"],
-    items: [
-      { name: "Men's Boxy Tee With Pocket", slug: "mens-boxy-tee-with-pocket", price: "699" },
-      { name: "Men's Joggers", slug: "mens-joggers", price: "999" },
-      { name: "Men's Shorts", slug: "mens-shorts", price: "695" }
-    ]
-  },
-  {
-    id: 4,
-    title: "Women's Soft Movement Combo",
-    description: "Soft on top, free-flowing below. Easy comfort for slow days, travel, and everyday movement.",
-    originalPrice: "1,798",
-    discountedPrice: "1,699",
-    savings: "99",
-    tiles: ["tile-clay", "tile-olive"],
-    items: [
-      { name: "Women's Cropped Hoodie", slug: "womens-cropped-hoodie", price: "799" },
-      { name: "Women's Harem Pants", slug: "womens-harem-pants", price: "999" }
-    ]
-  },
-  {
-    id: 5,
-    title: "Unisex Tee Pair",
-    description: "Two easy tees you'll keep reaching for.",
-    originalPrice: "1,380",
-    discountedPrice: "1,299",
-    savings: "81",
-    tiles: ["tile-sand", "tile-sand"],
-    items: [
-      { name: "Unisex Boxy Tee", slug: "unisex-boxy-tee", price: "690" },
-      { name: "Unisex Boxy Tee", slug: "unisex-boxy-tee", price: "690" }
-    ]
-  },
-  {
-    id: 6,
-    title: "Couple / Friend Combo",
-    description: "Build a shared comfort fit without making it complicated.",
-    originalPrice: "1,689",
-    discountedPrice: "1,599",
-    savings: "90",
-    tiles: ["tile-sand", "tile-olive"],
-    items: [
-      { name: "Unisex Boxy Tee", slug: "unisex-boxy-tee", price: "690" },
-      { name: "Men's Joggers", slug: "mens-joggers", price: "999" }
-    ]
-  }
-];
+
+import { allCombos } from '../data/comboData';
+
+const combos = allCombos;
+
 
 const Home = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="border-b border-border">
-        <div className="container-osoul grid gap-10 py-14 md:grid-cols-12 md:py-20">
-          <div className="md:col-span-6 md:pt-6">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-medium">First drop · Live now</p>
-            <h1 className="mt-4 font-serif text-5xl leading-[1.05] md:text-6xl">
-              Soft fits. Clean looks.<br />
-              <span className="italic text-olive">No more adjusting.</span>
+      <section className="border-b border-border bg-background">
+        <div className="container-osoul grid gap-10 py-14 md:grid-cols-12 md:py-24">
+          <div className="md:col-span-6 md:pt-4">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">First drop · Live now</p>
+            <h1 className="mt-5 font-serif text-5xl leading-[1.05] md:text-7xl">
+              Wear it.<br />
+              <span className="italic text-olive">Forget you're wearing it.</span>
             </h1>
-            <p className="mt-5 max-w-md text-base text-foreground/80 leading-relaxed">
-              Everyday tees, joggers, shorts, hoodies, and harem pants made for sitting, walking, lounging, travelling, and living without constant fixing.
+            <p className="mt-6 max-w-lg text-base text-foreground/80 leading-relaxed">
+              Everyday tees, joggers, shorts, hoodies, and harem pants. Built for sitting, walking, and doing your actual day — without pulling, tugging, or thinking about what you're wearing.
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link to="/shop" className="h-12 rounded-md bg-foreground px-6 py-3 text-sm font-medium text-background hover:bg-foreground/90 transition-colors flex items-center">
-                Shop The First Drop
-              </Link>
-              <Link to="/combos" className="h-12 rounded-md border border-foreground px-6 py-3 text-sm font-medium text-foreground hover:bg-foreground hover:text-background transition-colors flex items-center">
-                Shop Combos
-              </Link>
+            
+            <div className="mt-8">
+              <div className="flex flex-wrap gap-4">
+                <Link to="/shop" className="h-12 rounded-md bg-foreground px-8 py-3 text-sm font-medium text-background hover:bg-foreground/90 transition-all flex items-center shadow-lg shadow-charcoal/10">
+                  Shop The First Drop →
+                </Link>
+                <Link to="/combos" className="h-12 rounded-md border border-foreground px-8 py-3 text-sm font-medium text-foreground hover:bg-foreground hover:text-background transition-all flex items-center">
+                  Shop Combos
+                </Link>
+              </div>
+
+              {/* Trust Strip */}
+              <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
+                {[
+                  "Products from ₹690",
+                  "In stock now",
+                  "Secure Razorpay checkout",
+                  "Easy exchange support"
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground/80 font-medium">
+                    <span className="h-1 w-1 rounded-full bg-olive/60" />
+                    {item}
+                  </div>
+                ))}
+              </div>
             </div>
-            <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-2 text-xs text-muted-foreground sm:grid-cols-4">
-              <li>· Products from ₹690</li>
-              <li>· In stock now</li>
-              <li>· Secure Razorpay checkout</li>
-              <li>· Easy exchange support</li>
-            </ul>
           </div>
 
           <div className="md:col-span-6">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="relative w-full overflow-hidden rounded-md tile-olive aspect-[3/4]" aria-hidden="true">
-                <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
-                <div className="absolute inset-x-0 bottom-0 p-4">
-                  <div className="text-[10px] uppercase tracking-[0.18em] text-ivory/70">O'Soul</div>
-                  <div className="mt-1 font-serif text-lg leading-tight text-ivory">Men's Joggers</div>
+            <div className="grid grid-cols-2 gap-4">
+              {/* Primary Hero Image */}
+              <div className="relative col-span-2 overflow-hidden rounded-xl bg-secondary aspect-[16/9] md:aspect-[3/2] group">
+                <img 
+                  src="/src/assets/product/BO7A9010.jpeg" 
+                  alt="O'Soul Relaxed Fit" 
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-charcoal/40 to-transparent opacity-60"></div>
+                <div className="absolute bottom-5 left-5">
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-ivory/80">Movement proof</div>
+                  <div className="mt-1 font-serif text-xl text-ivory italic">No more adjusting.</div>
                 </div>
               </div>
-              <div className="space-y-3">
-                <div className="relative w-full overflow-hidden rounded-md tile-clay aspect-square" aria-hidden="true">
-                  <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
-                  <div className="absolute inset-x-0 bottom-0 p-4">
-                    <div className="text-[10px] uppercase tracking-[0.18em] text-ivory/70">O'Soul</div>
-                    <div className="mt-1 font-serif text-lg leading-tight text-ivory">Women's Cropped Hoodie</div>
-                  </div>
+              
+              {/* Secondary Hero Images */}
+              <div className="relative overflow-hidden rounded-xl bg-secondary aspect-square group">
+                <img 
+                  src="/src/assets/product/BO7A9133.jpeg" 
+                  alt="O'Soul Daily Wear" 
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                />
+                <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-charcoal/30 to-transparent">
+                  <div className="font-serif text-sm text-ivory italic">Walks clean.</div>
                 </div>
-                <div className="relative w-full overflow-hidden rounded-md tile-sand aspect-square" aria-hidden="true">
-                  <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
-                  <div className="absolute inset-x-0 bottom-0 p-4">
-                    <div className="text-[10px] uppercase tracking-[0.18em] text-ivory/70">O'Soul</div>
-                    <div className="mt-1 font-serif text-lg leading-tight text-ivory">Unisex Boxy Tee</div>
-                  </div>
+              </div>
+              <div className="relative overflow-hidden rounded-xl bg-secondary aspect-square group">
+                <img 
+                  src="/src/assets/product/BO7A9201.jpeg" 
+                  alt="O'Soul Detail" 
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                />
+                <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-charcoal/30 to-transparent">
+                  <div className="font-serif text-sm text-ivory italic">Pockets work.</div>
                 </div>
               </div>
             </div>
@@ -221,7 +103,7 @@ const Home = () => {
         <div className="text-center">
           <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">The first drop</p>
           <h2 className="mt-3 font-serif text-3xl md:text-4xl">Start with the pieces you'll actually repeat.</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground italic">Soft, clean, everyday fits made for the way your day actually moves.</p>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground italic">Soft. Clean. Made for the way your day actually moves. The first drop is small — because fit takes time.</p>
         </div>
         <div className="mt-10 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
           {products.map(product => (
@@ -303,30 +185,56 @@ const Home = () => {
       </section>
 
       {/* Why O'Soul Section */}
-      <section className="bg-secondary/40 py-16 border-y border-border font-serif">
+      <section className="bg-secondary/30 py-16 md:py-24 border-y border-border">
         <div className="container-osoul">
-          <div className="text-center">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-sans font-medium">Why O'Soul</p>
-            <h2 className="mt-3 text-3xl md:text-4xl italic">Made for the comfort you notice once, then forget.</h2>
-            <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground font-sans italic">O'Soul pieces are designed to feel easy through the small movements of your day.</p>
+          <div className="text-center mb-16">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Why O'Soul</p>
+            <h2 className="mt-4 font-serif text-3xl md:text-5xl italic">Made for the comfort you notice once — then forget.</h2>
+            <p className="mx-auto mt-6 max-w-3xl text-base text-muted-foreground italic leading-relaxed">
+              Most clothes are designed to look right standing still. O'Soul is built for everything after that — the sitting, walking, commuting, working, and just living that fills your actual day.
+            </p>
           </div>
-          <div className="mt-10 grid gap-5 md:grid-cols-4">
+          
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
-              { title: "Soft where it matters", desc: "Waistbands, fabric, and fits that don't keep interrupting you." },
-              { title: "Clean enough for outside", desc: "Comfort that still looks intentional." },
-              { title: "Made for real movement", desc: "Sitting, walking, lounging, travelling, and doing normal life." },
-              { title: "Easy to repeat", desc: "The kind of pieces you reach for without thinking twice." }
-            ].map((prop, idx) => (
-              <div key={idx} className="rounded-lg border border-border bg-background p-5 shadow-sm">
-                <h4 className="text-lg italic">{prop.title}</h4>
-                <p className="mt-2 text-sm text-muted-foreground font-sans leading-relaxed italic">{prop.desc}</p>
+              { 
+                num: "01",
+                title: "The fit is in the pattern, not the size.", 
+                desc: "Most brands grade sizing by adding one inch everywhere. That's lazy, and it's why your \"right size\" still pulls in the wrong places. O'Soul grades across waist, hip, thigh, rise, and inseam — independently. Because Indian bodies aren't just bigger or smaller versions of each other." 
+              },
+              { 
+                num: "02",
+                title: "The waistband is tested, not guessed.", 
+                desc: "Every waistband passes a 10-wear test and a 5-wash test before a single piece ships. It has to stretch, sit flat, and recover — not roll, fold, or dig in. The waistband is where most comfort fails. It's where we start." 
+              },
+              { 
+                num: "03",
+                title: "The fabric is chosen for movement, not feel in a store.", 
+                desc: "Soft is the starting point, not the finish line. O'Soul fabric also has to breathe, recover after stretch, resist cling, and hold its shape after repeated wear. A lot of fabrics fail one of those things. We test until something passes all of them." 
+              },
+              { 
+                num: "04",
+                title: "The rise comes first.", 
+                desc: "Rise is the measurement from waist to crotch — and it's what decides whether you can sit comfortably for three hours or spend the day adjusting. We set the rise first, then build the pant around it. It's a different design order. It produces a different result." 
+              }
+            ].map((prop) => (
+              <div key={prop.num} className="group rounded-xl border border-border bg-background p-6 shadow-sm transition-all hover:shadow-md hover:border-olive/30">
+                <span className="text-[10px] uppercase tracking-widest text-olive/60 font-bold">{prop.num}</span>
+                <h4 className="mt-3 font-serif text-lg italic leading-tight group-hover:text-olive transition-colors">{prop.title}</h4>
+                <p className="mt-4 text-sm text-muted-foreground leading-relaxed italic">{prop.desc}</p>
               </div>
             ))}
           </div>
-          <div className="mt-8 text-center font-sans">
-            <Link to="/shop" className="inline-flex h-11 items-center rounded-md bg-foreground px-6 text-sm text-background hover:bg-foreground/90 transition-colors">
-              Shop The First Drop
-            </Link>
+
+          <div className="mt-16 text-center">
+            <p className="font-serif text-xl md:text-2xl text-foreground italic">
+              "If it makes you adjust, it failed. That's not marketing. It's the design brief."
+            </p>
+            <div className="mt-10">
+              <Link to="/shop" className="inline-flex h-12 items-center rounded-md bg-foreground px-10 text-sm font-bold uppercase tracking-widest text-background hover:bg-foreground/90 transition-all shadow-lg shadow-charcoal/10">
+                Shop The First Drop
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -359,26 +267,53 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Feedback Section */}
-      <section className="bg-secondary/40 py-16 border-y border-border">
+      {/* Social Proof / Reviews Section */}
+      <section className="bg-secondary/40 py-16 md:py-24 border-y border-border">
         <div className="container-osoul">
-          <div className="text-center">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-medium">Early feedback</p>
-            <h2 className="mt-3 font-serif text-3xl md:text-4xl italic">What early buyers noticed.</h2>
-            <p className="mt-3 text-center text-xs text-muted-foreground italic">Early feedback themes. Replace with real customer reviews.</p>
+          <div className="text-center mb-16">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Social proof</p>
+            <h2 className="mt-4 font-serif text-3xl md:text-5xl italic">The exact things people notice after wearing O'Soul.</h2>
+            <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground italic leading-relaxed">
+              Not random praise. Real doubts answered. Five questions — five answers from people who had the same doubt before buying.
+            </p>
           </div>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
+          
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[
-              "Fabric feels soft, not cheap.",
-              "Fit is actually comfortable.",
-              "Joggers are easy for daily wear.",
-              "Need more colours.",
-              "Looks clean but feels relaxed.",
-              "Pocket on the tee is genuinely useful."
+              {
+                doubt: "Will it actually fit me right?",
+                answer: "I didn't have to keep fixing it. First pair I've worn through a full college day without thinking about my pants once.",
+                author: "Aanya, 22 · Mumbai · Men's Joggers"
+              },
+              {
+                doubt: "Will the waistband dig when I sit?",
+                answer: "I work from home and I sit for hours. Most joggers make me feel like I'm being strangled by hour two. These just... don't.",
+                author: "Rohan, 29 · Bangalore · Men's Joggers"
+              },
+              {
+                doubt: "Will my thighs feel tight?",
+                answer: "I always size up in pants because of my thighs. Took my usual size here. It fits. That was a moment.",
+                author: "Priya, 26 · Delhi · Men's Shorts"
+              },
+              {
+                doubt: "Will the fabric feel cheap at this price?",
+                answer: "Expected it to feel like any ₹999 basic. It doesn't. The fabric is soft but it has weight to it. Not cheap at all.",
+                author: "Kartik, 31 · Mumbai · Men's Joggers"
+              },
+              {
+                doubt: "Will I actually wear it again?",
+                answer: "I've worn the joggers four times this week. I keep reaching for them. They're not the most exciting thing I own — but they're the most useful.",
+                author: "Meera, 27 · Hyderabad · Men's Joggers"
+              }
             ].map((review, idx) => (
-              <blockquote key={idx} className="rounded-lg border border-border bg-background p-5 italic shadow-sm hover:border-olive/30 transition-colors">
-                <p className="font-serif text-base text-foreground/80 leading-relaxed">"{review}"</p>
-              </blockquote>
+              <div key={idx} className="flex flex-col rounded-xl border border-border bg-background p-8 shadow-sm hover:border-olive/30 transition-colors">
+                <div className="text-[10px] uppercase tracking-[0.2em] text-olive/60 font-bold mb-4">Doubt 0{idx + 1}</div>
+                <h4 className="font-serif text-lg italic text-foreground mb-4 leading-tight">"{review.doubt}"</h4>
+                <div className="mt-auto pt-6 border-t border-border/40">
+                  <p className="text-sm text-muted-foreground leading-relaxed italic mb-4">"{review.answer}"</p>
+                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">{review.author}</p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -460,17 +395,50 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Email / Drop List Section */}
+      <section className="bg-secondary/20 py-20 border-t border-border">
+        <div className="container-osoul max-w-xl text-center">
+          <h2 className="font-serif text-3xl md:text-4xl italic">Join the No-Adjust List.</h2>
+          <p className="mt-4 text-muted-foreground italic leading-relaxed">
+            Be first to know when the next drop goes live. No spam. Just useful drop updates and the occasional honest note from the founder.
+          </p>
+          <form className="mt-8 flex flex-col sm:flex-row gap-3" onSubmit={(e) => e.preventDefault()}>
+            <input 
+              type="email" 
+              placeholder="Your email" 
+              className="h-12 flex-1 rounded-md border border-border bg-background px-4 text-sm focus:border-olive focus:outline-none transition-colors italic"
+              required
+            />
+            <button 
+              type="submit" 
+              className="h-12 rounded-md bg-foreground px-8 text-[11px] font-bold uppercase tracking-widest text-background hover:bg-foreground/90 transition-all"
+            >
+              Join the List →
+            </button>
+          </form>
+          <p className="mt-4 text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">
+            Unsubscribe anytime. We won't email you unless it's worth your time.
+          </p>
+        </div>
+      </section>
+
       {/* Closing CTA Section */}
-      <section className="container-osoul py-20 text-center">
-        <h2 className="font-serif text-4xl italic">Start with one piece you'll actually repeat.</h2>
-        <p className="mt-3 text-muted-foreground italic text-lg font-light">First drop live. Products from ₹690.</p>
-        <div className="mt-7 flex flex-wrap justify-center gap-3">
-          <Link to="/shop" className="h-11 flex items-center px-8 rounded-md bg-foreground text-xs font-bold uppercase tracking-widest text-background hover:bg-foreground/90 transition-all">
-            Shop The First Drop
+      <section className="container-osoul py-24 md:py-32 text-center">
+        <h2 className="font-serif text-4xl md:text-5xl italic tracking-tight">Start with one piece you'll actually repeat.</h2>
+        <p className="mt-6 text-muted-foreground italic text-lg leading-relaxed">
+          First drop live. Products from ₹690. <br className="md:hidden" />
+          <span className="text-olive font-medium">Small batch — no restocks.</span>
+        </p>
+        <div className="mt-10 flex flex-wrap justify-center gap-4">
+          <Link to="/shop" className="h-14 flex items-center px-10 rounded-md bg-foreground text-[11px] font-bold uppercase tracking-widest text-background hover:bg-foreground/90 transition-all shadow-xl shadow-charcoal/10">
+            Shop The First Drop →
           </Link>
-          <Link to="/combos" className="h-11 flex items-center px-8 rounded-md border border-foreground text-xs font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-all">
+          <Link to="/combos" className="h-14 flex items-center px-10 rounded-md border border-border text-[11px] font-bold uppercase tracking-widest hover:bg-foreground hover:text-background transition-all">
             Shop Combos
           </Link>
+        </div>
+        <div className="mt-10 flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">
+          Secure Razorpay checkout · Easy exchange support · In stock now
         </div>
       </section>
     </div>

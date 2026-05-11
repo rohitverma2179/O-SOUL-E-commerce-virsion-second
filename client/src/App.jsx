@@ -7,6 +7,7 @@ import CategoryPage from './pages/CategoryPage';
 import Combos from './pages/Combos';
 import ProductDetails from './pages/ProductDetails';
 import InformationPage from './pages/InformationPage';
+import About from './pages/About';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Checkout from './pages/Checkout';
@@ -33,6 +34,7 @@ function App() {
           <Route path="/products/:slug" element={<ProductDetails />} />
           
           {/* Static Information Pages */}
+          <Route path="/about" element={<About />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/size-guide" element={<SizeGuide />} />
           <Route path="/founder" element={<FounderNote />} />

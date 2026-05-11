@@ -8,11 +8,18 @@ const ProductCard = ({ product }) => {
     <article className="group flex flex-col">
       <Link to={`/products/${slug}`} className="block overflow-hidden rounded-md">
         <div className={`relative aspect-[4/5] w-full overflow-hidden rounded-md ${tileClass} transition-transform duration-500 group-hover:scale-[1.02]`} aria-hidden="true">
+          {product.image && (
+            <img 
+              src={product.image} 
+              alt={name} 
+              className="h-full w-full object-cover"
+            />
+          )}
           <div 
             className="absolute inset-0 opacity-[0.06] mix-blend-overlay" 
             style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}
           />
-          <div className="absolute inset-x-0 bottom-0 p-4">
+          <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-charcoal/30 to-transparent">
             <div className="text-[10px] uppercase tracking-[0.18em] text-ivory/70">O'Soul</div>
             <div className="mt-1 font-serif text-lg leading-tight text-ivory">{name}</div>
           </div>
@@ -33,17 +40,13 @@ const ProductCard = ({ product }) => {
       </div>
 
       <p className="mt-2 text-sm italic text-muted-foreground">{shortDescription}</p>
-      <p className="mt-1 text-sm text-foreground/80">{product.description}</p>
-      <p className="mt-2 text-xs text-muted-foreground">Best for: {bestFor}</p>
-
-      <div className="mt-3 flex flex-wrap gap-1.5">
-        {tags.map((tag) => (
+      <p className="mt-2 text-xs text-muted-foreground">Best for: {bestFor}</p>      <div className="mt-3 flex flex-wrap gap-1.5">
+        {tags?.map((tag) => (
           <span key={tag} className="rounded-full border border-border bg-secondary/60 px-2 py-0.5 text-[11px] text-foreground/70">
             {tag}
           </span>
         ))}
       </div>
-
       <div className="mt-4 grid grid-cols-2 gap-2">
         <button type="button" className="h-10 rounded-md border border-foreground bg-background text-sm font-medium text-foreground transition hover:bg-foreground hover:text-background">
           Add to Cart

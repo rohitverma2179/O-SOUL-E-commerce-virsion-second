@@ -5,23 +5,30 @@ const ComboCard = ({ combo }) => {
   const { title, description, originalPrice, discountedPrice, savings, tiles, items } = combo;
 
   return (
-    <article className="rounded-lg border border-border bg-card p-5">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h3 className="font-serif text-xl">{title}</h3>
-          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+    <article className="rounded-xl border border-border bg-card p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex flex-col gap-1">
+        <div className="flex items-start justify-between gap-4">
+          <h3 className="font-serif text-2xl tracking-tight">{combo.title}</h3>
+          <div className="text-right shrink-0">
+            <div className="text-xs text-muted-foreground line-through">₹{combo.originalPrice}</div>
+            <div className="font-serif text-xl text-foreground">₹{combo.discountedPrice}</div>
+            <div className="mt-1 inline-block rounded-full bg-olive/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-olive">Save ₹{combo.savings}</div>
+          </div>
         </div>
-        <div className="text-right shrink-0">
-          <div className="text-xs text-muted-foreground line-through">₹{originalPrice}</div>
-          <div className="font-serif text-lg">₹{discountedPrice}</div>
-          <div className="text-xs text-olive font-medium">Save ₹{savings}</div>
-        </div>
+        <p className="mt-2 font-serif text-lg italic text-olive/80 leading-tight">{combo.headline}</p>
+        <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{combo.description}</p>
+        {(combo.proofLine || combo.valueLine) && (
+          <p className="mt-3 text-xs font-medium text-foreground/70 italic border-l-2 border-olive/20 pl-3">
+            {combo.proofLine || combo.valueLine}
+          </p>
+        )}
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-4">
-        {tiles.map((tile, idx) => (
-          <div key={idx} className={`relative w-full overflow-hidden rounded-md ${tile} aspect-square`} aria-hidden="true">
-            <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {combo.images?.map((img, idx) => (
+          <div key={idx} className={`relative w-full overflow-hidden rounded-lg bg-secondary aspect-square shadow-sm transition-transform hover:scale-[1.02]`} aria-hidden="true">
+            <img src={img} alt={`${combo.title} item ${idx + 1}`} className="h-full w-full object-cover" />
+            <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
           </div>
         ))}
       </div>

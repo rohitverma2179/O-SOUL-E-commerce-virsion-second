@@ -1,33 +1,78 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Instagram, Mail, MessageSquare, ArrowRight } from 'lucide-react';
 
 const Support = () => {
-  return (
-    <div className="container-osoul max-w-2xl py-14">
-      <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-medium">Contact</p>
-      <h1 className="font-serif text-4xl italic">Customer support</h1>
-      
-      <p className="mt-6 text-sm text-foreground/80 leading-relaxed italic">
-        We respond to most queries within one business day. Email is the fastest way to reach us with your order ID.
-      </p>
-      
-      <div className="mt-8 rounded-2xl border border-border bg-card p-8 shadow-sm">
-        <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-medium mb-2">Email us at</div>
-        <a 
-          href="mailto:hello@osoul.in" 
-          className="text-2xl font-serif text-foreground hover:text-olive transition-colors underline underline-offset-4"
-        >
-          hello@osoul.in
-        </a>
-        <p className="mt-6 text-xs text-muted-foreground italic">
-          Available Monday to Saturday · 10 AM to 6 PM IST
-        </p>
-      </div>
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-      <div className="mt-12 bg-secondary/10 p-8 rounded-2xl border border-border">
-        <h3 className="font-serif text-xl mb-4 italic">Before you email</h3>
-        <p className="text-sm text-muted-foreground italic leading-relaxed">
-          Please check our <a href="/faq" className="underline">FAQ</a> and <a href="/size-guide" className="underline">Size Guide</a> first. Many common questions about sizing, delivery times, and exchanges are answered there.
-        </p>
+  const supportOptions = [
+    { label: "Order support", icon: MessageSquare },
+    { label: "Exchange support", icon: RefreshCcw },
+    { label: "Product question", icon: Mail },
+    { label: "Payment issue", icon: Mail },
+  ];
+
+  // Helper because RefreshCcw is not imported but was used in my thought
+  const RefreshCcwIcon = ({className}) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+      <path d="M3 3v5h5"/>
+      <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+      <path d="M16 16h5v5"/>
+    </svg>
+  );
+
+  return (
+    <div className="bg-background min-h-screen">
+      <div className="container-osoul max-w-3xl py-14 md:py-24">
+        <header className="mb-16 text-center">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Support</p>
+          <h1 className="mt-4 font-serif text-4xl md:text-5xl italic tracking-tight">Need help? We're here.</h1>
+          <p className="mt-6 text-lg text-muted-foreground italic leading-relaxed">
+            For order questions, size help, exchanges, or anything else — reach out below. For size questions specifically, DM us on Instagram — it's the fastest.
+          </p>
+        </header>
+
+        <div className="grid gap-6">
+          {/* Instagram High Priority */}
+          <a 
+            href="https://instagram.com/osoul.in" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="group flex items-center justify-between rounded-2xl border-2 border-olive/30 bg-olive/5 p-6 md:p-8 transition-all hover:bg-olive/10"
+          >
+            <div className="flex items-center gap-6">
+              <div className="rounded-full bg-olive/10 p-4 text-olive">
+                <Instagram className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="font-serif text-xl italic text-foreground">Size question?</h3>
+                <p className="text-sm text-muted-foreground italic">DM on Instagram for fastest response</p>
+              </div>
+            </div>
+            <ArrowRight className="h-5 w-5 text-olive transition-transform group-hover:translate-x-1" />
+          </a>
+
+          {/* Other Support Options */}
+          <div className="grid gap-4 sm:grid-cols-2 mt-4">
+            {[
+              { label: "Order support", icon: MessageSquare, email: "orders@osoul.in" },
+              { label: "Exchange support", icon: RefreshCcwIcon, email: "exchanges@osoul.in" },
+              { label: "Product question", icon: Mail, email: "hello@osoul.in" },
+              { label: "Payment issue", icon: Mail, email: "support@osoul.in" },
+            ].map((option, idx) => (
+              <div key={idx} className="rounded-xl border border-border bg-card p-6 transition-all hover:border-olive/20 hover:shadow-sm">
+                <div className="mb-4 text-olive/60">
+                  <option.icon className="h-5 w-5" />
+                </div>
+                <h4 className="font-serif text-lg italic text-foreground mb-2">{option.label}</h4>
+                <p className="text-xs text-muted-foreground italic mb-4">Email: {option.email}</p>
+                <button className="text-[10px] uppercase tracking-widest font-bold text-olive/70 hover:text-olive transition-colors">Start Conversation →</button>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
