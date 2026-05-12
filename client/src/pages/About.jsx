@@ -12,7 +12,7 @@ const About = () => {
         <header className="mb-20 text-center">
           <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-bold">About O'Soul</p>
           <h1 className="mt-4 font-serif text-4xl md:text-6xl tracking-tight leading-tight">
-            We're building the category <br />
+            We're building the category<br />
             <span className="italic text-olive font-normal">that should have existed.</span>
           </h1>
         </header>

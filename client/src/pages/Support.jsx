@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
-import { Instagram, Mail, MessageSquare, ArrowRight } from 'lucide-react';
+import {  Mail, MessageSquare, ArrowRight } from 'lucide-react';
+// import { FaInstagram } from "react-icons/fa6";
+import { IoLogoInstagram } from "react-icons/io5";
 
 const Support = () => {
   useEffect(() => {
@@ -44,7 +46,7 @@ const Support = () => {
           >
             <div className="flex items-center gap-6">
               <div className="rounded-full bg-olive/10 p-4 text-olive">
-                <Instagram className="h-6 w-6" />
+                <IoLogoInstagram className="h-6 w-6" />
               </div>
               <div>
                 <h3 className="font-serif text-xl italic text-foreground">Size question?</h3>
