@@ -23,6 +23,7 @@ export const allProducts = [
     bestFor: "Travel · College · Cafés · Work-from-home · Daily movement",
     tileClass: "tile-olive",
     image: imgJoggers,
+    alt: "Model wearing O'Soul relaxed fit joggers in olive color",
     tags: [
       "Sits clean",
       "No-roll waist",
@@ -64,6 +65,7 @@ export const allProducts = [
     bestFor: "Daily wear · Layering · College · Errands · Throwing on without overthinking",
     tileClass: "tile-charcoal",
     image: imgBoxyTeePocket,
+    alt: "Man wearing O'Soul boxy fit t-shirt with pocket in black",
     tags: [
       "Boxy fall",
       "Functional pocket",
@@ -104,6 +106,7 @@ export const allProducts = [
     bestFor: "Summer · Home · Walks · Errands · College · Anywhere you want to actually be comfortable",
     tileClass: "tile-charcoal",
     image: imgShorts,
+    alt: "O'Soul everyday comfort shorts in charcoal grey",
     tags: [
       "Thigh room",
       "Stable waist",
@@ -144,6 +147,7 @@ export const allProducts = [
     bestFor: "Everyday wear · Layering · College · Shared wardrobes · Gifting",
     tileClass: "tile-sand",
     image: imgUnisexBoxyTee,
+    alt: "Unisex boxy t-shirt by O'Soul in sand color",
     tags: [
       "Unisex fit",
       "Boxy fall",
@@ -184,6 +188,7 @@ export const allProducts = [
     bestFor: "Layering · Travel · Cafés · Lounging · Casual outings · Days when you're not sure what to wear",
     tileClass: "tile-clay",
     image: imgCroppedHoodie,
+    alt: "Women's cropped hoodie in clay color by O'Soul",
     tags: [
       "Cropped fit",
       "Soft interior",
@@ -224,6 +229,7 @@ export const allProducts = [
     bestFor: "Travel · Home · Creative work · Slow days · Cafés · Anywhere you want actual ease",
     tileClass: "tile-olive",
     image: imgHaremPants,
+    alt: "Women's comfortable harem pants in olive green",
     tags: [
       "Roomy rise",
       "Soft drape",

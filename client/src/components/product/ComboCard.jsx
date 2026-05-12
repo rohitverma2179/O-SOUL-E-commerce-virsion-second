@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import OptimizedImage from '../common/OptimizedImage';
 
 const ComboCard = ({ combo }) => {
   const { title, description, originalPrice, discountedPrice, savings, tiles, items } = combo;
@@ -27,7 +28,11 @@ const ComboCard = ({ combo }) => {
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {combo.images?.map((img, idx) => (
           <div key={idx} className={`relative w-full overflow-hidden rounded-lg bg-secondary aspect-square shadow-sm transition-transform hover:scale-[1.02]`} aria-hidden="true">
-            <img src={img} alt={`${combo.title} item ${idx + 1}`} className="h-full w-full object-cover" />
+            <OptimizedImage 
+              src={img} 
+              alt={combo.alts ? combo.alts[idx] : `${combo.title} item ${idx + 1}`} 
+              className="h-full w-full"
+            />
             <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
           </div>
         ))}

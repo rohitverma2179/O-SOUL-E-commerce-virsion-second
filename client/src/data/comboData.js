@@ -21,6 +21,7 @@ export const allCombos = [
     savings: "99",
     tiles: ["tile-charcoal", "tile-olive"],
     images: [imgBoxyTeePocket, imgJoggers],
+    alts: ["Men's boxy tee with pocket", "Men's relaxed joggers"],
     items: [
       { name: "Men's Boxy Tee With Pocket", slug: "mens-boxy-tee-with-pocket", price: "699" },
       { name: "Men's Joggers", slug: "mens-joggers", price: "999" }
@@ -36,6 +37,7 @@ export const allCombos = [
     savings: "95",
     tiles: ["tile-charcoal", "tile-charcoal"],
     images: [imgBoxyTeePocket, imgShorts],
+    alts: ["Men's boxy tee with pocket", "Men's everyday shorts"],
     items: [
       { name: "Men's Boxy Tee With Pocket", slug: "mens-boxy-tee-with-pocket", price: "699" },
       { name: "Men's Shorts", slug: "mens-shorts", price: "695" }
@@ -52,6 +54,7 @@ export const allCombos = [
     savings: "194",
     tiles: ["tile-charcoal", "tile-olive", "tile-charcoal"],
     images: [imgBoxyTee2, imgJoggers2, imgShorts2],
+    alts: ["Men's boxy tee version 2", "Men's relaxed joggers version 2", "Men's summer shorts version 2"],
     items: [
       { name: "Men's Boxy Tee With Pocket", slug: "mens-boxy-tee-with-pocket", price: "699" },
       { name: "Men's Joggers", slug: "mens-joggers", price: "999" },
@@ -68,6 +71,7 @@ export const allCombos = [
     savings: "99",
     tiles: ["tile-clay", "tile-olive"],
     images: [imgCroppedHoodie, imgHaremPants],
+    alts: ["Women's cropped hoodie", "Women's harem pants"],
     items: [
       { name: "Women's Cropped Hoodie", slug: "womens-cropped-hoodie", price: "799" },
       { name: "Women's Harem Pants", slug: "womens-harem-pants", price: "999" }
@@ -83,6 +87,7 @@ export const allCombos = [
     savings: "81",
     tiles: ["tile-sand", "tile-sand"],
     images: [imgUnisexBoxyTee, imgUnisexBoxyTee2],
+    alts: ["Unisex boxy tee sand", "Unisex boxy tee olive"],
     items: [
       { name: "Unisex Boxy Tee", slug: "unisex-boxy-tee", price: "690" },
       { name: "Unisex Boxy Tee", slug: "unisex-boxy-tee", price: "690" }
@@ -98,6 +103,7 @@ export const allCombos = [
     savings: "90",
     tiles: ["tile-sand", "tile-olive"],
     images: [imgUnisexBoxyTee, imgJoggers],
+    alts: ["Unisex boxy tee", "Men's relaxed joggers"],
     items: [
       { name: "Unisex Boxy Tee", slug: "unisex-boxy-tee", price: "690" },
       { name: "Men's Joggers", slug: "mens-joggers", price: "999" }

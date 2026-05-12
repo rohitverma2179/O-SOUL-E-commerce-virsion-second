@@ -4,6 +4,7 @@ import { allProducts } from '../data/productData';
 import ProductCard from '../components/product/ProductCard';
 import ComboCard from '../components/product/ComboCard';
 import { ChevronRight } from 'lucide-react';
+import OptimizedImage from '../components/common/OptimizedImage';
 
 // Image imports
 import heroImg1 from '../assets/product/BO7A9010.jpeg';
@@ -65,10 +66,12 @@ const Home = () => {
             <div className="grid grid-cols-2 gap-4">
               {/* Primary Hero Image */}
               <div className="relative col-span-2 overflow-hidden rounded-xl bg-secondary aspect-[16/9] md:aspect-[3/2] group">
-                <img 
+                <OptimizedImage 
                   src={heroImg1} 
-                  alt="O'Soul Relaxed Fit" 
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  alt="O'Soul Relaxed Fit - Movement Proof" 
+                  priority={true}
+                  aspectRatio="aspect-[16/9] md:aspect-[3/2]"
+                  className="transition-transform duration-700 group-hover:scale-[1.03]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-charcoal/40 to-transparent opacity-60"></div>
                 <div className="absolute bottom-5 left-5">
@@ -79,20 +82,22 @@ const Home = () => {
               
               {/* Secondary Hero Images */}
               <div className="relative overflow-hidden rounded-xl bg-secondary aspect-square group">
-                <img 
+                <OptimizedImage 
                   src={heroImg2} 
-                  alt="O'Soul Daily Wear" 
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  alt="O'Soul Daily Wear - Walk Clean" 
+                  priority={true}
+                  className="transition-transform duration-700 group-hover:scale-[1.03]"
                 />
                 <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-charcoal/30 to-transparent">
                   <div className="font-serif text-sm text-ivory italic">Walks clean.</div>
                 </div>
               </div>
               <div className="relative overflow-hidden rounded-xl bg-secondary aspect-square group">
-                <img 
+                <OptimizedImage 
                   src={heroImg3} 
-                  alt="O'Soul Detail" 
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  alt="O'Soul Detail - Pockets Work" 
+                  priority={true}
+                  className="transition-transform duration-700 group-hover:scale-[1.03]"
                 />
                 <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-charcoal/30 to-transparent">
                   <div className="font-serif text-sm text-ivory italic">Pockets work.</div>

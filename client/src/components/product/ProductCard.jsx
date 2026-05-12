@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import OptimizedImage from '../common/OptimizedImage';
 
 const ProductCard = ({ product }) => {
   const { id, name, price, shortDescription, tileClass, bestFor, tags, slug } = product;
@@ -9,10 +10,11 @@ const ProductCard = ({ product }) => {
       <Link to={`/products/${slug}`} className="block overflow-hidden rounded-md">
         <div className={`relative aspect-[4/5] w-full overflow-hidden rounded-md ${tileClass} transition-transform duration-500 group-hover:scale-[1.02]`} aria-hidden="true">
           {product.image && (
-            <img 
+            <OptimizedImage 
               src={product.image} 
-              alt={name} 
-              className="h-full w-full object-cover"
+              alt={product.alt || name} 
+              aspectRatio="aspect-[4/5]"
+              className="h-full w-full"
             />
           )}
           <div 
