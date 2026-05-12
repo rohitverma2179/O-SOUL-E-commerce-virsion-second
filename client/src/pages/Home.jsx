@@ -4,7 +4,12 @@ import { allProducts } from '../data/productData';
 import ProductCard from '../components/product/ProductCard';
 import ComboCard from '../components/product/ComboCard';
 import { ChevronRight } from 'lucide-react';
-import hero1 from '../assets/product/BO7A9010.jpeg';  
+
+// Image imports
+import heroImg1 from '../assets/product/BO7A9010.jpeg';
+import heroImg2 from '../assets/product/BO7A9133.jpeg';
+import heroImg3 from '../assets/product/BO7A9201.jpeg';
+
 const products = allProducts;
 
 
@@ -61,7 +66,7 @@ const Home = () => {
               {/* Primary Hero Image */}
               <div className="relative col-span-2 overflow-hidden rounded-xl bg-secondary aspect-[16/9] md:aspect-[3/2] group">
                 <img 
-                  src={hero1}  
+                  src={heroImg1} 
                   alt="O'Soul Relaxed Fit" 
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                 />
@@ -75,7 +80,7 @@ const Home = () => {
               {/* Secondary Hero Images */}
               <div className="relative overflow-hidden rounded-xl bg-secondary aspect-square group">
                 <img 
-                  src="/src/assets/product/BO7A9133.jpeg" 
+                  src={heroImg2} 
                   alt="O'Soul Daily Wear" 
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                 />
@@ -85,7 +90,7 @@ const Home = () => {
               </div>
               <div className="relative overflow-hidden rounded-xl bg-secondary aspect-square group">
                 <img 
-                  src="/src/assets/product/BO7A9201.jpeg" 
+                  src={heroImg3} 
                   alt="O'Soul Detail" 
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                 />
@@ -97,6 +102,7 @@ const Home = () => {
           </div>
         </div>
       </section>
+
 
       {/* Products Section */}
       <section id="products" className="container-osoul py-16">

@@ -1,3 +1,14 @@
+import imgBoxyTeePocket from '../assets/product/BO7A9020.jpeg';
+import imgJoggers from '../assets/product/BO7A9013.jpeg';
+import imgShorts from '../assets/product/page short .jpeg';
+import imgBoxyTee2 from '../assets/product/BO7A9023.jpeg';
+import imgJoggers2 from '../assets/product/BO7A9019.jpeg';
+import imgShorts2 from '../assets/product/short 2.jpeg';
+import imgCroppedHoodie from '../assets/product/BO7A9135.jpeg';
+import imgHaremPants from '../assets/product/BO7A9142.jpeg';
+import imgUnisexBoxyTee from '../assets/product/BO7A9028.jpeg';
+import imgUnisexBoxyTee2 from '../assets/product/BO7A9042.jpeg';
+
 export const allCombos = [
   {
     id: 1,
@@ -9,7 +20,7 @@ export const allCombos = [
     discountedPrice: "1,599",
     savings: "99",
     tiles: ["tile-charcoal", "tile-olive"],
-    images: ["/src/assets/product/BO7A9020.jpeg", "/src/assets/product/BO7A9013.jpeg"],
+    images: [imgBoxyTeePocket, imgJoggers],
     items: [
       { name: "Men's Boxy Tee With Pocket", slug: "mens-boxy-tee-with-pocket", price: "699" },
       { name: "Men's Joggers", slug: "mens-joggers", price: "999" }
@@ -24,7 +35,7 @@ export const allCombos = [
     discountedPrice: "1,299",
     savings: "95",
     tiles: ["tile-charcoal", "tile-charcoal"],
-    images: ["/src/assets/product/BO7A9020.jpeg", "/src/assets/product/page short .jpeg"],
+    images: [imgBoxyTeePocket, imgShorts],
     items: [
       { name: "Men's Boxy Tee With Pocket", slug: "mens-boxy-tee-with-pocket", price: "699" },
       { name: "Men's Shorts", slug: "mens-shorts", price: "695" }
@@ -40,7 +51,7 @@ export const allCombos = [
     discountedPrice: "2,199",
     savings: "194",
     tiles: ["tile-charcoal", "tile-olive", "tile-charcoal"],
-    images: ["/src/assets/product/BO7A9023.jpeg", "/src/assets/product/BO7A9019.jpeg", "/src/assets/product/short 2.jpeg"],
+    images: [imgBoxyTee2, imgJoggers2, imgShorts2],
     items: [
       { name: "Men's Boxy Tee With Pocket", slug: "mens-boxy-tee-with-pocket", price: "699" },
       { name: "Men's Joggers", slug: "mens-joggers", price: "999" },
@@ -56,7 +67,7 @@ export const allCombos = [
     discountedPrice: "1,699",
     savings: "99",
     tiles: ["tile-clay", "tile-olive"],
-    images: ["/src/assets/product/BO7A9135.jpeg", "/src/assets/product/BO7A9142.jpeg"],
+    images: [imgCroppedHoodie, imgHaremPants],
     items: [
       { name: "Women's Cropped Hoodie", slug: "womens-cropped-hoodie", price: "799" },
       { name: "Women's Harem Pants", slug: "womens-harem-pants", price: "999" }
@@ -71,7 +82,7 @@ export const allCombos = [
     discountedPrice: "1,299",
     savings: "81",
     tiles: ["tile-sand", "tile-sand"],
-    images: ["/src/assets/product/BO7A9028.jpeg", "/src/assets/product/BO7A9042.jpeg"],
+    images: [imgUnisexBoxyTee, imgUnisexBoxyTee2],
     items: [
       { name: "Unisex Boxy Tee", slug: "unisex-boxy-tee", price: "690" },
       { name: "Unisex Boxy Tee", slug: "unisex-boxy-tee", price: "690" }
@@ -86,7 +97,7 @@ export const allCombos = [
     discountedPrice: "1,599",
     savings: "90",
     tiles: ["tile-sand", "tile-olive"],
-    images: ["/src/assets/product/BO7A9028.jpeg", "/src/assets/product/BO7A9013.jpeg"],
+    images: [imgUnisexBoxyTee, imgJoggers],
     items: [
       { name: "Unisex Boxy Tee", slug: "unisex-boxy-tee", price: "690" },
       { name: "Men's Joggers", slug: "mens-joggers", price: "999" }

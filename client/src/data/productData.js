@@ -1,3 +1,10 @@
+import imgJoggers from '../assets/product/BO7A9013.jpeg';
+import imgBoxyTeePocket from '../assets/product/BO7A9020.jpeg';
+import imgShorts from '../assets/product/page short .jpeg';
+import imgUnisexBoxyTee from '../assets/product/BO7A9028.jpeg';
+import imgCroppedHoodie from '../assets/product/BO7A9135.jpeg';
+import imgHaremPants from '../assets/product/BO7A9142.jpeg';
+
 export const allProducts = [
   {
     id: "men-joggers",
@@ -15,7 +22,7 @@ export const allProducts = [
     fitDetail: "The rise is set for sitting. So you can be in a café for three hours and not once think about your pants.",
     bestFor: "Travel · College · Cafés · Work-from-home · Daily movement",
     tileClass: "tile-olive",
-    image: "/src/assets/product/BO7A9013.jpeg",
+    image: imgJoggers,
     tags: [
       "Sits clean",
       "No-roll waist",
@@ -56,7 +63,7 @@ export const allProducts = [
     shortDescription: "Throw it on. Feel sorted. Soft enough to repeat every week. The pocket is there when you need it, invisible when you don't.",
     bestFor: "Daily wear · Layering · College · Errands · Throwing on without overthinking",
     tileClass: "tile-charcoal",
-    image: "/src/assets/product/BO7A9020.jpeg",
+    image: imgBoxyTeePocket,
     tags: [
       "Boxy fall",
       "Functional pocket",
@@ -96,7 +103,7 @@ export const allProducts = [
     shortDescription: "Easy shorts that don't ride up, dig in, or make you adjust every twenty minutes. The thigh room is built in — not something you have to size up for.",
     bestFor: "Summer · Home · Walks · Errands · College · Anywhere you want to actually be comfortable",
     tileClass: "tile-charcoal",
-    image: "/src/assets/product/page short .jpeg",
+    image: imgShorts,
     tags: [
       "Thigh room",
       "Stable waist",
@@ -136,7 +143,7 @@ export const allProducts = [
     shortDescription: "A clean boxy tee that works across outfits, occasions, and people. Soft, simple, and easy enough to reach for without thinking.",
     bestFor: "Everyday wear · Layering · College · Shared wardrobes · Gifting",
     tileClass: "tile-sand",
-    image: "/src/assets/product/BO7A9028.jpeg",
+    image: imgUnisexBoxyTee,
     tags: [
       "Unisex fit",
       "Boxy fall",
@@ -176,7 +183,7 @@ export const allProducts = [
     shortDescription: "A cropped hoodie for days when you want warmth without losing your silhouette. Soft, easy to layer, and clean enough to actually leave the house in.",
     bestFor: "Layering · Travel · Cafés · Lounging · Casual outings · Days when you're not sure what to wear",
     tileClass: "tile-clay",
-    image: "/src/assets/product/BO7A9135.jpeg",
+    image: imgCroppedHoodie,
     tags: [
       "Cropped fit",
       "Soft interior",
@@ -216,7 +223,7 @@ export const allProducts = [
     shortDescription: "Harem pants that drape softly, move freely, and don't look like you borrowed them from someone three sizes up. The rise is generous — so sitting feels like sitting, not a compromise.",
     bestFor: "Travel · Home · Creative work · Slow days · Cafés · Anywhere you want actual ease",
     tileClass: "tile-olive",
-    image: "/src/assets/product/BO7A9142.jpeg",
+    image: imgHaremPants,
     tags: [
       "Roomy rise",
       "Soft drape",
