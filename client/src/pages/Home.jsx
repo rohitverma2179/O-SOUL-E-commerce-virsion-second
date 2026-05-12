@@ -4,7 +4,7 @@ import { allProducts } from '../data/productData';
 import ProductCard from '../components/product/ProductCard';
 import ComboCard from '../components/product/ComboCard';
 import { ChevronRight } from 'lucide-react';
-
+import hero1 from '../assets/product/BO7A9010.jpeg';  
 const products = allProducts;
 
 
@@ -61,7 +61,7 @@ const Home = () => {
               {/* Primary Hero Image */}
               <div className="relative col-span-2 overflow-hidden rounded-xl bg-secondary aspect-[16/9] md:aspect-[3/2] group">
                 <img 
-                  src="/src/assets/product/BO7A9010.jpeg" 
+                  src={hero1}  
                   alt="O'Soul Relaxed Fit" 
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                 />
