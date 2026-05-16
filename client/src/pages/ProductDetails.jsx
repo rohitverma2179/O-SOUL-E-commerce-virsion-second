@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { allProducts } from '../data/productData';
 import { useCart } from '../context/CartContext';
 import { Minus, Plus, ShoppingBag, CheckCircle2, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
+import OptimizedImage from '../components/common/OptimizedImage';
 
 const ProductDetails = () => {
   const { slug } = useParams();
@@ -54,7 +55,13 @@ const ProductDetails = () => {
           <div className="lg:col-span-7 space-y-8">
             <div className={`relative w-full overflow-hidden rounded-2xl bg-secondary aspect-[4/5] shadow-sm`}>
               {product.image && (
-                <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+                <OptimizedImage 
+                  src={product.image} 
+                  alt={product.name} 
+                  aspectRatio="aspect-[4/5]"
+                  priority={true}
+                  className="h-full w-full"
+                />
               )}
               <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
             </div>

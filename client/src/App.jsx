@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import CategoryPage from './pages/CategoryPage';
 import Combos from './pages/Combos';
 import ProductDetails from './pages/ProductDetails';
-import InformationPage from './pages/InformationPage';
 import About from './pages/About';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -18,39 +17,63 @@ import FounderNote from './pages/FounderNote';
 import ExchangePolicy from './pages/ExchangePolicy';
 import Support from './pages/Support';
 import TrackOrder from './pages/TrackOrder';
+import ScrollToTop from './components/common/ScrollToTop';
 import { CartProvider } from './context/CartContext';
 
-
+// Admin Imports
+import AdminLayout from './components/admin/AdminLayout';
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import UserManagement from './pages/Admin/UserManagement';
+import HomepageEditor from './pages/Admin/HomepageEditor';
+import AdminLogin from './pages/Admin/AdminLogin';
+import AdminSignup from './pages/Admin/AdminSignup';
 
 function App() {
   return (
     <CartProvider>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/men" element={<CategoryPage categoryName="men" />} />
-          <Route path="/women" element={<CategoryPage categoryName="women" />} />
-          <Route path="/unisex" element={<CategoryPage categoryName="unisex" />} />
-          <Route path="/combos" element={<Combos />} />
-          <Route path="/products/:slug" element={<ProductDetails />} />
+      <ScrollToTop />
+      <Routes>
+        {/* User Routes (Wrapped in Layout using Outlet) */}
+        <Route element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="shop" element={<Shop />} />
+          <Route path="men" element={<CategoryPage categoryName="men" />} />
+          <Route path="women" element={<CategoryPage categoryName="women" />} />
+          <Route path="unisex" element={<CategoryPage categoryName="unisex" />} />
+          <Route path="combos" element={<Combos />} />
+          <Route path="products/:slug" element={<ProductDetails />} />
           
           {/* Static Information Pages */}
-          <Route path="/about" element={<About />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/size-guide" element={<SizeGuide />} />
-          <Route path="/founder" element={<FounderNote />} />
-          <Route path="/fit-tests" element={<FitTests />} />
-          <Route path="/exchange" element={<ExchangePolicy />} />
-          <Route path="/support" element={<Support />} />
-          <Route path="/track" element={<TrackOrder />} />
+          <Route path="about" element={<About />} />
+          <Route path="faq" element={<FAQ />} />
+          <Route path="size-guide" element={<SizeGuide />} />
+          <Route path="founder" element={<FounderNote />} />
+          <Route path="fit-tests" element={<FitTests />} />
+          <Route path="exchange" element={<ExchangePolicy />} />
+          <Route path="support" element={<Support />} />
+          <Route path="track" element={<TrackOrder />} />
 
           {/* Auth & Checkout */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/checkout" element={<Checkout />} />
-        </Routes>
-      </Layout>
+          <Route path="login" element={<Login />} />
+          <Route path="signup" element={<Signup />} />
+          <Route path="checkout" element={<Checkout />} />
+        </Route>
+
+        {/* Admin Panel Routes */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/signup" element={<AdminSignup />} />
+        
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="users" element={<UserManagement />} />
+          <Route path="homepage" element={<HomepageEditor />} />
+          <Route path="settings" element={<div className="p-8"><h1 className="text-2xl font-bold">Settings Panel</h1><p className="text-slate-500 mt-2">Configure platform-wide settings here.</p></div>} />
+        </Route>
+
+        {/* Redirect for catch-all or default admin path */}
+        <Route path="/admin/*" element={<Navigate to="/admin/dashboard" replace />} />
+      </Routes>
     </CartProvider>
   );
 }

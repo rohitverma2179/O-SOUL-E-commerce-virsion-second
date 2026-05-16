@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 /**
  * OptimizedImage Component
@@ -9,6 +9,7 @@ import React, { useState, useEffect } from 'react';
  * - Fade-in animation on load
  * - Fallback handling
  * - Support for 'priority' (eager loading for above-the-fold content)
+ * - Robust handling of src changes and cached images
  */
 const OptimizedImage = ({ 
   src, 
@@ -20,11 +21,22 @@ const OptimizedImage = ({
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(false);
+  const imgRef = useRef(null);
 
-  // Reset state if src changes
-  useEffect(() => {
+  // Use a state-like variable during render to reset isLoaded if src changes
+  // this is faster than useEffect and prevents flashing old images
+  const [prevSrc, setPrevSrc] = useState(src);
+  if (src !== prevSrc) {
     setIsLoaded(false);
     setError(false);
+    setPrevSrc(src);
+  }
+
+  // Handle cached images that might load before the component mounts/renders
+  useEffect(() => {
+    if (imgRef.current && imgRef.current.complete) {
+      setIsLoaded(true);
+    }
   }, [src]);
 
   return (
@@ -42,6 +54,8 @@ const OptimizedImage = ({
       )}
 
       <img
+        ref={imgRef}
+        key={src} // Force fresh image element when src changes
         src={src}
         alt={alt || ''}
         loading={priority ? 'eager' : 'lazy'}

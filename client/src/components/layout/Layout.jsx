@@ -5,9 +5,9 @@ import AnnouncementBar from './AnnouncementBar';
 import CartDrawer from './CartDrawer';
 import { useCart } from '../../context/CartContext';
 import { ShoppingBag, LayoutGrid, Home } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 
-const Layout = ({ children }) => {
+const Layout = () => {
   const { setIsCartOpen, cartCount } = useCart();
 
   return (
@@ -16,7 +16,7 @@ const Layout = ({ children }) => {
       <Navbar />
       
       <main className="flex-1">
-        {children}
+        <Outlet />
       </main>
       
       <Footer />

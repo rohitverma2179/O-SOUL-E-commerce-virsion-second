@@ -28,7 +28,7 @@ const ComboCard = ({ combo }) => {
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {combo.images?.map((img, idx) => (
           <div key={idx} className={`relative w-full overflow-hidden rounded-lg bg-secondary aspect-square shadow-sm transition-transform hover:scale-[1.02]`} aria-hidden="true">
-            <OptimizedImage 
+            <OptimizedImage
               src={img} 
               alt={combo.alts ? combo.alts[idx] : `${combo.title} item ${idx + 1}`} 
               className="h-full w-full"

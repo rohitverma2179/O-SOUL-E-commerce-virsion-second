@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { allProducts } from '../data/productData';
 import ProductCard from '../components/product/ProductCard';
@@ -20,28 +20,58 @@ const combos = allCombos;
 
 
 const Home = () => {
+  const [heroContent, setHeroContent] = useState({
+    tagline: 'First drop · Live now',
+    titleLine1: 'Wear it.',
+    titleLine2: "Forget you're wearing it.",
+    description: 'Everyday tees, joggers, shorts, hoodies, and harem pants. Built for sitting, walking, and doing your actual day — without pulling, tugging, or thinking about what you\'re wearing.',
+    primaryBtnText: 'Shop The First Drop →',
+    primaryBtnLink: '/shop',
+    secondaryBtnText: 'Shop Combos',
+    secondaryBtnLink: '/combos',
+    images: [heroImg1, heroImg2, heroImg3]
+  });
+
+  useEffect(() => {
+    const fetchHomepageData = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/users/homepage`, {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        if (data.success) {
+          const hero = data.data.find(section => section.sectionName === 'hero');
+          if (hero) setHeroContent(hero.content);
+        }
+      } catch (error) {
+        console.log("Using static homepage data (Server might be offline)");
+      }
+    };
+    fetchHomepageData();
+  }, []);
+
   return (
     <div>
       {/* Hero Section */}
       <section className="border-b border-border bg-background">
         <div className="container-osoul grid gap-10 py-14 md:grid-cols-12 md:py-24">
           <div className="md:col-span-6 md:pt-4">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">First drop · Live now</p>
+            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">{heroContent.tagline}</p>
             <h1 className="mt-5 font-serif text-5xl leading-[1.05] md:text-7xl">
-              Wear it.<br />
-              <span className="italic text-olive">Forget you're wearing it.</span>
+              {heroContent.titleLine1}<br />
+              <span className="italic text-olive">{heroContent.titleLine2}</span>
             </h1>
             <p className="mt-6 max-w-lg text-base text-foreground/80 leading-relaxed">
-              Everyday tees, joggers, shorts, hoodies, and harem pants. Built for sitting, walking, and doing your actual day — without pulling, tugging, or thinking about what you're wearing.
+              {heroContent.description}
             </p>
             
             <div className="mt-8">
               <div className="flex flex-wrap gap-4">
-                <Link to="/shop" className="h-12 rounded-md bg-foreground px-8 py-3 text-sm font-medium text-background hover:bg-foreground/90 transition-all flex items-center shadow-lg shadow-charcoal/10">
-                  Shop The First Drop →
+                <Link to={heroContent.primaryBtnLink} className="h-12 rounded-md bg-foreground px-8 py-3 text-sm font-medium text-background hover:bg-foreground/90 transition-all flex items-center shadow-lg shadow-charcoal/10">
+                  {heroContent.primaryBtnText}
                 </Link>
-                <Link to="/combos" className="h-12 rounded-md border border-foreground px-8 py-3 text-sm font-medium text-foreground hover:bg-foreground hover:text-background transition-all flex items-center">
-                  Shop Combos
+                <Link to={heroContent.secondaryBtnLink} className="h-12 rounded-md border border-foreground px-8 py-3 text-sm font-medium text-foreground hover:bg-foreground hover:text-background transition-all flex items-center">
+                  {heroContent.secondaryBtnText}
                 </Link>
               </div>
 
