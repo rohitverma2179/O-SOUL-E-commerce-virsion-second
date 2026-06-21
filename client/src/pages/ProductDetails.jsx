@@ -115,7 +115,18 @@ const ProductDetails = () => {
                 <div>
                   <div className="mb-4 flex items-center justify-between">
                     <span className="text-[11px] uppercase tracking-widest text-muted-foreground font-bold">Size: <span className="text-foreground ml-1">{selectedSize}</span></span>
-                    <Link to="/size-guide" className="text-xs font-bold uppercase tracking-widest text-olive/70 hover:text-olive transition-colors">Size Guide</Link>
+                    <div className="flex items-center gap-3">
+                      <Link to="/size-guide" className="text-xs font-bold uppercase tracking-widest text-olive/70 hover:text-olive transition-colors">Size Guide</Link>
+                      <span className="text-border text-xs">|</span>
+                      <a 
+                        href={`https://wa.me/919999999999?text=${encodeURIComponent(`Hi O'Soul, I am looking at "${product.name}" and need help choosing my size.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-bold uppercase tracking-widest text-olive hover:opacity-85 transition-opacity"
+                      >
+                        WhatsApp Help
+                      </a>
+                    </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {product.sizes.map(size => (

@@ -1,9 +1,9 @@
-import imgJoggers from '../assets/product/BO7A9013.jpeg';
-import imgBoxyTeePocket from '../assets/product/BO7A9020.jpeg';
-import imgShorts from '../assets/product/page short .jpeg';
-import imgUnisexBoxyTee from '../assets/product/BO7A9028.jpeg';
-import imgCroppedHoodie from '../assets/product/BO7A9135.jpeg';
-import imgHaremPants from '../assets/product/BO7A9142.jpeg';
+import imgJoggers from '../assets/product/(1).png';
+import imgBoxyTeePocket from '../assets/product/(10).png';
+import imgShorts from '../assets/product/(20).png';
+import imgUnisexBoxyTee from '../assets/product/(30).png';
+import imgCroppedHoodie from '../assets/product/(40).png';
+import imgHaremPants from '../assets/product/(50).png';
 
 export const allProducts = [
   {

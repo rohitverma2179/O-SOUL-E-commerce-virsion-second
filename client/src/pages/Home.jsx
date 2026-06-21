@@ -7,9 +7,14 @@ import { ChevronRight } from 'lucide-react';
 import OptimizedImage from '../components/common/OptimizedImage';
 
 // Image imports
-import heroImg1 from '../assets/product/BO7A9010.jpeg';
-import heroImg2 from '../assets/product/BO7A9133.jpeg';
-import heroImg3 from '../assets/product/BO7A9201.jpeg';
+import heroImg1 from '../assets/product/(4).png';
+import heroImg2 from '../assets/product/(5).png';
+import heroImg3 from '../assets/product/(15).png';
+
+import catImgMen from '../assets/product/(4).png';
+import catImgWomen from '../assets/product/(50).png';
+import catImgUnisex from '../assets/product/(32).png';
+import catImgCombos from '../assets/product/(10).png';
 
 const products = allProducts;
 
@@ -21,16 +26,19 @@ const combos = allCombos;
 
 const Home = () => {
   const [heroContent, setHeroContent] = useState({
-    tagline: 'First drop · Live now',
-    titleLine1: 'Wear it.',
-    titleLine2: "Forget you're wearing it.",
-    description: 'Everyday tees, joggers, shorts, hoodies, and harem pants. Built for sitting, walking, and doing your actual day — without pulling, tugging, or thinking about what you\'re wearing.',
+    tagline: 'Bottomwear that you don’t need to adjust.',
+    titleLine1: 'Welcome to an  adjust-free world',
+
+    titleLine2: "  of bottoms by O’Soul",
+    description: 'Everyday joggers, shorts, and harem pants. Built for sitting, walking, and doing your actual day — without pulling, tugging, or thinking about what you\'re wearing.',
     primaryBtnText: 'Shop The First Drop →',
     primaryBtnLink: '/shop',
     secondaryBtnText: 'Shop Combos',
     secondaryBtnLink: '/combos',
     images: [heroImg1, heroImg2, heroImg3]
   });
+
+  const [activeReviewIndex, setActiveReviewIndex] = useState(1);
 
   useEffect(() => {
     const fetchHomepageData = async () => {
@@ -50,21 +58,50 @@ const Home = () => {
     fetchHomepageData();
   }, []);
 
+  const reviewsData = [
+    {
+      objection: "Will it actually fit?",
+      quote: "“I didn't have to keep fixing it. First pair I've worn through a full college day without thinking about my pants once.”",
+      author: "— Aanya, 22 · Mumbai"
+    },
+    {
+      objection: "Will the waistband dig?",
+      quote: "“It stayed in place without squeezing. After lunch I usually loosen something — not with these.”",
+      author: "— Riya, 27 · Bangalore"
+    },
+    {
+      objection: "Will my thighs feel tight?",
+      quote: "“I always size up in pants because of my thighs. Took my usual size here. It fits. That was a moment.”",
+      author: "— Priya, 26 · Delhi"
+    },
+    {
+      objection: "Will the fabric feel cheap?",
+      quote: "“Expected it to feel like any ₹999 basic. It doesn't. The fabric is soft but it has weight to it. Not cheap at all.”",
+      author: "— Kartik, 31 · Mumbai"
+    },
+    {
+      objection: "Will I wear it often?",
+      quote: "“I've worn the joggers four times this week. I keep reaching for them. They're not the most exciting thing I own — but they're the most useful.”",
+      author: "— Meera, 27 · Hyderabad"
+    }
+  ];
+
   return (
     <div>
       {/* Hero Section */}
       <section className="border-b border-border bg-background">
         <div className="container-osoul grid gap-10 py-14 md:grid-cols-12 md:py-24">
           <div className="md:col-span-6 md:pt-4">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">{heroContent.tagline}</p>
-            <h1 className="mt-5 font-serif text-5xl leading-[1.05] md:text-7xl">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-[#9B6650] font-semibold">{heroContent.tagline}</p>
+            <h1 className="mt-5 font-serif text-3xl  leading-[1.05] md:text-7xl">
               {heroContent.titleLine1}<br />
-              <span className="italic text-olive">{heroContent.titleLine2}</span>
+              {/* {heroContent.titleLine2} */}
+              <span className="italic text-[#9B6650]">{heroContent.titleLine2}</span>
             </h1>
             <p className="mt-6 max-w-lg text-base text-foreground/80 leading-relaxed">
               {heroContent.description}
             </p>
-            
+
             <div className="mt-8">
               <div className="flex flex-wrap gap-4">
                 <Link to={heroContent.primaryBtnLink} className="h-12 rounded-md bg-foreground px-8 py-3 text-sm font-medium text-background hover:bg-foreground/90 transition-all flex items-center shadow-lg shadow-charcoal/10">
@@ -78,7 +115,6 @@ const Home = () => {
               {/* Trust Strip */}
               <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
                 {[
-                  "Products from ₹690",
                   "In stock now",
                   "Secure Razorpay checkout",
                   "Easy exchange support"
@@ -95,10 +131,10 @@ const Home = () => {
           <div className="md:col-span-6">
             <div className="grid grid-cols-2 gap-4">
               {/* Primary Hero Image */}
-              <div className="relative col-span-2 overflow-hidden rounded-xl bg-secondary aspect-[16/9] md:aspect-[3/2] group">
-                <OptimizedImage 
-                  src={heroImg1} 
-                  alt="O'Soul Relaxed Fit - Movement Proof" 
+              <Link to="/products/mens-joggers" className="relative col-span-2 overflow-hidden rounded-xl bg-secondary aspect-[16/9] md:aspect-[3/2] group block cursor-pointer">
+                <OptimizedImage
+                  src={heroImg1}
+                  alt="O'Soul Relaxed Fit - Movement Proof"
                   priority={true}
                   aspectRatio="aspect-[16/9] md:aspect-[3/2]"
                   className="transition-transform duration-700 group-hover:scale-[1.03]"
@@ -108,31 +144,31 @@ const Home = () => {
                   <div className="text-[10px] uppercase tracking-[0.2em] text-ivory/80">Movement proof</div>
                   <div className="mt-1 font-serif text-xl text-ivory italic">No more adjusting.</div>
                 </div>
-              </div>
-              
+              </Link>
+
               {/* Secondary Hero Images */}
-              <div className="relative overflow-hidden rounded-xl bg-secondary aspect-square group">
-                <OptimizedImage 
-                  src={heroImg2} 
-                  alt="O'Soul Daily Wear - Walk Clean" 
+              <Link to="/products/mens-shorts" className="relative overflow-hidden rounded-xl bg-secondary aspect-square group block cursor-pointer">
+                <OptimizedImage
+                  src={heroImg2}
+                  alt="O'Soul Daily Wear - Walk Clean"
                   priority={true}
                   className="transition-transform duration-700 group-hover:scale-[1.03]"
                 />
                 <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-charcoal/30 to-transparent">
                   <div className="font-serif text-sm text-ivory italic">Walks clean.</div>
                 </div>
-              </div>
-              <div className="relative overflow-hidden rounded-xl bg-secondary aspect-square group">
-                <OptimizedImage 
-                  src={heroImg3} 
-                  alt="O'Soul Detail - Pockets Work" 
+              </Link>
+              <Link to="/products/womens-harem-pants" className="relative overflow-hidden rounded-xl bg-secondary aspect-square group block cursor-pointer">
+                <OptimizedImage
+                  src={heroImg3}
+                  alt="O'Soul Detail - Pockets Work"
                   priority={true}
                   className="transition-transform duration-700 group-hover:scale-[1.03]"
                 />
                 <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-charcoal/30 to-transparent">
                   <div className="font-serif text-sm text-ivory italic">Pockets work.</div>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
         </div>
@@ -177,7 +213,14 @@ const Home = () => {
         </div>
         <div className="mt-10 grid gap-4 md:grid-cols-4">
           <Link to="/men" className="group relative block overflow-hidden rounded-lg">
-            <div className="tile-charcoal aspect-[4/5] w-full transition-transform duration-500 group-hover:scale-[1.03]"></div>
+            <div className="aspect-[4/5] w-full bg-secondary relative">
+              <img 
+                src={catImgMen} 
+                alt="Men's Category" 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent"></div>
+            </div>
             <div className="absolute inset-0 flex flex-col justify-end p-5">
               <div className="font-serif text-2xl text-ivory">Men</div>
               <ul className="mt-1 space-y-0.5 text-xs text-ivory/80">
@@ -188,7 +231,14 @@ const Home = () => {
             </div>
           </Link>
           <Link to="/women" className="group relative block overflow-hidden rounded-lg">
-            <div className="tile-clay aspect-[4/5] w-full transition-transform duration-500 group-hover:scale-[1.03]"></div>
+            <div className="aspect-[4/5] w-full bg-secondary relative">
+              <img 
+                src={catImgWomen} 
+                alt="Women's Category" 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent"></div>
+            </div>
             <div className="absolute inset-0 flex flex-col justify-end p-5">
               <div className="font-serif text-2xl text-ivory">Women</div>
               <ul className="mt-1 space-y-0.5 text-xs text-ivory/80">
@@ -198,7 +248,14 @@ const Home = () => {
             </div>
           </Link>
           <Link to="/unisex" className="group relative block overflow-hidden rounded-lg">
-            <div className="tile-sand aspect-[4/5] w-full transition-transform duration-500 group-hover:scale-[1.03]"></div>
+            <div className="aspect-[4/5] w-full bg-secondary relative">
+              <img 
+                src={catImgUnisex} 
+                alt="Unisex Category" 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent"></div>
+            </div>
             <div className="absolute inset-0 flex flex-col justify-end p-5">
               <div className="font-serif text-2xl text-ivory">Unisex</div>
               <ul className="mt-1 space-y-0.5 text-xs text-ivory/80">
@@ -207,7 +264,14 @@ const Home = () => {
             </div>
           </Link>
           <Link to="/combos" className="group relative block overflow-hidden rounded-lg">
-            <div className="tile-olive aspect-[4/5] w-full transition-transform duration-500 group-hover:scale-[1.03]"></div>
+            <div className="aspect-[4/5] w-full bg-secondary relative">
+              <img 
+                src={catImgCombos} 
+                alt="Combos Category" 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent"></div>
+            </div>
             <div className="absolute inset-0 flex flex-col justify-end p-5">
               <div className="font-serif text-2xl text-ivory">Combos</div>
               <ul className="mt-1 space-y-0.5 text-xs text-ivory/80">
@@ -235,28 +299,28 @@ const Home = () => {
               Most clothes are designed to look right standing still. O'Soul is built for everything after that — the sitting, walking, commuting, working, and just living that fills your actual day.
             </p>
           </div>
-          
+
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
-              { 
+              {
                 num: "01",
-                title: "The fit is in the pattern, not the size.", 
-                desc: "Most brands grade sizing by adding one inch everywhere. That's lazy, and it's why your \"right size\" still pulls in the wrong places. O'Soul grades across waist, hip, thigh, rise, and inseam — independently. Because Indian bodies aren't just bigger or smaller versions of each other." 
+                title: "The fit is in the pattern, not the size.",
+                desc: "Most brands grade sizing by adding one inch everywhere. That's lazy, and it's why your \"right size\" still pulls in the wrong places. O'Soul grades across waist, hip, thigh, rise, and inseam — independently. Because Indian bodies aren't just bigger or smaller versions of each other."
               },
-              { 
+              {
                 num: "02",
-                title: "The waistband is tested, not guessed.", 
-                desc: "Every waistband passes a 10-wear test and a 5-wash test before a single piece ships. It has to stretch, sit flat, and recover — not roll, fold, or dig in. The waistband is where most comfort fails. It's where we start." 
+                title: "The waistband is tested, not guessed.",
+                desc: "Every waistband passes a 10-wear test and a 5-wash test before a single piece ships. It has to stretch, sit flat, and recover — not roll, fold, or dig in. The waistband is where most comfort fails. It's where we start."
               },
-              { 
+              {
                 num: "03",
-                title: "The fabric is chosen for movement, not feel in a store.", 
-                desc: "Soft is the starting point, not the finish line. O'Soul fabric also has to breathe, recover after stretch, resist cling, and hold its shape after repeated wear. A lot of fabrics fail one of those things. We test until something passes all of them." 
+                title: "The fabric is chosen for movement, not feel in a store.",
+                desc: "Soft is the starting point, not the finish line. O'Soul fabric also has to breathe, recover after stretch, resist cling, and hold its shape after repeated wear. A lot of fabrics fail one of those things. We test until something passes all of them."
               },
-              { 
+              {
                 num: "04",
-                title: "The rise comes first.", 
-                desc: "Rise is the measurement from waist to crotch — and it's what decides whether you can sit comfortably for three hours or spend the day adjusting. We set the rise first, then build the pant around it. It's a different design order. It produces a different result." 
+                title: "The rise comes first.",
+                desc: "Rise is the measurement from waist to crotch — and it's what decides whether you can sit comfortably for three hours or spend the day adjusting. We set the rise first, then build the pant around it. It's a different design order. It produces a different result."
               }
             ].map((prop) => (
               <div key={prop.num} className="group rounded-xl border border-border bg-background p-6 shadow-sm transition-all hover:shadow-md hover:border-olive/30">
@@ -309,54 +373,47 @@ const Home = () => {
       </section>
 
       {/* Social Proof / Reviews Section */}
-      <section className="bg-secondary/40 py-16 md:py-24 border-y border-border">
-        <div className="container-osoul">
-          <div className="text-center mb-16">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Social proof</p>
-            <h2 className="mt-4 font-serif text-3xl md:text-5xl italic">The exact things people notice after wearing O'Soul.</h2>
-            <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground italic leading-relaxed">
-              Not random praise. Real doubts answered. Five questions — five answers from people who had the same doubt before buying.
-            </p>
+      <section id="reviews" className="bg-secondary/40 border-y border-border/60 py-20 sm:py-28">
+        <div className="container-osoul max-w-5xl">
+          <div className="max-w-2xl mb-10">
+            <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground mb-4 font-medium">REVIEWS BY OBJECTION</p>
+            <h2 className="font-serif text-3xl sm:text-5xl leading-tight text-balance mb-4">The exact things people notice after wearing O’Soul.</h2>
+            <p className="text-foreground/70">Not random praise. Real doubts answered.</p>
           </div>
-          
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                doubt: "Will it actually fit me right?",
-                answer: "I didn't have to keep fixing it. First pair I've worn through a full college day without thinking about my pants once.",
-                author: "Aanya, 22 · Mumbai · Men's Joggers"
-              },
-              {
-                doubt: "Will the waistband dig when I sit?",
-                answer: "I work from home and I sit for hours. Most joggers make me feel like I'm being strangled by hour two. These just... don't.",
-                author: "Rohan, 29 · Bangalore · Men's Joggers"
-              },
-              {
-                doubt: "Will my thighs feel tight?",
-                answer: "I always size up in pants because of my thighs. Took my usual size here. It fits. That was a moment.",
-                author: "Priya, 26 · Delhi · Men's Shorts"
-              },
-              {
-                doubt: "Will the fabric feel cheap at this price?",
-                answer: "Expected it to feel like any ₹999 basic. It doesn't. The fabric is soft but it has weight to it. Not cheap at all.",
-                author: "Kartik, 31 · Mumbai · Men's Joggers"
-              },
-              {
-                doubt: "Will I actually wear it again?",
-                answer: "I've worn the joggers four times this week. I keep reaching for them. They're not the most exciting thing I own — but they're the most useful.",
-                author: "Meera, 27 · Hyderabad · Men's Joggers"
-              }
-            ].map((review, idx) => (
-              <div key={idx} className="flex flex-col rounded-xl border border-border bg-background p-8 shadow-sm hover:border-olive/30 transition-colors">
-                <div className="text-[10px] uppercase tracking-[0.2em] text-olive/60 font-bold mb-4">Doubt 0{idx + 1}</div>
-                <h4 className="font-serif text-lg italic text-foreground mb-4 leading-tight">"{review.doubt}"</h4>
-                <div className="mt-auto pt-6 border-t border-border/40">
-                  <p className="text-sm text-muted-foreground leading-relaxed italic mb-4">"{review.answer}"</p>
-                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">{review.author}</p>
-                </div>
-              </div>
+
+          <div className="flex flex-wrap gap-2 mb-8">
+            {reviewsData.map((rev, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveReviewIndex(idx)}
+                className={`text-sm px-4 py-2.5 rounded-sm border transition-colors ${
+                  activeReviewIndex === idx
+                    ? 'bg-foreground text-background border-foreground font-semibold'
+                    : 'border-border bg-background text-foreground/80 hover:border-foreground/50'
+                }`}
+              >
+                {rev.objection}
+              </button>
             ))}
           </div>
+
+          <div className="bg-background border border-border rounded-sm p-8 sm:p-12 max-w-3xl min-h-[200px] flex flex-col justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-4 font-bold">
+                {reviewsData[activeReviewIndex].objection.toUpperCase()}
+              </p>
+              <p className="text-2xl sm:text-3xl leading-snug text-balance mb-6 text-foreground font-medium" style={{ fontFamily: '"Fraunces", serif' }}>
+                {reviewsData[activeReviewIndex].quote}
+              </p>
+            </div>
+            <p className="text-sm text-foreground/70">
+              {reviewsData[activeReviewIndex].author}
+            </p>
+          </div>
+
+          <p className="mt-8 text-xs text-muted-foreground italic">
+            Reviews shown reflect early customer feedback themes from the first batch.
+          </p>
         </div>
       </section>
 
@@ -418,7 +475,7 @@ const Home = () => {
       </section>
 
       {/* Founder Note Section */}
-      <section className="bg-foreground py-16 text-background text-center">
+      {/* <section className="bg-foreground py-16 text-background text-center">
         <div className="container-osoul max-w-3xl mx-auto">
           <p className="text-[11px] uppercase tracking-[0.2em] text-background/60 font-medium">Founder note</p>
           <h2 className="mt-4 font-serif text-4xl italic">Why O'Soul exists.</h2>
@@ -434,7 +491,7 @@ const Home = () => {
             </Link>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Email / Drop List Section */}
       <section className="bg-secondary/20 py-20 border-t border-border">
@@ -444,14 +501,14 @@ const Home = () => {
             Be first to know when the next drop goes live. No spam. Just useful drop updates and the occasional honest note from the founder.
           </p>
           <form className="mt-8 flex flex-col sm:flex-row gap-3" onSubmit={(e) => e.preventDefault()}>
-            <input 
-              type="email" 
-              placeholder="Your email" 
+            <input
+              type="email"
+              placeholder="Your email"
               className="h-12 flex-1 rounded-md border border-border bg-background px-4 text-sm focus:border-olive focus:outline-none transition-colors italic"
               required
             />
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="h-12 rounded-md bg-foreground px-8 text-[11px] font-bold uppercase tracking-widest text-background hover:bg-foreground/90 transition-all"
             >
               Join the List →
@@ -467,7 +524,7 @@ const Home = () => {
       <section className="container-osoul py-24 md:py-32 text-center">
         <h2 className="font-serif text-4xl md:text-5xl italic tracking-tight">Start with one piece you'll actually repeat.</h2>
         <p className="mt-6 text-muted-foreground italic text-lg leading-relaxed">
-          First drop live. Products from ₹690. <br className="md:hidden" />
+          First drop live. Free shipping on all orders. <br className="md:hidden" />
           <span className="text-olive font-medium">Small batch — no restocks.</span>
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-4">

@@ -1,84 +1,301 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Mail, Lock, User, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Mail, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Signup = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [otp, setOtp] = useState('');
+  const [showOtpScreen, setShowOtpScreen] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState('');
+  const [error, setError] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [isResending, setIsResending] = useState(false);
 
-  const handleSubmit = (e) => {
+  const { signup, googleLogin, verifyEmail, loading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get redirection route (defaults to shop or home)
+  const from = location.state?.from?.pathname || '/shop';
+
+  // Dynamic GIS script loading
+  useEffect(() => {
+    const scriptId = 'google-gis-client';
+    let script = document.getElementById(scriptId);
+
+    const initializeGoogleButton = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: '512626231482-0pdqpssacmkfg1e96e247tgk277bg2ap.apps.googleusercontent.com',
+          callback: handleGoogleCredentialResponse,
+        });
+        window.google.accounts.id.renderButton(
+          document.getElementById('google-signin-btn'),
+          { 
+            theme: 'outline', 
+            size: 'large', 
+            width: '380',
+            text: 'signup_with',
+            shape: 'rectangular'
+          }
+        );
+      }
+    };
+
+    if (!script) {
+      script = document.createElement('script');
+      script.id = scriptId;
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.defer = true;
+      script.onload = initializeGoogleButton;
+      document.head.appendChild(script);
+    } else {
+      initializeGoogleButton();
+    }
+  }, [showOtpScreen]); // Re-render button if we return to signup form
+
+  const handleGoogleCredentialResponse = async (response) => {
+    setError(null);
+    setMessage(null);
+    const result = await googleLogin(response.credential);
+    if (result.success) {
+      navigate(from, { replace: true });
+    } else {
+      setError(result.message);
+    }
+  };
+
+  const handleSignupSubmit = async (e) => {
     e.preventDefault();
-    console.log("Signup attempt:", formData);
+    setError(null);
+    setMessage(null);
+
+    const result = await signup(name, email, password);
+    if (result.success) {
+      if (result.unverified) {
+        setVerificationEmail(email);
+        setShowOtpScreen(true);
+        setMessage("Account created. A 6-digit verification code has been sent to your email.");
+      } else {
+        // Direct login
+        navigate(from, { replace: true });
+      }
+    } else {
+      setError(result.message);
+    }
+  };
+
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setMessage(null);
+
+    if (otp.trim().length !== 6) {
+      setError("Please enter a valid 6-digit OTP code.");
+      return;
+    }
+
+    const result = await verifyEmail(verificationEmail, otp.trim());
+    if (result.success) {
+      navigate(from, { replace: true });
+    } else {
+      setError(result.message);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setIsResending(true);
+    setError(null);
+    setMessage(null);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/users/resend-otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: verificationEmail }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setMessage("A new 6-digit verification code has been sent to your email.");
+      } else {
+        setError(data.message || "Failed to resend code.");
+      }
+    } catch (err) {
+      setError("Network error. Please try again.");
+    } finally {
+      setIsResending(false);
+    }
   };
 
   return (
     <div className="container-osoul flex min-h-[80vh] items-center justify-center py-20">
-      <div className="w-full max-w-md space-y-8">
+      <div className="w-full max-w-md space-y-8 bg-card border border-border/60 rounded-2xl p-8 shadow-sm">
+        
+        {/* Header Section */}
         <div className="text-center">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Start Your Journey</p>
-          <h1 className="mt-3 font-serif text-4xl">Join O'Soul</h1>
-          <p className="mt-2 text-sm text-muted-foreground italic">Experience everyday comfort at its best.</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">
+            {showOtpScreen ? "Security Verification" : "Start Your Journey"}
+          </p>
+          <h1 className="mt-3 font-serif text-4xl">
+            {showOtpScreen ? "Verify Email" : "Join O'Soul"}
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground italic">
+            {showOtpScreen ? `We sent a code to ${verificationEmail}` : "Experience everyday comfort at its best."}
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-2">
-            <label className="text-[11px] uppercase tracking-wider text-muted-foreground ml-1">Full Name</label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input 
-                type="text" 
-                required
-                className="h-12 w-full rounded-md border border-border bg-background pl-10 pr-4 text-sm outline-none transition focus:border-foreground/50"
-                placeholder="Rohit"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              />
-            </div>
+        {/* Success/Error Alerts */}
+        {error && (
+          <div className="rounded-md bg-destructive/10 border border-destructive/20 p-4 text-xs font-medium text-destructive italic text-center">
+            {error}
           </div>
-
-          <div className="space-y-2">
-            <label className="text-[11px] uppercase tracking-wider text-muted-foreground ml-1">Email Address</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input 
-                type="email" 
-                required
-                className="h-12 w-full rounded-md border border-border bg-background pl-10 pr-4 text-sm outline-none transition focus:border-foreground/50"
-                placeholder="you@example.com"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              />
-            </div>
+        )}
+        {message && (
+          <div className="rounded-md bg-olive/10 border border-olive/20 p-4 text-xs font-medium text-olive italic text-center">
+            {message}
           </div>
+        )}
 
-          <div className="space-y-2">
-            <label className="text-[11px] uppercase tracking-wider text-muted-foreground ml-1">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input 
-                type="password" 
-                required
-                className="h-12 w-full rounded-md border border-border bg-background pl-10 pr-4 text-sm outline-none transition focus:border-foreground/50"
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              />
+        {/* Render UI Forms */}
+        {!showOtpScreen ? (
+          <div className="space-y-6">
+            <form onSubmit={handleSignupSubmit} className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-[11px] uppercase tracking-wider text-muted-foreground ml-1 font-bold">Full Name</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <input 
+                    type="text" 
+                    required
+                    className="h-12 w-full rounded-md border border-border bg-background pl-10 pr-4 text-sm outline-none transition focus:border-olive/50"
+                    placeholder="Rohit"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[11px] uppercase tracking-wider text-muted-foreground ml-1 font-bold">Email Address</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <input 
+                    type="email" 
+                    required
+                    className="h-12 w-full rounded-md border border-border bg-background pl-10 pr-4 text-sm outline-none transition focus:border-olive/50"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[11px] uppercase tracking-wider text-muted-foreground ml-1 font-bold">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <input 
+                    type="password" 
+                    required
+                    className="h-12 w-full rounded-md border border-border bg-background pl-10 pr-4 text-sm outline-none transition focus:border-olive/50"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={loading}
+                className="group flex h-12 w-full items-center justify-center gap-2 rounded-md bg-foreground font-medium text-background transition hover:bg-foreground/90 disabled:opacity-75"
+              >
+                {loading ? "Creating Account..." : "Create Account"}
+                {!loading && <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />}
+              </button>
+            </form>
+
+            {/* SSO / Divider */}
+            <div className="space-y-4">
+              <div className="relative flex py-2 items-center">
+                <div className="flex-grow border-t border-border"></div>
+                <span className="flex-shrink mx-4 text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">or</span>
+                <div className="flex-grow border-t border-border"></div>
+              </div>
+
+              <div className="flex flex-col items-center justify-center space-y-2">
+                <div id="google-signin-btn" className="w-full flex justify-center"></div>
+              </div>
             </div>
+
+            <div className="text-center text-sm pt-2">
+              <span className="text-muted-foreground italic font-medium">Already have an account? </span>
+              <Link to="/login" className="font-semibold underline underline-offset-4 hover:text-olive transition-colors">Login</Link>
+            </div>
+            
+            <p className="text-center text-[10px] text-muted-foreground italic">
+              By joining, you agree to our Terms of Service and Privacy Policy.
+            </p>
           </div>
+        ) : (
+          /* OTP Screen */
+          <form onSubmit={handleOtpSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-[11px] uppercase tracking-wider text-muted-foreground ml-1 font-bold block text-center">
+                Enter 6-Digit OTP Code
+              </label>
+              <div className="relative">
+                <ShieldCheck className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <input 
+                  type="text" 
+                  maxLength={6}
+                  required
+                  className="h-12 w-full rounded-md border border-border bg-background pl-10 pr-4 text-center text-lg tracking-[0.45em] font-mono outline-none transition focus:border-olive/50"
+                  placeholder="000000"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                />
+              </div>
+              <p className="text-[10px] text-muted-foreground text-center italic mt-1">
+                Check your spam folder if the email does not arrive in a few minutes.
+              </p>
+            </div>
 
-          <button type="submit" className="group flex h-12 w-full items-center justify-center gap-2 rounded-md bg-foreground font-medium text-background transition hover:bg-foreground/90">
-            Create Account
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </button>
-        </form>
+            <div className="space-y-3">
+              <button 
+                type="submit" 
+                disabled={loading}
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-md bg-foreground font-medium text-background transition hover:bg-foreground/90 disabled:opacity-75"
+              >
+                {loading ? "Verifying Code..." : "Verify Code"}
+              </button>
 
-        <div className="text-center text-sm">
-          <span className="text-muted-foreground italic">Already have an account? </span>
-          <Link to="/login" className="font-medium underline underline-offset-4">Login</Link>
-        </div>
-
-        <p className="text-center text-[10px] text-muted-foreground italic">
-          By joining, you agree to our Terms of Service and Privacy Policy.
-        </p>
+              <div className="flex items-center justify-between px-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowOtpScreen(false)}
+                  className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  ← Back to Signup
+                </button>
+                <button
+                  type="button"
+                  disabled={isResending}
+                  onClick={handleResendOtp}
+                  className="text-xs font-bold uppercase tracking-widest text-olive hover:text-olive/80 transition-colors disabled:opacity-50"
+                >
+                  {isResending ? "Resending..." : "Resend Code"}
+                </button>
+              </div>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

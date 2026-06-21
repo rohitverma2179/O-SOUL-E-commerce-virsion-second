@@ -15,40 +15,48 @@ const FounderNote = () => {
         </header>
         
         <div className="mt-10 space-y-8 text-lg text-foreground/80 leading-relaxed italic font-light">
-          <p className="font-serif text-3xl md:text-4xl text-foreground italic leading-tight mb-12">
-            "I used to think the problem was my body."
+          <p>
+            some days, the reason you don’t feel like yourself has nothing to do with your mood.
+          </p>
+
+          <p className="text-xl text-foreground not-italic font-normal">
+            it’s what you’re wearing.
           </p>
 
           <p>
-            Every pair of jeans that dug in when I sat. Every jogger that pulled across the thigh when I walked fast. Every waistband that rolled by hour three. I kept buying new ones hoping this time it would be different. It never was. And because it never was, I quietly assumed I was the wrong shape.
+            the fit feels off.<br />
+            you keep adjusting it without thinking.<br />
+            and little by little, something as simple as bottoms starts deciding how present you feel in your own day.
           </p>
 
           <p>
-            Then someone pointed out what I couldn't see: <span className="text-foreground font-normal">the pattern was wrong.</span> The pants weren't built for the way Indian bodies actually are — the waist-to-hip ratio, the thigh circumference, the fact that we sit cross-legged and commute in heat and go from a café to a client to dinner in the same pair of trousers.
+            i felt that more often than i should have.
           </p>
 
           <p>
-            Once I understood that, I couldn't stop seeing it. Every adjustment I made throughout the day was a small failure I'd accepted as normal. Pulling the waistband before sitting. Shifting after standing. Avoiding certain movements to avoid certain embarrassments.
+            and i kept wondering why something we wear for hours is treated like it doesn’t matter enough to get right.
+          </p>
+
+          <p className="text-xl text-foreground not-italic font-normal">
+            that’s where o’soul began.
           </p>
 
           <p>
-            O'Soul is my answer to that. Not a perfect answer — a first drop of six products, tested as carefully as I know how, built around the idea that <span className="text-foreground font-normal">fit is a design problem, not a body problem.</span>
+            with one simple thought <br />
+            the clothes closest to you should never make you feel like you have to adjust yourself to fit into them.
           </p>
 
           <p>
-            If you buy something and it doesn't work — tell me. That feedback is how this gets better.
+            not to make more clothes.<br />
+            but to make bottoms that respect your body, your movement, and the way real days actually feel.
           </p>
 
-          <p className="font-serif text-2xl text-foreground border-l-2 border-olive/30 pl-8 py-4 my-12">
-            "But if it works? If you put it on, move through your day, and realise at the end of it that you never once thought about your clothes — that's the whole thing."
-          </p>
-
-          <p>
-            That's what I'm building toward.
+          <p className="font-serif text-2xl text-foreground italic leading-tight mt-12 mb-12">
+            they should respect you as you are.
           </p>
 
           <div className="pt-12 border-t border-border mt-16">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-foreground">— Manan Sadhwani</p>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-foreground">— manan</p>
             <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Founder, O'Soul</p>
           </div>
         </div>

@@ -21,11 +21,11 @@ const Footer = () => {
               <h4 className="text-[11px] uppercase tracking-widest font-bold text-foreground mb-6">Shop</h4>
               <ul className="space-y-3 text-sm text-muted-foreground italic">
                 <li><Link to="/products/mens-boxy-tee-with-pocket" className="hover:text-olive transition-colors">Men's Boxy Tee</Link></li>
-                <li><Link to="/products/mens-joggers" className="hover:text-olive transition-colors">Men's Joggers</Link></li>
-                <li><Link to="/products/mens-shorts" className="hover:text-olive transition-colors">Men's Shorts</Link></li>
+                <li><Link to="/men" className="hover:text-olive transition-colors">Men</Link></li>
+                <li><Link to="/women" className="hover:text-olive transition-colors">Women</Link></li>
                 <li><Link to="/products/unisex-boxy-tee" className="hover:text-olive transition-colors">Unisex Boxy Tee</Link></li>
-                <li><Link to="/products/womens-cropped-hoodie" className="hover:text-olive transition-colors">Women's Cropped Hoodie</Link></li>
-                <li><Link to="/products/womens-harem-pants" className="hover:text-olive transition-colors">Women's Harem Pants</Link></li>
+                {/* <li><Link to="/products/womens-cropped-hoodie" className="hover:text-olive transition-colors">Women's Cropped Hoodie</Link></li>
+                <li><Link to="/products/womens-harem-pants" className="hover:text-olive transition-colors">Women's Harem Pants</Link></li> */}
                 <li><Link to="/combos" className="hover:text-olive transition-colors font-medium text-foreground/80">Combos</Link></li>
               </ul>
             </div>

@@ -1,13 +1,13 @@
-import imgBoxyTeePocket from '../assets/product/BO7A9020.jpeg';
-import imgJoggers from '../assets/product/BO7A9013.jpeg';
-import imgShorts from '../assets/product/page short .jpeg';
-import imgBoxyTee2 from '../assets/product/BO7A9023.jpeg';
-import imgJoggers2 from '../assets/product/BO7A9019.jpeg';
-import imgShorts2 from '../assets/product/short 2.jpeg';
-import imgCroppedHoodie from '../assets/product/BO7A9135.jpeg';
-import imgHaremPants from '../assets/product/BO7A9142.jpeg';
-import imgUnisexBoxyTee from '../assets/product/BO7A9028.jpeg';
-import imgUnisexBoxyTee2 from '../assets/product/BO7A9042.jpeg';
+import imgBoxyTeePocket from '../assets/product/(10).png';
+import imgJoggers from '../assets/product/(1).png';
+import imgShorts from '../assets/product/(20).png';
+import imgBoxyTee2 from '../assets/product/(11).png';
+import imgJoggers2 from '../assets/product/(2).png';
+import imgShorts2 from '../assets/product/(21).png';
+import imgCroppedHoodie from '../assets/product/(40).png';
+import imgHaremPants from '../assets/product/(50).png';
+import imgUnisexBoxyTee from '../assets/product/(30).png';
+import imgUnisexBoxyTee2 from '../assets/product/(31).png';
 
 export const allCombos = [
   {
@@ -107,6 +107,38 @@ export const allCombos = [
     items: [
       { name: "Unisex Boxy Tee", slug: "unisex-boxy-tee", price: "690" },
       { name: "Men's Joggers", slug: "mens-joggers", price: "999" }
+    ]
+  },
+  {
+    id: 7,
+    title: "The Harem & Tee Combo",
+    headline: "The ultimate relaxed shape.",
+    description: "Unisex Boxy Tee + Harem Pants. A super-fluid, easy shape that lets you sit cross-legged, walk clean, and feel completely un-restricted.",
+    originalPrice: "1,689",
+    discountedPrice: "1,549",
+    savings: "140",
+    tiles: ["tile-sand", "tile-olive"],
+    images: [imgUnisexBoxyTee, imgHaremPants],
+    alts: ["Unisex boxy tee", "Women's harem pants"],
+    items: [
+      { name: "Unisex Boxy Tee", slug: "unisex-boxy-tee", price: "690" },
+      { name: "Women's Harem Pants", slug: "womens-harem-pants", price: "999" }
+    ]
+  },
+  {
+    id: 8,
+    title: "The Bottoms Duo",
+    headline: "Complete freedom for both of you.",
+    description: "Men's Joggers + Women's Harem Pants. Our two signature bottoms, built with custom waistbands and spacious patterns to solve your daily movement complaints.",
+    originalPrice: "1,998",
+    discountedPrice: "1,849",
+    savings: "149",
+    tiles: ["tile-olive", "tile-olive"],
+    images: [imgJoggers, imgHaremPants],
+    alts: ["Men's relaxed joggers", "Women's harem pants"],
+    items: [
+      { name: "Men's Joggers", slug: "mens-joggers", price: "999" },
+      { name: "Women's Harem Pants", slug: "womens-harem-pants", price: "999" }
     ]
   }
 ];

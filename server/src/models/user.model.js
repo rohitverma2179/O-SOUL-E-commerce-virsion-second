@@ -18,12 +18,22 @@ const userSchema = new mongoose.Schema(
         },
         password: {
             type: String,
-            required: [true, "Password is required"],
+            required: false, // Optional for Google Login
         },
         role: {
             type: String,
             enum: ["user", "admin", "superadmin"],
             default: "user",
+        },
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
+        verificationCode: {
+            type: String,
+        },
+        verificationCodeExpiry: {
+            type: Date,
         },
         refreshToken: {
             type: String,
@@ -34,10 +44,9 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-userSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
+userSchema.pre("save", async function () {
+    if (!this.isModified("password") || !this.password) return;
     this.password = await bcrypt.hash(this.password, 10);
-    next();
 });
 
 userSchema.methods.isPasswordCorrect = async function (password) {

@@ -10,7 +10,18 @@ app.use(helmet())
 
 // CORS configuration
 app.use(cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: function (origin, callback) {
+        const allowedOrigin = process.env.CORS_ORIGIN || "http://localhost:5173";
+        if (!origin || 
+            origin === allowedOrigin || 
+            allowedOrigin === "*" || 
+            /^http:\/\/localhost:\d+$/.test(origin) || 
+            /^http:\/\/127\.0\.0\.1:\d+$/.test(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }))
 

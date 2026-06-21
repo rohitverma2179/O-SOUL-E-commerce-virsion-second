@@ -12,7 +12,7 @@ const Layout = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <AnnouncementBar />
+      {/* <AnnouncementBar /> */}
       <Navbar />
       
       <main className="flex-1">

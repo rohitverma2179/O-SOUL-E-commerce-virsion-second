@@ -26,10 +26,13 @@ const Navbar = () => {
             </button>
             <nav className="hidden items-center gap-7 md:flex">
               <Link to="/shop" className="text-sm text-foreground/80 hover:text-foreground transition-colors">Shop</Link>
-              <Link to="/men" className="text-sm text-foreground/80 hover:text-foreground transition-colors">Men</Link>
-              <Link to="/women" className="text-sm text-foreground/80 hover:text-foreground transition-colors">Women</Link>
+              <Link to="/about" className="text-sm text-foreground/80 hover:text-foreground transition-colors">About</Link>
+              {/* <Link to="/men" className="text-sm text-foreground/80 hover:text-foreground transition-colors">Men</Link>
+              <Link to="/women" className="text-sm text-foreground/80 hover:text-foreground transition-colors">Women</Link> */}
               <Link to="/combos" className="text-sm text-foreground/80 hover:text-foreground transition-colors">Combos</Link>
+              <Link to="/find-my-fit" className="text-sm text-foreground/80 hover:text-foreground transition-colors">Find My Fit</Link>
               <Link to="/fit-tests" className="text-sm text-foreground/80 hover:text-foreground transition-colors">Fit Tests</Link>
+              <a href="/#reviews" className="text-sm text-foreground/80 hover:text-foreground transition-colors">Reviews</a>
             </nav>
           </div>
 

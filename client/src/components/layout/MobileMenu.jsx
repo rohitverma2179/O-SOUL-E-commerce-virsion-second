@@ -3,13 +3,13 @@ import { X, ChevronRight, User, Package, HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const InstagramIcon = ({ className }) => (
-  <svg 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
     className={className}
   >
     <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
@@ -24,16 +24,16 @@ const MobileMenu = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 md:hidden">
       {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-charcoal/40 backdrop-blur-sm transition-opacity" 
+      <div
+        className="absolute inset-0 bg-charcoal/40 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
-      
+
       {/* Sidebar */}
       <div className="absolute inset-y-0 left-0 w-4/5 max-w-sm bg-background p-6 shadow-2xl transition-transform">
         <div className="flex items-center justify-between">
           <Link to="/" onClick={onClose} className="font-serif text-2xl tracking-tight">O'Soul</Link>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 hover:text-foreground/80 transition-colors"
             aria-label="Close menu"
@@ -46,13 +46,27 @@ const MobileMenu = ({ isOpen, onClose }) => {
           <div className="space-y-4">
             <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Shop by Category</div>
             <div className="grid gap-2">
-              <Link 
-                to="/shop" 
+              <Link
+                to="/shop"
                 onClick={onClose}
                 className="flex items-center justify-between rounded-lg bg-secondary/40 px-4 py-4 text-base font-medium"
               >
                 All Products <ChevronRight className="h-4 w-4 text-muted-foreground" />
               </Link>
+              <Link
+                to="/find-my-fit"
+                onClick={onClose}
+                className="flex items-center justify-between rounded-lg bg-olive/10 border border-olive/20 px-4 py-4 text-base font-semibold text-olive"
+              >
+                Find My Fit <ChevronRight className="h-4 w-4 text-olive" />
+              </Link>
+              <a
+                href="/#reviews"
+                onClick={onClose}
+                className="flex items-center justify-between rounded-lg bg-secondary/40 px-4 py-4 text-base font-medium"
+              >
+                Customer Reviews <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              </a>
               <div className="grid grid-cols-2 gap-2">
                 <Link to="/men" onClick={onClose} className="rounded-lg border border-border px-4 py-3 text-sm font-medium">Men</Link>
                 <Link to="/women" onClick={onClose} className="rounded-lg border border-border px-4 py-3 text-sm font-medium">Women</Link>
@@ -78,9 +92,9 @@ const MobileMenu = ({ isOpen, onClose }) => {
           </div>
 
           <div className="pt-4">
-            <a 
-              href="https://instagram.com" 
-              target="_blank" 
+            <a
+              href="https://instagram.com"
+              target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 text-sm font-medium text-muted-foreground"
             >

@@ -100,6 +100,48 @@ const FitTests = () => {
           ))}
         </div>
 
+        {/* Sizing & Measurement Steps */}
+        <section className="mt-24 border-t border-border pt-16">
+          <div className="max-w-2xl mb-12">
+            <p className="text-xs uppercase tracking-[0.18em] text-olive font-bold">Fit Guide</p>
+            <h2 className="font-serif text-3xl sm:text-4xl leading-tight mb-4">How to measure your body for an adjust-free fit.</h2>
+            <p className="text-muted-foreground italic">Standard size charts only tell you waist size. O'Soul bottomwear requires three easy measurements to guarantee you'll never need to adjust again.</p>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-3">
+            {[
+              {
+                step: "01",
+                name: "The Waist Rise",
+                desc: "Measure around your natural waistline, where you normally want your waistband to rest. Do not pull the tape tight — let it sit naturally. Our waistband is designed to flex.",
+              },
+              {
+                step: "02",
+                name: "Thigh Circumference",
+                desc: "Spreading your legs slightly, measure around the fullest part of your thigh. Our patterns build in extra room right here, so you do not need to size up for comfort.",
+              },
+              {
+                step: "03",
+                name: "Seat / Hip Area",
+                desc: "Measure around the fullest part of your hips. This ensures that when you sit down (running our Chair Test), the rise handles the volume expansion without pulling the crotch.",
+              }
+            ].map((s) => (
+              <div key={s.step} className="border border-border bg-card p-6 rounded-lg relative overflow-hidden">
+                <span className="text-4xl font-serif italic text-olive/20 absolute right-4 top-2 font-bold">{s.step}</span>
+                <h4 className="font-serif text-xl italic text-foreground mb-3">{s.name}</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed italic">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-10 flex flex-wrap gap-4 items-center">
+            <Link to="/find-my-fit" className="h-12 flex items-center bg-foreground px-8 rounded-md text-xs font-bold uppercase tracking-widest text-background hover:bg-foreground/90 transition-all">
+              Find My Fit Wizard
+            </Link>
+            <span className="text-xs text-muted-foreground italic">Or chat with us to find your perfect shape.</span>
+          </div>
+        </section>
+
         <div className="mt-24 space-y-8 border-t border-border pt-16">
           <p className="max-w-3xl text-lg text-foreground/80 leading-relaxed italic">
             Every piece in the first drop passed all five tests. Not easily — the jogger sample failed the chair test in the first round and went back for a rise adjustment. The shorts went through three pocket iterations before they stopped bulging.
