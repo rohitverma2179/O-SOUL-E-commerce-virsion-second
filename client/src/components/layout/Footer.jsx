@@ -23,6 +23,7 @@ const Footer = () => {
                 <li><Link to="/products/mens-boxy-tee-with-pocket" className="hover:text-olive transition-colors">Men's Boxy Tee</Link></li>
                 <li><Link to="/men" className="hover:text-olive transition-colors">Men</Link></li>
                 <li><Link to="/women" className="hover:text-olive transition-colors">Women</Link></li>
+                <li><Link to="/gallery" className="hover:text-olive transition-colors">Gallery</Link></li>
                 <li><Link to="/products/unisex-boxy-tee" className="hover:text-olive transition-colors">Unisex Boxy Tee</Link></li>
                 {/* <li><Link to="/products/womens-cropped-hoodie" className="hover:text-olive transition-colors">Women's Cropped Hoodie</Link></li>
                 <li><Link to="/products/womens-harem-pants" className="hover:text-olive transition-colors">Women's Harem Pants</Link></li> */}
