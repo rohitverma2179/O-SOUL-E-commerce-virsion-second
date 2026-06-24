@@ -37,10 +37,11 @@ export const allCombos = [
     savings: "95",
     tiles: ["tile-charcoal", "tile-charcoal"],
     images: [imgBoxyTeePocket, imgShorts],
-    alts: ["Men's boxy tee with pocket", "Men's everyday shorts"],
+    alts: ["Men's boxy tee with pocket", "Men's everyday shorts" , "Women's Harem Pants"],
     items: [
       { name: "Men's Boxy Tee With Pocket", slug: "mens-boxy-tee-with-pocket", price: "699" },
-      { name: "Men's Shorts", slug: "mens-shorts", price: "695" }
+      { name: "Men's Shorts", slug: "mens-shorts", price: "695" },
+      { name: "Women's Harem Pants", slug: "mens-shorts", price: "999 " }
     ]
   },
   {

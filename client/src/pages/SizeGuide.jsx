@@ -1,5 +1,74 @@
 import React, { useEffect } from 'react';
 
+const sizeCharts = [
+  {
+    title: "Unisex Plain Tee (in inches)",
+    headers: ["Size", "Chest", "Sleeve length", "Body length", "Shoulder width"],
+    rows: [
+      ["S", "38-40", "8.5", "26", "19.5"],
+      ["M", "40-42", "9", "27", "21.5"],
+      ["L", "42-43", "9.5", "28", "23"],
+      ["XL", "44-45", "10", "29", "24.5"],
+      ["XXL", "46-47", "10.5", "29.5", "25"],
+    ]
+  },
+  {
+    title: "Men's Pocket Tee (in inches)",
+    headers: ["Size", "Chest", "Sleeve length", "Body length", "Shoulder width"],
+    rows: [
+      ["S", "38-40", "8.5", "26", "19.5"],
+      ["M", "40-42", "9", "27", "21.5"],
+      ["L", "42-43", "9.5", "28", "23"],
+      ["XL", "44-45", "10", "29", "24.5"],
+      ["XXL", "46-47", "10.5", "29.5", "25"],
+    ]
+  },
+  {
+    title: "Women's Cropped Hoodie (in inches)",
+    headers: ["Size", "Chest", "Body length", "Hem width", "Shoulder width"],
+    rows: [
+      ["S", "27-31", "16.5", "36", "14"],
+      ["M", "32-33", "17", "38", "15"],
+      ["L", "34-36", "17.5", "40", "16"],
+      ["XL", "37-38", "18", "42", "17"],
+      ["XXL", "39-42", "18.5", "44", "18"],
+    ]
+  },
+  {
+    title: "Women's Harem Pants (in inches)",
+    headers: ["Size", "Waist", "Hip", "Inseam", "Outseam", "Front rise", "Back rise"],
+    rows: [
+      ["S", "24-26", "29", "25.5", "36", "13", "14"],
+      ["M", "26-28", "31", "26", "38", "13.5", "14.5"],
+      ["L", "28-30", "34", "27", "39", "14", "15"],
+      ["XL", "30-33", "35-37", "28", "40", "14.5", "15.5"],
+      ["XXL", "34-36", "41", "29", "41", "15", "16"],
+    ]
+  },
+  {
+    title: "Men's Joggers (in inches)",
+    headers: ["Size", "Waist", "Hip", "Inseam", "Outseam", "Front rise", "Back rise", "Hem width"],
+    rows: [
+      ["S", "26-28.5", "37", "29.5", "38", "12.5", "14.5", "10"],
+      ["M", "29-31.5", "39", "30", "39.5", "13", "15", "11"],
+      ["L", "32-33.5", "41", "30.5", "41", "13.5", "15.5", "12"],
+      ["XL", "34-36.5", "43", "31.5", "42", "14", "16", "13"],
+      ["XXL", "37-39.5", "45", "32", "43", "14.5", "16.5", "14"],
+    ]
+  },
+  {
+    title: "Men's Shorts (in inches)",
+    headers: ["Size", "Waist", "Hip", "Inseam", "Outseam", "Front rise", "Back rise", "Hem width", "Thigh"],
+    rows: [
+      ["S", "26-28", "39", "6", "16.5", "13.5", "14.5", "23", "35"],
+      ["M", "28-31", "41", "6.5", "17", "14", "15", "23.5", "37"],
+      ["L", "31-33", "43", "7", "17.5", "14.5", "15.5", "24", "39"],
+      ["XL", "34-36", "45", "7.5", "18.5", "15", "16", "24.5", "41"],
+      ["XXL", "37-39", "47-49", "8", "19.5", "15.5", "16.5", "25", "43.5"],
+    ]
+  }
+];
+
 const SizeGuide = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -42,6 +111,39 @@ const SizeGuide = () => {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Detailed Size Charts */}
+        <div className="mb-20 space-y-12">
+          {sizeCharts.map((chart, idx) => (
+            <div key={idx}>
+              <h3 className="font-serif text-2xl italic mb-6">{chart.title}</h3>
+              <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-sm">
+                <table className="w-full text-left border-collapse whitespace-nowrap">
+                  <thead>
+                    <tr className="border-b border-border bg-secondary/30">
+                      {chart.headers.map((header, hIdx) => (
+                        <th key={hIdx} className="px-6 py-4 text-[10px] uppercase tracking-widest font-bold text-muted-foreground">
+                          {header}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/50">
+                    {chart.rows.map((row, rIdx) => (
+                      <tr key={rIdx} className="hover:bg-secondary/10 transition-colors">
+                        {row.map((cell, cIdx) => (
+                          <td key={cIdx} className={`px-6 py-4 text-sm ${cIdx === 0 ? 'font-serif text-lg italic text-foreground' : 'text-muted-foreground'}`}>
+                            {cell}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Decision Guide */}

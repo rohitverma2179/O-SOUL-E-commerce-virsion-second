@@ -56,7 +56,7 @@ const FounderNote = () => {
           </p>
 
           <div className="pt-12 border-t border-border mt-16">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-foreground">— manan</p>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-foreground">— manan / Tanishka</p>
             <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Founder, O'Soul</p>
           </div>
         </div>

@@ -7,9 +7,9 @@ import { ChevronRight } from 'lucide-react';
 import OptimizedImage from '../components/common/OptimizedImage';
 
 // Image imports
-import heroImg1 from '../assets/product/(4).png';
-import heroImg2 from '../assets/product/(5).png';
-import heroImg3 from '../assets/product/(15).png';
+import heroImg1 from '../assets/product/(61).png';
+import heroImg2 from '../assets/product/(62).png';
+import heroImg3 from '../assets/product/(67).png';
 
 import catImgMen from '../assets/product/(4).png';
 import catImgWomen from '../assets/product/(50).png';
@@ -131,20 +131,25 @@ const Home = () => {
           <div className="md:col-span-6">
             <div className="grid grid-cols-2 gap-4">
               {/* Primary Hero Image */}
-              <Link to="/products/mens-joggers" className="relative col-span-2 overflow-hidden rounded-xl bg-secondary aspect-[16/9] md:aspect-[3/2] group block cursor-pointer">
+              <div className="relative col-span-2 overflow-hidden rounded-xl bg-secondary aspect-[16/9] md:aspect-[3/2] group block">
                 <OptimizedImage
                   src={heroImg1}
                   alt="O'Soul Relaxed Fit - Movement Proof"
                   priority={true}
-                  aspectRatio="aspect-[16/9] md:aspect-[3/2]"
+                  aspectRatio="aspect-[16/9] md:aspect-[3/2.2]"
                   className="transition-transform duration-700 group-hover:scale-[1.03]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal/40 to-transparent opacity-60"></div>
-                <div className="absolute bottom-5 left-5">
-                  <div className="text-[10px] uppercase tracking-[0.2em] text-ivory/80">Movement proof</div>
-                  <div className="mt-1 font-serif text-xl text-ivory italic">No more adjusting.</div>
+                {/* <div className="absolute inset-0 bg-gradient-to-t from-charcoal/40 to-transparent opacity-60 pointer-events-none"></div> */}
+                <Link to="/products/" className="absolute inset-0 z-0"></Link>
+                <div className="absolute bottom-5 left-5 flex gap-3 z-10">
+                  <Link to="/men" className="inline-flex h-10 items-center justify-center rounded-md bg-background px-8 text-[11px] font-bold uppercase tracking-widest text-foreground hover:bg-background/90 transition-all shadow-md">
+                    Men
+                  </Link>
+                  <Link to="/women" className="inline-flex h-10 items-center justify-center rounded-md bg-background px-8 text-[11px] font-bold uppercase tracking-widest text-foreground hover:bg-background/90 transition-all shadow-md">
+                    Women
+                  </Link>
                 </div>
-              </Link>
+              </div>
 
               {/* Secondary Hero Images */}
               <Link to="/products/mens-shorts" className="relative overflow-hidden rounded-xl bg-secondary aspect-square group block cursor-pointer">
@@ -158,7 +163,7 @@ const Home = () => {
                   <div className="font-serif text-sm text-ivory italic">Walks clean.</div>
                 </div>
               </Link>
-              <Link to="/products/womens-harem-pants" className="relative overflow-hidden rounded-xl bg-secondary aspect-square group block cursor-pointer">
+              <Link to="/products/womens-harem-pants" className="relative overflow-hidden rounded-xl bg-secondary aspect-[4/4] group block cursor-pointer">
                 <OptimizedImage
                   src={heroImg3}
                   alt="O'Soul Detail - Pockets Work"
