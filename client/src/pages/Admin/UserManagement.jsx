@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { 
   Search, 
   Filter, 
@@ -9,15 +9,38 @@ import {
   Trash2,
   Edit2
 } from 'lucide-react';
+import { API_BASE_URL } from '../../lib/api';
 
 const UserManagement = () => {
-  const [users, setUsers] = useState([
-    { id: 1, name: 'Rohit Verma', email: 'rohit@osoul.com', role: 'Super Admin', status: 'Active', avatar: 'RV' },
-    { id: 2, name: 'Aanya Sharma', email: 'aanya@gmail.com', role: 'User', status: 'Active', avatar: 'AS' },
-    { id: 3, name: 'Rohan Gupta', email: 'rohan.g@yahoo.com', role: 'Admin', status: 'Inactive', avatar: 'RG' },
-    { id: 4, name: 'Priya Das', email: 'priya@outlook.com', role: 'User', status: 'Active', avatar: 'PD' },
-    { id: 5, name: 'Amit Kumar', email: 'amit.k@gmail.com', role: 'User', status: 'Active', avatar: 'AK' },
-  ]);
+  const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/admin/users`, { credentials: 'include' })
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.message || 'Could not load users');
+        setUsers(payload.data || []);
+      })
+      .catch((requestError) => setError(requestError.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const visibleUsers = useMemo(() => {
+    const term = search.toLowerCase().trim();
+    if (!term) return users;
+    return users.filter((user) => `${user.fullName} ${user.email} ${user.role}`.toLowerCase().includes(term));
+  }, [search, users]);
+
+  const initials = (name = '') => name.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase();
+
+  const deleteUser = async (id) => {
+    if (!window.confirm('Delete this user account?')) return;
+    const response = await fetch(`${API_BASE_URL}/admin/users/${id}`, { method: 'DELETE', credentials: 'include' });
+    if (response.ok) setUsers((current) => current.filter((user) => user.id !== id));
+  };
 
   return (
     <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
@@ -26,10 +49,7 @@ const UserManagement = () => {
           <h1 className="text-2xl font-bold text-slate-900">User Management</h1>
           <p className="text-slate-500 mt-1">Manage permissions and monitor user activity across the platform.</p>
         </div>
-        <button className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all">
-          <UserPlus size={18} />
-          Add New User
-        </button>
+        
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
@@ -40,6 +60,8 @@ const UserManagement = () => {
             <input 
               type="text" 
               placeholder="Search by name, email or role..." 
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
               className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm transition-all"
             />
           </div>
@@ -70,15 +92,15 @@ const UserManagement = () => {
               </tr>
             </thead>
             <tbody className="text-sm divide-y divide-slate-50">
-              {users.map((user) => (
+              {visibleUsers.map((user) => (
                 <tr key={user.id} className="hover:bg-slate-50/50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold border border-slate-200">
-                        {user.avatar}
+                        {initials(user.fullName)}
                       </div>
                       <div>
-                        <p className="font-bold text-slate-900">{user.name}</p>
+                        <p className="font-bold text-slate-900">{user.fullName}</p>
                         <p className="text-xs text-slate-500 flex items-center gap-1">
                           <Mail size={12} />
                           {user.email}
@@ -89,41 +111,40 @@ const UserManagement = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-1.5 font-medium">
                       <Shield size={14} className={user.role === 'Super Admin' ? 'text-purple-500' : 'text-blue-500'} />
-                      {user.role}
+                      {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
-                      user.status === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'
+                      user.status === 'active' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'
                     }`}>
-                      {user.status}
+                      {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-slate-500">
-                    2 hours ago
+                    {user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Never'}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Edit User">
-                        <Edit2 size={16} />
-                      </button>
-                      <button className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Delete User">
+                      
+                      <button onClick={() => deleteUser(user.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Delete User">
                         <Trash2 size={16} />
                       </button>
-                      <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all">
-                        <MoreVertical size={16} />
-                      </button>
+                     
                     </div>
                   </td>
                 </tr>
               ))}
+              {loading && <tr><td colSpan="5" className="px-6 py-10 text-center text-slate-400">Loading users...</td></tr>}
+              {!loading && error && <tr><td colSpan="5" className="px-6 py-10 text-center text-red-500">{error}</td></tr>}
+              {!loading && !error && !visibleUsers.length && <tr><td colSpan="5" className="px-6 py-10 text-center text-slate-400">No users found.</td></tr>}
             </tbody>
           </table>
         </div>
 
         {/* Pagination */}
         <div className="p-4 border-t border-slate-50 flex items-center justify-between text-sm text-slate-500 bg-slate-50/20">
-          <p>Showing 5 of 24 users</p>
+          <p>Showing {visibleUsers.length} of {users.length} users</p>
           <div className="flex gap-2">
             <button className="px-3 py-1 rounded border border-slate-200 hover:bg-white disabled:opacity-50" disabled>Previous</button>
             <button className="px-3 py-1 rounded bg-blue-600 text-white font-medium">1</button>

@@ -1,23 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { allProducts } from '../data/productData';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../lib/api';
 import { useCart } from '../context/CartContext';
 import { Minus, Plus, ShoppingBag, CheckCircle2, ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
 import OptimizedImage from '../components/common/OptimizedImage';
+import { useAuth } from '../context/AuthContext';
 
 const ProductDetails = () => {
   const { slug } = useParams();
-  const product = allProducts.find(p => p.slug === slug);
+  const [product, setProduct] = useState(null);
+  const [loadingProduct, setLoadingProduct] = useState(true);
   const { addToCart } = useCart();
+  const { user } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState('M');
-  const [selectedColor, setSelectedColor] = useState('Black');
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
   const [openObjection, setOpenObjection] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    setLoadingProduct(true);
+    fetch(`${API_BASE_URL}/products/${slug}`)
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.message);
+        setProduct(payload.data);
+        setSelectedSize(payload.data.sizes?.[0] || '');
+        setSelectedColor(payload.data.colors?.[0] || '');
+      })
+      .catch(() => setProduct(null))
+      .finally(() => setLoadingProduct(false));
   }, [slug]);
+
+  if (loadingProduct) return <div className="container-osoul py-20 text-center text-sm text-muted-foreground">Loading product...</div>;
 
   if (!product) {
     return (
@@ -29,8 +47,12 @@ const ProductDetails = () => {
   }
 
   const handleAddToCart = () => {
+    if (!user) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
     for(let i=0; i<quantity; i++) {
-      addToCart(product, selectedSize, selectedColor);
+      addToCart({ ...product, id: product._id }, selectedSize, selectedColor);
     }
   };
 
@@ -92,18 +114,18 @@ const ProductDetails = () => {
                 <span className="text-3xl font-serif text-foreground">₹{product.price}</span>
                 <div className="flex items-center gap-2">
                   <span className="h-1.5 w-1.5 rounded-full bg-olive animate-pulse"></span>
-                  <span className="text-[10px] uppercase tracking-widest font-bold text-olive">In Stock · On Sale</span>
+                  <span className="text-[10px] uppercase tracking-widest font-bold text-olive">{product.stock > 0 ? `${product.stock} In Stock` : 'Out of Stock'}</span>
                 </div>
               </div>
 
               <div className="mt-10 space-y-6 border-l-2 border-olive/20 pl-8">
                 <p className="font-serif text-2xl italic text-foreground leading-tight">
-                  "{product.emotionalHook}"
+                  "{product.emotionalHook || product.shortDescription}"
                 </p>
                 <p className="text-base text-muted-foreground leading-relaxed italic">
                   {product.shortDescription}
                 </p>
-                {product.fitDetail && (
+                  {product.fitDetail && (
                   <p className="text-sm font-bold text-olive/80 uppercase tracking-widest">
                     The Fit Truth: <span className="normal-case italic font-medium ml-1 text-foreground/80">{product.fitDetail}</span>
                   </p>
@@ -129,7 +151,7 @@ const ProductDetails = () => {
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {product.sizes.map(size => (
+                    {product.sizes?.map(size => (
                       <button 
                         key={size} 
                         onClick={() => setSelectedSize(size)}
@@ -146,7 +168,7 @@ const ProductDetails = () => {
                 <div>
                   <div className="mb-4 text-[11px] uppercase tracking-widest text-muted-foreground font-bold">Color: <span className="text-foreground ml-1">{selectedColor}</span></div>
                   <div className="flex gap-3">
-                    {product.colors.map(color => (
+                    {product.colors?.map(color => (
                       <button 
                         key={color} 
                         onClick={() => setSelectedColor(color)}
@@ -164,14 +186,15 @@ const ProductDetails = () => {
                   <div className="inline-flex h-14 items-center rounded-md border border-border bg-card">
                     <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-5 hover:text-olive transition-colors"><Minus className="h-4 w-4" /></button>
                     <span className="min-w-[2rem] text-center font-bold text-lg">{quantity}</span>
-                    <button onClick={() => setQuantity(quantity + 1)} className="px-5 hover:text-olive transition-colors"><Plus className="h-4 w-4" /></button>
+                    <button disabled={quantity >= product.stock} onClick={() => setQuantity(Math.min(product.stock, quantity + 1))} className="px-5 hover:text-olive transition-colors disabled:cursor-not-allowed disabled:opacity-30"><Plus className="h-4 w-4" /></button>
                   </div>
                   <button 
                     onClick={handleAddToCart}
-                    className="flex-1 h-14 rounded-md bg-foreground text-background font-bold uppercase tracking-widest text-[11px] transition-all hover:bg-foreground/90 active:scale-[0.98] flex items-center justify-center gap-3 shadow-xl shadow-charcoal/10"
+                    disabled={product.stock < 1 || !selectedSize || !selectedColor}
+                    className="flex-1 h-14 rounded-md bg-foreground text-background font-bold uppercase tracking-widest text-[11px] transition-all hover:bg-foreground/90 active:scale-[0.98] flex items-center justify-center gap-3 shadow-xl shadow-charcoal/10 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <ShoppingBag className="h-4 w-4" />
-                    Add to Bag
+                    {product.stock > 0 ? 'Add to Bag' : 'Out of Stock'}
                   </button>
                 </div>
                 
@@ -187,9 +210,9 @@ const ProductDetails = () => {
                 <h4 className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-bold mb-6">Technical Details</h4>
                 {[
                   { title: "Fit & Pattern", content: product.fitDetail },
-                  { title: "Fabric Feel", content: product.details.fabric },
+                  { title: "Fabric Feel", content: product.details?.fabric || "Comfort-focused everyday fabric." },
                   { title: "Best For", content: product.bestFor },
-                  { title: "Care Instructions", content: product.details.care }
+                  { title: "Care Instructions", content: product.details?.care || "Follow the care label for best results." }
                 ].map((item, idx) => (
                   <details key={idx} className="group border-b border-border/60">
                     <summary className="flex cursor-pointer items-center justify-between py-4 text-sm font-medium hover:text-olive transition-colors list-none">

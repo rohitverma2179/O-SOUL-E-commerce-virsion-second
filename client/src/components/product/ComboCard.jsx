@@ -1,9 +1,37 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import OptimizedImage from '../common/OptimizedImage';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 
 const ComboCard = ({ combo }) => {
   const { title, description, originalPrice, discountedPrice, savings, tiles, items } = combo;
+  const discountPercent = Number(originalPrice) > 0 ? Math.round((Number(savings) / Number(originalPrice)) * 100) : 0;
+  const { addToCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const cartCombo = {
+    id: combo._id || combo.id,
+    name: combo.title,
+    price: Number(combo.discountedPrice),
+    image: combo.images?.[0],
+    stock: 999,
+    isCombo: true
+  };
+
+  const handleAddCombo = () => {
+    if (!user) {
+      navigate('/login', { state: { from: location } });
+      return false;
+    }
+    addToCart(cartCombo, `${items.length} items`, 'Combo');
+    return true;
+  };
+  const handleBuyCombo = () => {
+    if (handleAddCombo()) navigate('/checkout');
+  };
 
   return (
     <article className="rounded-xl border border-border bg-card p-6 shadow-sm hover:shadow-md transition-shadow">
@@ -13,11 +41,13 @@ const ComboCard = ({ combo }) => {
           <div className="text-right shrink-0">
             <div className="text-xs text-muted-foreground line-through">₹{combo.originalPrice}</div>
             <div className="font-serif text-xl text-foreground">₹{combo.discountedPrice}</div>
-            <div className="mt-1 inline-block rounded-full bg-olive/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-olive">Save ₹{combo.savings}</div>
+            <div className="mt-1 inline-block rounded-full bg-olive/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-olive">Save ₹{combo.savings} · {discountPercent}% off</div>
+            <div className="mt-1 text-[10px] text-muted-foreground">₹{combo.originalPrice} − ₹{combo.savings} = ₹{combo.discountedPrice}</div>
           </div>
         </div>
         <p className="mt-2 font-serif text-lg italic text-olive/80 leading-tight">{combo.headline}</p>
         <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{combo.description}</p>
+        <p className="mt-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">{items.length} clothing item{items.length === 1 ? '' : 's'} included</p>
         {(combo.proofLine || combo.valueLine) && (
           <p className="mt-3 text-xs font-medium text-foreground/70 italic border-l-2 border-olive/20 pl-3">
             {combo.proofLine || combo.valueLine}
@@ -43,9 +73,9 @@ const ComboCard = ({ combo }) => {
           <div key={idx} className="rounded-md border border-border bg-background p-3">
             <div className="flex items-center justify-between gap-3">
               <div className="text-sm font-medium">
-                {idx + 1}. <Link to={`/products/${item.slug}`} className="hover:underline">{item.name}</Link>
+                {idx + 1}. {item.name}
               </div>
-              <div className="text-xs text-muted-foreground">₹{item.price}</div>
+              <div className="text-xs text-muted-foreground">Included</div>
             </div>
             
             <div className="mt-3 grid grid-cols-2 gap-3">
@@ -69,9 +99,10 @@ const ComboCard = ({ combo }) => {
         ))}
       </div>
 
-      <button type="button" className="mt-5 h-11 w-full rounded-md bg-foreground text-sm font-medium text-background transition hover:bg-foreground/90">
-        Add Combo to Cart
-      </button>
+      <div className="mt-5 grid grid-cols-2 gap-3">
+        <button type="button" onClick={handleAddCombo} className="h-11 rounded-md border border-foreground bg-background text-sm font-medium text-foreground transition hover:bg-foreground hover:text-background">Add Combo</button>
+        <button type="button" onClick={handleBuyCombo} className="h-11 rounded-md bg-foreground text-sm font-medium text-background transition hover:bg-foreground/90">Buy Now</button>
+      </div>
     </article>
   );
 };

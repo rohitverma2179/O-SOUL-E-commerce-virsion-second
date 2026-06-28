@@ -4,9 +4,11 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import SearchModal from './SearchModal';
 import MobileMenu from './MobileMenu';
+import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const { setIsCartOpen, cartCount } = useCart();
+  const { user } = useAuth();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -51,8 +53,12 @@ const Navbar = () => {
               <Search className="h-5 w-5" />
             </button>
             
-            <Link to="/login" className="hidden md:block p-2 hover:text-foreground/80 transition-colors" aria-label="Account">
-              <User className="h-5 w-5" />
+            <Link to={user ? '/account' : '/login'} className="p-2 hover:text-foreground/80 transition-colors" aria-label={user ? 'Open account dashboard' : 'Login'}>
+              {user ? (
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-olive text-[10px] font-bold uppercase text-ivory">
+                  {user.fullName?.split(/\s+/).slice(0, 2).map((part) => part[0]).join('') || 'U'}
+                </span>
+              ) : <User className="h-5 w-5" />}
             </Link>
 
             <button 

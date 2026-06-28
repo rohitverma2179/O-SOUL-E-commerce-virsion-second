@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
-  LayoutDashboard, 
   Users, 
-  Home as HomeIcon, 
-  Settings, 
   LogOut, 
   Menu, 
   X, 
   ChevronRight,
   Bell,
   Search,
-  ArrowRight
+  ArrowRight,
+  PackagePlus
 } from 'lucide-react';
+import { API_BASE_URL } from '../../lib/api';
 
 const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -20,16 +19,14 @@ const AdminLayout = () => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/admin/dashboard' },
     { name: 'Users', icon: <Users size={20} />, path: '/admin/users' },
-    { name: 'Homepage CMS', icon: <HomeIcon size={20} />, path: '/admin/homepage' },
-    { name: 'Settings', icon: <Settings size={20} />, path: '/admin/settings' },
+    { name: 'Catalog', icon: <PackagePlus size={20} />, path: '/admin/catalog' },
     { name: 'Back to Site', icon: <ArrowRight size={20} />, path: '/' },
   ];
 
   const handleLogout = async () => {
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/users/logout`, { 
+      await fetch(`${API_BASE_URL}/admin/logout`, { 
         method: 'POST',
         credentials: 'include'
       });

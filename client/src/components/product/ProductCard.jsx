@@ -1,9 +1,31 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import OptimizedImage from '../common/OptimizedImage';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 
 const ProductCard = ({ product }) => {
   const { id, name, price, shortDescription, tileClass, bestFor, tags, slug } = product;
+  const { addToCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const defaultSize = product.sizes?.[0] || 'One size';
+  const defaultColor = product.colors?.[0] || 'Default';
+
+  const handleAddToCart = () => {
+    if (!user) return navigate('/login', { state: { from: location } });
+    if (product.stock < 1) return;
+    addToCart(product, defaultSize, defaultColor);
+  };
+
+  const handleBuyNow = () => {
+    if (!user) return navigate('/login', { state: { from: location } });
+    if (product.stock < 1) return;
+    addToCart(product, defaultSize, defaultColor);
+    navigate('/checkout');
+  };
 
   return (
     <article className="group flex flex-col">
@@ -36,8 +58,9 @@ const ProductCard = ({ product }) => {
           <div className="mt-1 text-sm text-muted-foreground">₹{price}</div>
         </div>
         <div className="flex flex-col items-end gap-1">
-          <span className="rounded-full bg-olive/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-olive">In stock</span>
-          <span className="rounded-full bg-clay/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-clay">On sale</span>
+          <span className={`rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider ${product.stock > 0 ? 'bg-olive/10 text-olive' : 'bg-clay/10 text-clay'}`}>
+            {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+          </span>
         </div>
       </div>
 
@@ -50,12 +73,8 @@ const ProductCard = ({ product }) => {
         ))}
       </div>
       <div className="mt-4 grid grid-cols-2 gap-2">
-        <button type="button" className="h-10 rounded-md border border-foreground bg-background text-sm font-medium text-foreground transition hover:bg-foreground hover:text-background">
-          Add to Cart
-        </button>
-        <button type="button" className="h-10 rounded-md bg-foreground text-sm font-medium text-background transition hover:bg-foreground/90">
-          Buy Now
-        </button>
+        <button type="button" onClick={handleAddToCart} disabled={product.stock < 1} className="flex h-10 items-center justify-center rounded-md border border-foreground bg-background text-sm font-medium text-foreground transition hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-40">Add to Cart</button>
+        <button type="button" onClick={handleBuyNow} disabled={product.stock < 1} className="flex h-10 items-center justify-center rounded-md bg-foreground text-sm font-medium text-background transition hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-40">Buy Now</button>
       </div>
     </article>
   );

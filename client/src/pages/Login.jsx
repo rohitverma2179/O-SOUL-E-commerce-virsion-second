@@ -54,7 +54,7 @@ const Login = () => {
       document.head.appendChild(script);
     } else {
       initializeGoogleButton();
-    }
+    } 
   }, [showOtpScreen]); // Re-render button if we return to login form
 
   const handleGoogleCredentialResponse = async (response) => {

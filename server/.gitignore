@@ -1,34 +1,5 @@
-# Dependencies
 node_modules/
-
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Debug logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-logs/
+config/.env
+uploads/*
+!uploads/.gitkeep
 *.log
-
-# Editor folders
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS related files
-.DS_Store
-Thumbs.db
-
-# Build/Dist
-dist/
-build/
-
-# Multer/Uploads (if applicable)
-uploads/
-temp/
