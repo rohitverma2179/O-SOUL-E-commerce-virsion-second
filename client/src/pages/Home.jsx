@@ -157,7 +157,8 @@ const Home = () => {
                   src={heroImg2}
                   alt="O'Soul Daily Wear - Walk Clean"
                   priority={true}
-                  className="transition-transform duration-700 group-hover:scale-[1.03]"
+                  className="transition-transform duration-700  group-hover:scale-[1.03]"
+                  imgClassName="object-[center_32%]"
                 />
                 <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-charcoal/30 to-transparent">
                   <div className="font-serif text-sm text-ivory italic">Walks clean.</div>
@@ -169,6 +170,7 @@ const Home = () => {
                   alt="O'Soul Detail - Pockets Work"
                   priority={true}
                   className="transition-transform duration-700 group-hover:scale-[1.03]"
+                  imgClassName="object-[center_35%]"
                 />
                 <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-charcoal/30 to-transparent">
                   <div className="font-serif text-sm text-ivory italic">Pockets work.</div>
@@ -219,10 +221,10 @@ const Home = () => {
         <div className="mt-10 grid gap-4 md:grid-cols-4">
           <Link to="/men" className="group relative block overflow-hidden rounded-lg">
             <div className="aspect-[4/5] w-full bg-secondary relative">
-              <img 
-                src={catImgMen} 
-                alt="Men's Category" 
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" 
+              <img
+                src={catImgMen}
+                alt="Men's Category"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent"></div>
             </div>
@@ -237,10 +239,10 @@ const Home = () => {
           </Link>
           <Link to="/women" className="group relative block overflow-hidden rounded-lg">
             <div className="aspect-[4/5] w-full bg-secondary relative">
-              <img 
-                src={catImgWomen} 
-                alt="Women's Category" 
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" 
+              <img
+                src={catImgWomen}
+                alt="Women's Category"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent"></div>
             </div>
@@ -254,10 +256,10 @@ const Home = () => {
           </Link>
           <Link to="/unisex" className="group relative block overflow-hidden rounded-lg">
             <div className="aspect-[4/5] w-full bg-secondary relative">
-              <img 
-                src={catImgUnisex} 
-                alt="Unisex Category" 
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" 
+              <img
+                src={catImgUnisex}
+                alt="Unisex Category"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent"></div>
             </div>
@@ -270,10 +272,10 @@ const Home = () => {
           </Link>
           <Link to="/combos" className="group relative block overflow-hidden rounded-lg">
             <div className="aspect-[4/5] w-full bg-secondary relative">
-              <img 
-                src={catImgCombos} 
-                alt="Combos Category" 
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" 
+              <img
+                src={catImgCombos}
+                alt="Combos Category"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent"></div>
             </div>
@@ -391,11 +393,10 @@ const Home = () => {
               <button
                 key={idx}
                 onClick={() => setActiveReviewIndex(idx)}
-                className={`text-sm px-4 py-2.5 rounded-sm border transition-colors ${
-                  activeReviewIndex === idx
+                className={`text-sm px-4 py-2.5 rounded-sm border transition-colors ${activeReviewIndex === idx
                     ? 'bg-foreground text-background border-foreground font-semibold'
                     : 'border-border bg-background text-foreground/80 hover:border-foreground/50'
-                }`}
+                  }`}
               >
                 {rev.objection}
               </button>

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import SearchModal from './SearchModal';
 import MobileMenu from './MobileMenu';
+import logo from "../../assets/logo.png"
 
 const Navbar = () => {
   const { setIsCartOpen, cartCount } = useCart();
@@ -38,7 +39,7 @@ const Navbar = () => {
 
           {/* Center: Logo */}
           <Link to="/" className="absolute left-1/2 -translate-x-1/2 font-serif text-2xl tracking-tight">
-            O'Soul
+            <img src={logo} alt="osoul" className="h-10 md:h-12 w-auto object-contain" />
           </Link>
 
           {/* Right: Actions */}

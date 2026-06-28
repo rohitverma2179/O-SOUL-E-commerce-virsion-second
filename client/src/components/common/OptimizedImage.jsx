@@ -15,6 +15,7 @@ const OptimizedImage = ({
   src, 
   alt, 
   className = '', 
+  imgClassName = '',
   priority = false,
   aspectRatio = 'aspect-square',
   ...props 
@@ -64,7 +65,7 @@ const OptimizedImage = ({
         onError={() => setError(true)}
         className={`h-full w-full object-cover transition-opacity duration-700 ease-in-out ${
           isLoaded ? 'opacity-100' : 'opacity-0'
-        }`}
+        } ${imgClassName}`}
         {...props}
       />
     </div>
