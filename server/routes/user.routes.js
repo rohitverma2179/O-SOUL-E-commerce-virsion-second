@@ -2,6 +2,9 @@ const router = require("express").Router();
 const userController = require("../controllers/user.controller");
 const requireUser = require("../middlewares/user-auth.middleware");
 const cartController = require("../controllers/cart.controller");
+const homepageController = require("../controllers/homepage.controller");
+
+router.get("/homepage", homepageController.getHomepageData);
 
 router.post("/register", userController.register);
 router.post("/login", userController.login);
