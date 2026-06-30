@@ -52,10 +52,10 @@ const AdminSignup = () => {
     <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-6 font-sans">
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600 mb-4 shadow-xl shadow-blue-600/20">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-olive mb-4 shadow-xl shadow-olive/20">
             <Shield className="text-white" size={32} />
           </div>
-          <h1 className="text-3xl font-bold text-white tracking-tighter">O'SOUL <span className="text-blue-500 text-lg uppercase tracking-widest ml-1">Join</span></h1>
+          <h1 className="text-3xl font-bold text-white tracking-tighter">O'SOUL <span className="text-olive text-lg uppercase tracking-widest ml-1">Join</span></h1>
           <p className="text-slate-400 mt-2">Create your administrative access account.</p>
         </div>
 
@@ -64,12 +64,12 @@ const AdminSignup = () => {
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Full Name</label>
               <div className="relative group">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" size={20} />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-olive transition-colors" size={20} />
                 <input 
                   type="text" 
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full bg-slate-800/50 border border-slate-700 text-white pl-12 pr-4 py-4 rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                  className="w-full bg-slate-800/50 border border-slate-700 text-white pl-12 pr-4 py-4 rounded-2xl focus:ring-2 focus:ring-olive/20 focus:border-olive outline-none transition-all"
                   placeholder="John Doe"
                   required
                 />
@@ -79,12 +79,12 @@ const AdminSignup = () => {
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Email Address</label>
               <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" size={20} />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-olive transition-colors" size={20} />
                 <input 
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-slate-800/50 border border-slate-700 text-white pl-12 pr-4 py-4 rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                  className="w-full bg-slate-800/50 border border-slate-700 text-white pl-12 pr-4 py-4 rounded-2xl focus:ring-2 focus:ring-olive/20 focus:border-olive outline-none transition-all"
                   placeholder="admin@osoul.com"
                   required
                 />
@@ -94,12 +94,12 @@ const AdminSignup = () => {
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Password</label>
               <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" size={20} />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-olive transition-colors" size={20} />
                 <input 
                   type="password" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-slate-800/50 border border-slate-700 text-white pl-12 pr-4 py-4 rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                  className="w-full bg-slate-800/50 border border-slate-700 text-white pl-12 pr-4 py-4 rounded-2xl focus:ring-2 focus:ring-olive/20 focus:border-olive outline-none transition-all"
                   placeholder="••••••••"
                   required
                 />
@@ -108,7 +108,7 @@ const AdminSignup = () => {
 
             <button 
               type="submit" 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.01]"
+              className="w-full bg-olive hover:bg-olive/90 text-white font-bold py-4 rounded-2xl shadow-lg shadow-olive/20 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.01]"
             >
               Create Account
               <ArrowRight size={20} />
@@ -117,7 +117,7 @@ const AdminSignup = () => {
 
           <div className="mt-8 pt-8 border-t border-slate-800 text-center">
             <p className="text-sm text-slate-500">
-              Already have an account? <button onClick={() => navigate('/admin/login')} className="text-blue-500 font-bold hover:underline">Log In</button>
+              Already have an account? <button onClick={() => navigate('/admin/login')} className="text-olive font-bold hover:underline">Log In</button>
             </p>
           </div>
         </div>

@@ -1,122 +1,80 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Lock, Shield, User } from 'lucide-react';
+import { API_BASE_URL } from '../../lib/api';
 
 const AdminLogin = () => {
-  const [email, setEmail] = useState('admin@osoul.com');
-  const [password, setPassword] = useState('password123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    setError('');
     setIsLoading(true);
+
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/users/login`, {
+      const response = await fetch(`${API_BASE_URL}/admin/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password })
       });
-      const data = await response.json();
-      if (data.success) {
-        // The backend sets the cookie, but we can also store user info in state or localStorage if needed
-        navigate('/admin/dashboard');
-      } else {
-        alert(data.message || 'Login failed');
-      }
-    } catch (error) {
-      alert('Network error. Please try again.');
+      const payload = await response.json();
+
+      if (!response.ok) throw new Error(payload.message || 'Login failed');
+      navigate('/admin/catalog', { replace: true });
+    } catch (requestError) {
+      setError(requestError.message === 'Failed to fetch'
+        ? 'Cannot reach the server. Make sure the backend is running on port 5000.'
+        : requestError.message);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-6 font-sans">
+    <div className="flex min-h-screen items-center justify-center bg-[#0f172a] p-6 font-sans">
       <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600 mb-4 shadow-xl shadow-blue-600/20">
+        <div className="mb-10 text-center">
+          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-olive shadow-xl shadow-olive/20">
             <Shield className="text-white" size={32} />
           </div>
-          <h1 className="text-3xl font-bold text-white tracking-tighter">O'SOUL <span className="text-blue-500 text-lg uppercase tracking-widest ml-1">Admin</span></h1>
-          <p className="text-slate-400 mt-2">Enter your credentials to access the command center.</p>
+          <h1 className="text-3xl font-bold tracking-tighter text-white">O'SOUL <span className="ml-1 text-lg uppercase tracking-widest text-olive">Admin</span></h1>
+          <p className="mt-2 text-slate-400">Sign in to manage products and combos.</p>
         </div>
 
-        {/* Login Card */}
-        <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 p-8 rounded-3xl shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+        <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-8 shadow-2xl backdrop-blur-xl">
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Email Address</label>
-              <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" size={20} />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-slate-800/50 border border-slate-700 text-white pl-12 pr-4 py-4 rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
-                  placeholder="admin@osoul.com"
-                  required
-                />
+              <label htmlFor="admin-username" className="ml-1 text-xs font-bold uppercase tracking-widest text-slate-500">Username</label>
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+                <input id="admin-username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" className="w-full rounded-2xl border border-slate-700 bg-slate-800/50 py-4 pl-12 pr-4 text-white outline-none focus:border-olive" placeholder="Enter username" required />
               </div>
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between ml-1">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Password</label>
-                <button type="button" className="text-xs text-blue-500 font-bold hover:underline">Forgot?</button>
-              </div>
-              <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-500 transition-colors" size={20} />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-slate-800/50 border border-slate-700 text-white pl-12 pr-12 py-4 rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
-                  placeholder="••••••••"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
-                >
+              <label htmlFor="admin-password" className="ml-1 text-xs font-bold uppercase tracking-widest text-slate-500">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={20} />
+                <input id="admin-password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" className="w-full rounded-2xl border border-slate-700 bg-slate-800/50 py-4 pl-12 pr-12 text-white outline-none focus:border-olive" placeholder="Enter password" required />
+                <button type="button" onClick={() => setShowPassword((current) => !current)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white" aria-label="Show or hide password">
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 transition-all transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-70"
-            >
-              {isLoading ? (
-                <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              ) : (
-                <>
-                  Sign In to Panel
-                  <ArrowRight size={20} />
-                </>
-              )}
+            {error && <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</p>}
+
+            <button type="submit" disabled={isLoading} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-olive py-4 font-bold text-white shadow-lg shadow-olive/20 transition hover:bg-olive/90 disabled:opacity-60">
+              {isLoading ? 'Signing in...' : <><span>Sign In</span><ArrowRight size={20} /></>}
             </button>
           </form>
-
-          <div className="mt-8 pt-8 border-t border-slate-800 text-center">
-            <p className="text-sm text-slate-500 italic">
-              "With great power comes great responsibility."
-            </p>
-          </div>
         </div>
-
-        {/* Footer */}
-        <p className="text-center text-slate-600 text-xs mt-10">
-          &copy; 2026 O'SOUL Infrastructure. All rights reserved.
-        </p>
       </div>
     </div>
   );

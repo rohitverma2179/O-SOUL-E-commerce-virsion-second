@@ -54,7 +54,7 @@ const Login = () => {
       document.head.appendChild(script);
     } else {
       initializeGoogleButton();
-    }
+    } 
   }, [showOtpScreen]); // Re-render button if we return to login form
 
   const handleGoogleCredentialResponse = async (response) => {
@@ -180,7 +180,7 @@ const Login = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between ml-1">
                   <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold">Password</label>
-                  <Link to="/forgot-password" size="sm" className="text-xs underline underline-offset-4 opacity-70 hover:opacity-100 font-medium">Forgot?</Link>
+                  {/* <Link to="/forgot-password" size="sm" className="text-xs underline underline-offset-4 opacity-70 hover:opacity-100 font-medium">Forgot?</Link> */}
                 </div>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -207,15 +207,15 @@ const Login = () => {
 
             {/* SSO / Divider */}
             <div className="space-y-4">
-              <div className="relative flex py-2 items-center">
+              {/* <div className="relative flex py-2 items-center">
                 <div className="flex-grow border-t border-border"></div>
                 <span className="flex-shrink mx-4 text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">or</span>
                 <div className="flex-grow border-t border-border"></div>
-              </div>
+              </div> */}
 
-              <div className="flex flex-col items-center justify-center space-y-2">
+              {/* <div className="flex flex-col items-center justify-center space-y-2">
                 <div id="google-signin-btn" className="w-full flex justify-center"></div>
-              </div>
+              </div> */}
             </div>
 
             <div className="text-center text-sm pt-2">

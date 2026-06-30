@@ -19,6 +19,7 @@ import FounderNote from './pages/FounderNote';
 import ExchangePolicy from './pages/ExchangePolicy';
 import Support from './pages/Support';
 import TrackOrder from './pages/TrackOrder';
+import UserDashboard from './pages/UserDashboard';
 import ScrollToTop from './components/common/ScrollToTop';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
@@ -26,11 +27,13 @@ import ProtectedRoute from './components/common/ProtectedRoute';
 
 // Admin Imports
 import AdminLayout from './components/admin/AdminLayout';
-import AdminDashboard from './pages/Admin/AdminDashboard';
+import AdminGuard from './components/admin/AdminGuard';
 import UserManagement from './pages/Admin/UserManagement';
-import HomepageEditor from './pages/Admin/HomepageEditor';
 import AdminLogin from './pages/Admin/AdminLogin';
 import AdminSignup from './pages/Admin/AdminSignup';
+import CatalogManagement from './pages/Admin/CatalogManagement';
+import PopupManagement from './pages/Admin/PopupManagement';
+import FooterManagement from './pages/Admin/FooterManagement';
 
 function App() {
   return (
@@ -64,22 +67,23 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<Signup />} />
             <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+            <Route path="account" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
           </Route>
 
           {/* Admin Panel Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/signup" element={<AdminSignup />} />
           
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Navigate to="/admin/dashboard" replace />} />
-            <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="/admin" element={<AdminGuard><AdminLayout /></AdminGuard>}>
+            <Route index element={<Navigate to="/admin/catalog" replace />} />
             <Route path="users" element={<UserManagement />} />
-            <Route path="homepage" element={<HomepageEditor />} />
-            <Route path="settings" element={<div className="p-8"><h1 className="text-2xl font-bold">Settings Panel</h1><p className="text-slate-500 mt-2">Configure platform-wide settings here.</p></div>} />
+            <Route path="catalog" element={<CatalogManagement />} />
+            <Route path="popup" element={<PopupManagement />} />
+            <Route path="footer" element={<FooterManagement />} />
           </Route>
 
           {/* Redirect for catch-all or default admin path */}
-          <Route path="/admin/*" element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="/admin/*" element={<Navigate to="/admin/catalog" replace />} />
         </Routes>
       </CartProvider>
     </AuthProvider>

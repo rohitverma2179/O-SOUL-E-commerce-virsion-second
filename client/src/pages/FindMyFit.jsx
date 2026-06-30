@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { allProducts } from '../data/productData';
+import { API_BASE_URL } from '../lib/api';
 import { ArrowRight, RefreshCw, MessageSquare } from 'lucide-react';
 
 const FindMyFit = () => {
@@ -15,9 +16,22 @@ const FindMyFit = () => {
 
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
+  const [liveProducts, setLiveProducts] = useState([]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const fetchLiveProducts = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/products`);
+        const data = await response.json();
+        if (data.success && data.data) {
+          setLiveProducts(data.data);
+        }
+      } catch (error) {
+        console.error("Could not fetch live products for Fit Finder", error);
+      }
+    };
+    fetchLiveProducts();
   }, []);
 
   // Questions definitions
@@ -77,17 +91,24 @@ const FindMyFit = () => {
   const getRecommendation = () => {
     const { discomfort, activity, gender } = answers;
 
+    const findProductBySlug = (slug) => {
+      // Look up inside liveProducts first, fallback to static if empty or loading
+      const foundLive = liveProducts.find(p => p.slug === slug);
+      if (foundLive) return foundLive;
+      return allProducts.find(p => p.slug === slug);
+    };
+
     // Female matches
     if (gender === 'Women') {
       if (discomfort === 'waist_digs' || discomfort === 'crotch_pulls' || discomfort === 'thighs_tight' || discomfort === 'fabric_clings' || activity === 'sitting') {
-        const item = allProducts.find(p => p.id === 'women-harem-pants');
+        const item = findProductBySlug('womens-harem-pants');
         return {
           product: item,
           customTitle: "Women's Harem Pants",
           customDescription: "You need a generous rise for complete freedom of movement and a fluid, non-cling drape."
         };
       }
-      const hoodie = allProducts.find(p => p.id === 'women-cropped-hoodie');
+      const hoodie = findProductBySlug('womens-cropped-hoodie');
       return {
         product: hoodie,
         customTitle: "Women's Cropped Hoodie",
@@ -97,7 +118,7 @@ const FindMyFit = () => {
 
     // Unisex matches
     if (gender === 'Unisex') {
-      const unisexTee = allProducts.find(p => p.id === 'unisex-boxy-tee');
+      const unisexTee = findProductBySlug('unisex-boxy-tee');
       return {
         product: unisexTee,
         customTitle: "Unisex Boxy Tee",
@@ -107,7 +128,7 @@ const FindMyFit = () => {
 
     // Male matches / Default
     if (discomfort === 'shorts_ride_up' || activity === 'walking') {
-      const shorts = allProducts.find(p => p.id === 'men-shorts');
+      const shorts = findProductBySlug('mens-shorts');
       return {
         product: shorts,
         customTitle: "Everyday Shorts",
@@ -116,7 +137,7 @@ const FindMyFit = () => {
     }
 
     if (discomfort === 'waist_digs' || discomfort === 'crotch_pulls' || discomfort === 'thighs_tight' || activity === 'sitting') {
-      const joggers = allProducts.find(p => p.id === 'men-joggers');
+      const joggers = findProductBySlug('mens-joggers');
       return {
         product: joggers,
         customTitle: "Men's Joggers",
@@ -124,7 +145,7 @@ const FindMyFit = () => {
       };
     }
 
-    const pocketTee = allProducts.find(p => p.id === 'men-boxy-tee-pocket');
+    const pocketTee = findProductBySlug('mens-boxy-tee-with-pocket');
     return {
       product: pocketTee,
       customTitle: "Men's Boxy Tee With Pocket",
@@ -138,14 +159,22 @@ const FindMyFit = () => {
   // Initialize selected sizes and colors when recommendation is loaded
   useEffect(() => {
     if (product) {
-      if (!selectedSize) setSelectedSize(product.sizes[1] || product.sizes[0]);
-      if (!selectedColor) setSelectedColor(product.colors[0]);
+      if (product.sizes && product.sizes.length > 0) {
+        setSelectedSize(prev => prev || product.sizes[1] || product.sizes[0]);
+      }
+      if (product.colors && product.colors.length > 0) {
+        setSelectedColor(prev => prev || product.colors[0]);
+      }
     }
   }, [product]);
 
   const handleAddToCart = () => {
     if (product && selectedSize && selectedColor) {
-      addToCart(product, selectedSize, selectedColor);
+      const cartProduct = {
+        ...product,
+        id: product._id || product.id
+      };
+      addToCart(cartProduct, selectedSize, selectedColor);
     }
   };
 

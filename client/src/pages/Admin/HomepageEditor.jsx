@@ -145,7 +145,7 @@ const HomepageEditor = () => {
               onClick={() => setActiveSection(section.id)}
               className={`w-full flex items-center gap-3 p-4 rounded-2xl transition-all border ${
                 activeSection === section.id 
-                  ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-600/20' 
+                  ? 'bg-olive text-white border-olive shadow-md shadow-olive/20' 
                   : 'bg-white text-slate-600 border-slate-100 hover:border-slate-300'
               }`}
             >
@@ -161,12 +161,12 @@ const HomepageEditor = () => {
             <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-8">
               <div className="flex items-center justify-between border-b border-slate-50 pb-4">
                 <h2 className="text-lg font-bold flex items-center gap-2">
-                  <Type className="text-blue-600" />
+                  <Type className="text-olive" />
                   Hero Section Content
                 </h2>
                 <button 
                   onClick={fetchContent}
-                  className="text-slate-400 hover:text-blue-600 transition-colors"
+                  className="text-slate-400 hover:text-olive transition-colors"
                   title="Reset to published"
                 >
                   <RotateCcw size={18} />
@@ -180,7 +180,7 @@ const HomepageEditor = () => {
                     type="text" 
                     value={heroContent.tagline}
                     onChange={(e) => setHeroContent({...heroContent, tagline: e.target.value})}
-                    className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/10 outline-none"
+                    className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-olive/10 outline-none"
                   />
                 </div>
                 <div className="space-y-2">
@@ -189,7 +189,7 @@ const HomepageEditor = () => {
                     type="text" 
                     value={heroContent.primaryBtnText}
                     onChange={(e) => setHeroContent({...heroContent, primaryBtnText: e.target.value})}
-                    className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/10 outline-none"
+                    className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-olive/10 outline-none"
                   />
                 </div>
                 <div className="space-y-2">
@@ -198,7 +198,7 @@ const HomepageEditor = () => {
                     type="text" 
                     value={heroContent.titleLine1}
                     onChange={(e) => setHeroContent({...heroContent, titleLine1: e.target.value})}
-                    className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/10 outline-none"
+                    className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-olive/10 outline-none"
                   />
                 </div>
                 <div className="space-y-2">
@@ -207,7 +207,7 @@ const HomepageEditor = () => {
                     type="text" 
                     value={heroContent.titleLine2}
                     onChange={(e) => setHeroContent({...heroContent, titleLine2: e.target.value})}
-                    className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/10 outline-none font-serif italic"
+                    className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-olive/10 outline-none font-serif italic"
                   />
                 </div>
                 <div className="md:col-span-2 space-y-2">
@@ -216,7 +216,7 @@ const HomepageEditor = () => {
                     rows="4"
                     value={heroContent.description}
                     onChange={(e) => setHeroContent({...heroContent, description: e.target.value})}
-                    className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/10 outline-none resize-none"
+                    className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-olive/10 outline-none resize-none"
                   />
                 </div>
               </div>
@@ -225,10 +225,10 @@ const HomepageEditor = () => {
                 <h3 className="text-sm font-bold text-slate-900 mb-4">Hero Images (Visual CMS)</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {[1, 2, 3].map((idx) => (
-                    <div key={idx} className="group relative aspect-[3/4] bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:bg-blue-50/30 transition-all overflow-hidden">
+                    <div key={idx} className="group relative aspect-[3/4] bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center cursor-pointer hover:border-olive hover:bg-olive/10 transition-all overflow-hidden">
                       <div className="text-center p-4">
-                        <ImageIcon className="mx-auto text-slate-300 mb-2 group-hover:text-blue-400" />
-                        <p className="text-xs font-medium text-slate-400 group-hover:text-blue-500">Update Hero Image {idx}</p>
+                        <ImageIcon className="mx-auto text-slate-300 mb-2 group-hover:text-olive" />
+                        <p className="text-xs font-medium text-slate-400 group-hover:text-olive">Update Hero Image {idx}</p>
                       </div>
                     </div>
                   ))}

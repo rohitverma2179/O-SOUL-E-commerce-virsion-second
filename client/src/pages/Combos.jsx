@@ -1,11 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ComboCard from '../components/product/ComboCard';
-import { allCombos } from '../data/comboData';
+import { fetchCatalog } from '../lib/api';
 
 const Combos = () => {
+  const [uploadedCombos, setUploadedCombos] = useState([]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    fetchCatalog('combos').then(setUploadedCombos).catch(() => setUploadedCombos([]));
   }, []);
+
+  const combos = uploadedCombos;
 
   return (
     <div className="bg-background">
@@ -19,8 +24,8 @@ const Combos = () => {
         </header>
 
         <div className="grid gap-8 md:grid-cols-2">
-          {allCombos.map(combo => (
-            <ComboCard key={combo.id} combo={combo} />
+          {combos.map(combo => (
+            <ComboCard key={combo._id || combo.id} combo={combo} />
           ))}
         </div>
       </div>

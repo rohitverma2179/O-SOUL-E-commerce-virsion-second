@@ -1,7 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../../lib/api';
 
 const Footer = () => {
+  const [settings, setSettings] = useState({
+    tagline: 'No More Adjusting.',
+    quote: 'If it makes you adjust, it failed.',
+    instagramUrl: 'https://instagram.com/osoul.in',
+    copyrightText: '© 2026 O\'Soul. All rights reserved.',
+    copyrightSubtext: 'Everyday comfort that still looks clean.',
+    trustLabel1: 'Secure Razorpay checkout',
+    trustLabel2: 'Easy exchange support'
+  });
+
+  useEffect(() => {
+    const fetchFooterSettings = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/footer`);
+        const data = await response.json();
+        if (data.success && data.data) {
+          setSettings({
+            tagline: data.data.tagline || 'No More Adjusting.',
+            quote: data.data.quote || 'If it makes you adjust, it failed.',
+            instagramUrl: data.data.instagramUrl || 'https://instagram.com/osoul.in',
+            copyrightText: data.data.copyrightText || '© 2026 O\'Soul. All rights reserved.',
+            copyrightSubtext: data.data.copyrightSubtext || 'Everyday comfort that still looks clean.',
+            trustLabel1: data.data.trustLabel1 || 'Secure Razorpay checkout',
+            trustLabel2: data.data.trustLabel2 || 'Easy exchange support'
+          });
+        }
+      } catch (error) {
+        console.log("Using default footer layout fallbacks");
+      }
+    };
+    fetchFooterSettings();
+  }, []);
+
   return (
     <footer className="mt-24 border-t border-border bg-secondary/40">
       <div className="container-osoul py-16 md:py-20">
@@ -9,9 +43,9 @@ const Footer = () => {
           {/* Brand Info */}
           <div className="md:col-span-4">
             <Link to="/" className="font-serif text-2xl tracking-tighter uppercase font-bold text-foreground">O'Soul</Link>
-            <p className="mt-2 text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-bold">No More Adjusting.</p>
+            <p className="mt-2 text-[10px] uppercase tracking-[0.3em] text-muted-foreground font-bold">{settings.tagline}</p>
             <p className="mt-8 font-serif text-3xl md:text-4xl italic text-foreground leading-tight">
-              If it makes you adjust, it failed.
+              {settings.quote}
             </p>
           </div>
 
@@ -25,8 +59,6 @@ const Footer = () => {
                 <li><Link to="/women" className="hover:text-olive transition-colors">Women</Link></li>
                 <li><Link to="/gallery" className="hover:text-olive transition-colors">Gallery</Link></li>
                 <li><Link to="/products/unisex-boxy-tee" className="hover:text-olive transition-colors">Unisex Boxy Tee</Link></li>
-                {/* <li><Link to="/products/womens-cropped-hoodie" className="hover:text-olive transition-colors">Women's Cropped Hoodie</Link></li>
-                <li><Link to="/products/womens-harem-pants" className="hover:text-olive transition-colors">Women's Harem Pants</Link></li> */}
                 <li><Link to="/combos" className="hover:text-olive transition-colors font-medium text-foreground/80">Combos</Link></li>
               </ul>
             </div>
@@ -48,7 +80,7 @@ const Footer = () => {
                 <li><Link to="/about" className="hover:text-olive transition-colors">About O'Soul</Link></li>
                 <li><Link to="/founder" className="hover:text-olive transition-colors">Founder Note</Link></li>
                 <li><Link to="/fit-tests" className="hover:text-olive transition-colors">Fit Tests</Link></li>
-                <li><a href="https://instagram.com/osoul.in" target="_blank" rel="noopener noreferrer" className="hover:text-olive transition-colors font-medium text-foreground/80">Instagram</a></li>
+                <li><a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="hover:text-olive transition-colors font-medium text-foreground/80">Instagram</a></li>
               </ul>
             </div>
           </div>
@@ -56,11 +88,11 @@ const Footer = () => {
 
         <div className="mt-16 flex flex-col items-center justify-between gap-6 border-t border-border pt-10 md:flex-row">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">
-            © 2026 O'Soul. All rights reserved. <span className="mx-2 opacity-30">|</span> Everyday comfort that still looks clean.
+            {settings.copyrightText} <span className="mx-2 opacity-30">|</span> {settings.copyrightSubtext}
           </div>
           <div className="flex gap-6 text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">
-            <span>Secure Razorpay checkout</span>
-            <span>Easy exchange support</span>
+            <span>{settings.trustLabel1}</span>
+            <span>{settings.trustLabel2}</span>
           </div>
         </div>
       </div>

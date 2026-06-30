@@ -82,7 +82,8 @@ export const AuthProvider = ({ children }) => {
         return { success: true, unverified: true, email: data.data.user?.email || email };
       }
       if (data.success) {
-        return { success: true };
+        setUser(data.data?.user || null);
+        return { success: true, user: data.data?.user };
       }
       return { success: false, message: data.message || "Registration failed" };
     } catch (err) {

@@ -223,7 +223,7 @@ const Signup = () => {
 
             {/* SSO / Divider */}
             <div className="space-y-4">
-              <div className="relative flex py-2 items-center">
+              {/* <div className="relative flex py-2 items-center">
                 <div className="flex-grow border-t border-border"></div>
                 <span className="flex-shrink mx-4 text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">or</span>
                 <div className="flex-grow border-t border-border"></div>
@@ -231,7 +231,7 @@ const Signup = () => {
 
               <div className="flex flex-col items-center justify-center space-y-2">
                 <div id="google-signin-btn" className="w-full flex justify-center"></div>
-              </div>
+              </div> */}
             </div>
 
             <div className="text-center text-sm pt-2">

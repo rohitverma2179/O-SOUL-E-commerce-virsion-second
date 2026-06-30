@@ -25,6 +25,9 @@ const combos = allCombos;
 
 
 const Home = () => {
+  const [popup, setPopup] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [liveProducts, setLiveProducts] = useState([]);
   const [heroContent, setHeroContent] = useState({
     tagline: 'Bottomwear that you don’t need to adjust.',
     titleLine1: 'Welcome to an  adjust-free world',
@@ -55,7 +58,43 @@ const Home = () => {
         console.log("Using static homepage data (Server might be offline)");
       }
     };
+
+    const fetchPopupData = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/popup`);
+        const data = await response.json();
+        if (data.success && data.data && data.data.isActive) {
+          const activePopup = data.data;
+          // Use id + updatedAt so editing/saving in the admin panel shows it again
+          const dismissalKey = `osou_popup_dismissed_${activePopup._id}_${activePopup.updatedAt}`;
+          const isDismissed = localStorage.getItem(dismissalKey);
+          if (!isDismissed) {
+            setPopup(activePopup);
+            setTimeout(() => {
+              setShowPopup(true);
+            }, 1500);
+          }
+        }
+      } catch (error) {
+        console.log("Could not load promo popup");
+      }
+    };
+
+    const fetchProductsData = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/products`);
+        const data = await response.json();
+        if (data.success && data.data) {
+          setLiveProducts(data.data);
+        }
+      } catch (error) {
+        console.log("Could not load dynamic products");
+      }
+    };
+
     fetchHomepageData();
+    fetchPopupData();
+    fetchProductsData();
   }, []);
 
   const reviewsData = [
@@ -190,8 +229,8 @@ const Home = () => {
           <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground italic">Soft. Clean. Made for the way your day actually moves. The first drop is small — because fit takes time.</p>
         </div>
         <div className="mt-10 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map(product => (
-            <ProductCard key={product.id} product={product} />
+          {liveProducts.slice(0, 6).map(product => (
+            <ProductCard key={product._id || product.id} product={product} />
           ))}
         </div>
       </section>
@@ -394,8 +433,8 @@ const Home = () => {
                 key={idx}
                 onClick={() => setActiveReviewIndex(idx)}
                 className={`text-sm px-4 py-2.5 rounded-sm border transition-colors ${activeReviewIndex === idx
-                    ? 'bg-foreground text-background border-foreground font-semibold'
-                    : 'border-border bg-background text-foreground/80 hover:border-foreground/50'
+                  ? 'bg-foreground text-background border-foreground font-semibold'
+                  : 'border-border bg-background text-foreground/80 hover:border-foreground/50'
                   }`}
               >
                 {rev.objection}
@@ -545,6 +584,53 @@ const Home = () => {
           Secure Razorpay checkout · Easy exchange support · In stock now
         </div>
       </section>
+      {/* Promo Popup Modal */}
+      {showPopup && popup && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="relative bg-background border border-border w-full max-w-md overflow-hidden rounded-2xl shadow-2xl animate-in zoom-in-95 slide-in-from-bottom-10 duration-500 flex flex-col">
+            {/* Close Button */}
+            <button
+              onClick={() => {
+                const dismissalKey = `osou_popup_dismissed_${popup._id}_${popup.updatedAt}`;
+                localStorage.setItem(dismissalKey, 'true');
+                setShowPopup(false);
+              }}
+              className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-black/40 text-white hover:bg-black/60 hover:scale-105 transition-all outline-none"
+              aria-label="Close popup"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Banner Image (Full Height / No Cropping) */}
+            {popup.imageUrl ? (
+              <div className="relative w-full overflow-hidden">
+                <img src={popup.imageUrl} alt="" className="w-full h-auto block" />
+              </div>
+            ) : (
+              <div className="w-full h-48 bg-slate-100 flex items-center justify-center text-slate-400 text-xs italic">
+                <span>Please upload a banner image in the Admin Panel</span>
+              </div>
+            )}
+
+            {/* Content: Only the Button */}
+            <div className="p-5 text-center bg-background border-t border-slate-100 flex justify-center">
+              <Link
+                to={popup.link || '/shop'}
+                onClick={() => {
+                  const dismissalKey = `osou_popup_dismissed_${popup._id}_${popup.updatedAt}`;
+                  localStorage.setItem(dismissalKey, 'true');
+                  setShowPopup(false);
+                }}
+                className="w-full h-12 inline-flex items-center justify-center rounded-md bg-foreground px-10 text-xs font-bold uppercase tracking-widest text-background hover:bg-foreground/90 transition-all shadow-md"
+              >
+                {popup.buttonText || 'Shop Now'}
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

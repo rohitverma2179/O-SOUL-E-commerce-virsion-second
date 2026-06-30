@@ -11,7 +11,7 @@ import {
 
 const AdminDashboard = () => {
   const stats = [
-    { label: 'Total Users', value: '2,543', change: '+12.5%', isPositive: true, icon: <Users className="text-blue-600" />, bg: 'bg-blue-50' },
+    { label: 'Total Users', value: '2,543', change: '+12.5%', isPositive: true, icon: <Users className="text-olive" />, bg: 'bg-olive/10' },
     { label: 'Total Sales', value: '₹45,230', change: '+8.2%', isPositive: true, icon: <ShoppingBag className="text-emerald-600" />, bg: 'bg-emerald-50' },
     { label: 'Conversion Rate', value: '3.24%', change: '-1.5%', isPositive: false, icon: <TrendingUp className="text-amber-600" />, bg: 'bg-amber-50' },
     { label: 'Active Visitors', value: '154', change: '+24%', isPositive: true, icon: <Eye className="text-purple-600" />, bg: 'bg-purple-50' },
@@ -52,7 +52,7 @@ const AdminDashboard = () => {
         <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-bold">Recent Orders</h2>
-            <button className="text-sm text-blue-600 font-semibold hover:underline">View All</button>
+            <button className="text-sm text-olive font-semibold hover:underline">View All</button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
@@ -68,7 +68,7 @@ const AdminDashboard = () => {
               <tbody className="text-sm">
                 {[
                   { id: '#ORD-7421', user: 'Aanya Sharma', product: 'Boxy Tee (M)', amount: '₹990', status: 'Delivered', statusColor: 'text-emerald-600 bg-emerald-50' },
-                  { id: '#ORD-7420', user: 'Rohan Verma', product: 'Joggers (L)', amount: '₹1,490', status: 'Processing', statusColor: 'text-blue-600 bg-blue-50' },
+                  { id: '#ORD-7420', user: 'Rohan Verma', product: 'Joggers (L)', amount: '₹1,490', status: 'Processing', statusColor: 'text-olive bg-olive/10' },
                   { id: '#ORD-7419', user: 'Priya Das', product: 'Harem Pants (S)', amount: '₹1,290', status: 'Shipped', statusColor: 'text-amber-600 bg-amber-50' },
                   { id: '#ORD-7418', user: 'Kartik Iyer', product: 'Combos - Set 1', amount: '₹2,690', status: 'Delivered', statusColor: 'text-emerald-600 bg-emerald-50' },
                 ].map((order) => (
@@ -97,7 +97,7 @@ const AdminDashboard = () => {
           </div>
           <div className="space-y-6">
             {[
-              { time: '2 mins ago', msg: 'Super Admin updated Hero Section', color: 'bg-blue-500' },
+              { time: '2 mins ago', msg: 'Super Admin updated Hero Section', color: 'bg-olive' },
               { time: '15 mins ago', msg: 'New user registered: Amit K.', color: 'bg-emerald-500' },
               { time: '1 hour ago', msg: 'Server health check passed', color: 'bg-slate-400' },
               { time: '3 hours ago', msg: 'Database backup completed', color: 'bg-purple-500' },

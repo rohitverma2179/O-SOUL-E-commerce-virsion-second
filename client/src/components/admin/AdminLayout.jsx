@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
-  LayoutDashboard, 
   Users, 
-  Home as HomeIcon, 
-  Settings, 
   LogOut, 
   Menu, 
   X, 
   ChevronRight,
   Bell,
   Search,
-  ArrowRight
+  ArrowRight,
+  PackagePlus,
+  Megaphone,
+  Info
 } from 'lucide-react';
+import { API_BASE_URL } from '../../lib/api';
 
 const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -20,16 +21,16 @@ const AdminLayout = () => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/admin/dashboard' },
     { name: 'Users', icon: <Users size={20} />, path: '/admin/users' },
-    { name: 'Homepage CMS', icon: <HomeIcon size={20} />, path: '/admin/homepage' },
-    { name: 'Settings', icon: <Settings size={20} />, path: '/admin/settings' },
+    { name: 'Catalog', icon: <PackagePlus size={20} />, path: '/admin/catalog' },
+    { name: 'Promo Popup', icon: <Megaphone size={20} />, path: '/admin/popup' },
+    { name: 'Footer Settings', icon: <Info size={20} />, path: '/admin/footer' },
     { name: 'Back to Site', icon: <ArrowRight size={20} />, path: '/' },
   ];
 
   const handleLogout = async () => {
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/users/logout`, { 
+      await fetch(`${API_BASE_URL}/admin/logout`, { 
         method: 'POST',
         credentials: 'include'
       });
@@ -50,7 +51,7 @@ const AdminLayout = () => {
         <div className="p-6 flex items-center justify-between">
           {isSidebarOpen && (
             <span className="text-xl font-bold tracking-tighter text-white">
-              O'SOUL <span className="text-blue-400">ADMIN</span>
+              O'SOUL <span className="text-olive">ADMIN</span>
             </span>
           )}
           <button 
@@ -68,7 +69,7 @@ const AdminLayout = () => {
               to={item.path}
               className={`flex items-center p-3 rounded-xl transition-all duration-200 group ${
                 location.pathname === item.path 
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
+                  ? 'bg-olive text-white shadow-lg shadow-olive/20' 
                   : 'text-slate-400 hover:bg-slate-800 hover:text-white'
               }`}
             >
@@ -110,7 +111,7 @@ const AdminLayout = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="p-2 text-slate-400 hover:text-blue-600 transition-colors relative">
+            <button className="p-2 text-slate-400 hover:text-olive transition-colors relative">
               <Bell size={20} />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
@@ -120,7 +121,7 @@ const AdminLayout = () => {
                 <p className="text-sm font-semibold leading-none">Super Admin</p>
                 <p className="text-xs text-slate-400 mt-1">rohit@osoul.com</p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
+              <div className="w-10 h-10 rounded-full bg-olive flex items-center justify-center text-white font-bold">
                 R
               </div>
             </div>
