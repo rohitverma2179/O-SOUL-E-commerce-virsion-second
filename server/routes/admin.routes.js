@@ -13,3 +13,7 @@ router.delete("/users/:id", requireAdmin, deleteUser);
 router.post("/homepage/section", requireAdmin, homepageController.updateHomepageSection);
 
 module.exports = router;
+
+
+
+
