@@ -32,6 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+app.get("/", (_req, res) => res.json({ success: true, message: "Welcome to O-SOUL E-commerce API! Server is running." }));
 app.get("/api/health", (_req, res) => res.json({ success: true, message: "Server is running" }));
 app.use("/api/products", productRoutes);
 app.use("/api/combos", comboRoutes);
