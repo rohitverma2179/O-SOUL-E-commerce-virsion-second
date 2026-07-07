@@ -90,7 +90,8 @@ const Checkout = () => {
         },
         credentials: 'include',
         body: JSON.stringify({
-          amount: cartTotal + 50,
+          // amount: cartTotal + 50,
+          amount: cartTotal,
           items: cartItems,
           shippingDetails: formData
         })
