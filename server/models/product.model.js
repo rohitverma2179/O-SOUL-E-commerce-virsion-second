@@ -29,7 +29,17 @@ const productSchema = new mongoose.Schema({
       stock: { type: Number, default: 0, min: 0 }
     }
   ],
-  rating: { type: Number, default: 5, min: 1, max: 5 }
+  rating: { type: Number, default: 5, min: 1, max: 5 },
+  emotionalHook: { type: String, trim: true },
+  shortCopy: { type: String, trim: true },
+  fitDetailLine: { type: String, trim: true },
+  careLine: { type: String, trim: true },
+  objections: [
+    {
+      question: { type: String, trim: true },
+      answer: { type: String, trim: true }
+    }
+  ]
 }, { timestamps: true });
 
 module.exports = mongoose.model("Product", productSchema);

@@ -81,6 +81,15 @@ exports.createProduct = async (req, res, next) => {
 
     const rating = req.body.rating ? Number(req.body.rating) : 5;
 
+    let objections = [];
+    if (req.body.objections) {
+      try {
+        objections = typeof req.body.objections === "string" ? JSON.parse(req.body.objections) : req.body.objections;
+      } catch (e) {
+        console.error("Failed to parse objections:", e.message);
+      }
+    }
+
     const product = await Product.create({
       ...req.body,
       slug,
@@ -98,7 +107,8 @@ exports.createProduct = async (req, res, next) => {
       length,
       width,
       height,
-      rating
+      rating,
+      objections
     });
     res.status(201).json({ success: true, data: product, message: "Product created" });
   } catch (error) { next(error); }
@@ -155,6 +165,17 @@ exports.updateProduct = async (req, res, next) => {
       variants = product.variants;
     }
 
+    let objections = [];
+    if (req.body.objections) {
+      try {
+        objections = typeof req.body.objections === "string" ? JSON.parse(req.body.objections) : req.body.objections;
+      } catch (e) {
+        console.error("Failed to parse objections:", e.message);
+      }
+    } else if (product.objections) {
+      objections = product.objections;
+    }
+
     let stock = req.body.stock !== undefined ? Number(req.body.stock) : product.stock;
     if (variants && variants.length > 0) {
       stock = variants.reduce((sum, v) => sum + Number(v.stock || 0), 0);
@@ -195,6 +216,13 @@ exports.updateProduct = async (req, res, next) => {
     product.stock = stock;
     product.inStock = stock > 0;
     product.rating = req.body.rating !== undefined ? Number(req.body.rating) : product.rating;
+
+    // Update new fields
+    product.emotionalHook = req.body.emotionalHook !== undefined ? req.body.emotionalHook : product.emotionalHook;
+    product.shortCopy = req.body.shortCopy !== undefined ? req.body.shortCopy : product.shortCopy;
+    product.fitDetailLine = req.body.fitDetailLine !== undefined ? req.body.fitDetailLine : product.fitDetailLine;
+    product.careLine = req.body.careLine !== undefined ? req.body.careLine : product.careLine;
+    product.objections = req.body.objections !== undefined ? objections : product.objections;
 
     await product.save();
     res.json({ success: true, data: product, message: "Product updated successfully" });

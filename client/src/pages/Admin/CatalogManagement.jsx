@@ -5,7 +5,11 @@ import { API_BASE_URL, fetchCatalog } from '../../lib/api';
 const initialProduct = {
   name: '', slug: '', price: '', originalPrice: '', stock: '0', category: 'Unisex', type: 'Tees', shortDescription: '',
   bestFor: '', colors: 'Black, Olive', sizes: 'S, M, L, XL, XXL', tags: '',
-  weight: '500', length: '10', width: '10', height: '10', rating: 5
+  weight: '500', length: '10', width: '10', height: '10', rating: 5,
+  emotionalHook: '', shortCopy: '', fitDetailLine: '', careLine: '',
+  objection1Question: '', objection1Answer: '',
+  objection2Question: '', objection2Answer: '',
+  objection3Question: '', objection3Answer: ''
 };
 const initialCombo = {
   title: '', headline: '', description: '', valueLine: '', productNames: '', originalPrice: '', discountPercent: '', discountedPrice: ''
@@ -88,7 +92,17 @@ const CatalogManagement = () => {
       colors: Array.isArray(item.colors) ? item.colors.join(', ') : item.colors || '',
       sizes: Array.isArray(item.sizes) ? item.sizes.join(', ') : item.sizes || '',
       tags: Array.isArray(item.tags) ? item.tags.join(', ') : item.tags || '',
-      rating: item.rating || 5
+      rating: item.rating || 5,
+      emotionalHook: item.emotionalHook || '',
+      shortCopy: item.shortCopy || '',
+      fitDetailLine: item.fitDetailLine || '',
+      careLine: item.careLine || '',
+      objection1Question: item.objections?.[0]?.question || '',
+      objection1Answer: item.objections?.[0]?.answer || '',
+      objection2Question: item.objections?.[1]?.question || '',
+      objection2Answer: item.objections?.[1]?.answer || '',
+      objection3Question: item.objections?.[2]?.question || '',
+      objection3Answer: item.objections?.[2]?.answer || '',
     });
     setEditVariants(item.variants || []);
     setEditProductImage(null);
@@ -148,13 +162,23 @@ const CatalogManagement = () => {
     
     const totalStock = editVariants.length > 0 ? editVariants.reduce((sum, v) => sum + (v.stock || 0), 0) : editingProduct.stock;
 
+    const objections = [
+      { question: editingProduct.objection1Question, answer: editingProduct.objection1Answer },
+      { question: editingProduct.objection2Question, answer: editingProduct.objection2Answer },
+      { question: editingProduct.objection3Question, answer: editingProduct.objection3Answer }
+    ].filter(o => o.question || o.answer);
+
     const form = new FormData();
     Object.entries(editingProduct).forEach(([key, value]) => {
-      if (key !== 'variants' && key !== 'image' && key !== 'backImage') {
+      if (
+        key !== 'variants' && key !== 'image' && key !== 'backImage' && key !== 'objections' &&
+        !['objection1Question', 'objection1Answer', 'objection2Question', 'objection2Answer', 'objection3Question', 'objection3Answer'].includes(key)
+      ) {
         form.append(key, value);
       }
     });
 
+    form.append('objections', JSON.stringify(objections));
     form.append('variants', JSON.stringify(editVariants));
     form.append('stock', totalStock);
 
@@ -208,7 +232,22 @@ const CatalogManagement = () => {
     setMessage('');
     const form = new FormData();
     const values = tab === 'products' ? product : combo;
-    Object.entries(values).forEach(([key, value]) => form.append(key, value));
+    if (tab === 'products') {
+      const objections = [
+        { question: values.objection1Question, answer: values.objection1Answer },
+        { question: values.objection2Question, answer: values.objection2Answer },
+        { question: values.objection3Question, answer: values.objection3Answer }
+      ].filter(o => o.question || o.answer);
+      form.append('objections', JSON.stringify(objections));
+
+      Object.entries(values).forEach(([key, value]) => {
+        if (!['objection1Question', 'objection1Answer', 'objection2Question', 'objection2Answer', 'objection3Question', 'objection3Answer'].includes(key)) {
+          form.append(key, value);
+        }
+      });
+    } else {
+      Object.entries(values).forEach(([key, value]) => form.append(key, value));
+    }
     if (tab === 'combos') form.append('items', JSON.stringify(manualComboItems.map((name) => ({ name, slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), price: 0 }))));
     if (tab === 'products' && productImage) form.append('image', productImage);
     if (tab === 'products' && productBackImage) form.append('backImage', productBackImage);
@@ -355,11 +394,43 @@ const CatalogManagement = () => {
             </label>
             <select className={fieldClass} name="category" value={product.category} onChange={update(setProduct)}><option>Men</option><option>Women</option><option>Unisex</option></select>
             <input className={fieldClass} name="type" value={product.type} onChange={update(setProduct)} placeholder="Type (Tees, Joggers...)" required />
-            <input className={fieldClass} name="bestFor" value={product.bestFor} onChange={update(setProduct)} placeholder="Best for" />
+            {/* <input className={fieldClass} name="bestFor" value={product.bestFor} onChange={update(setProduct)} placeholder="Best for" /> */}
             <textarea className={`${fieldClass} md:col-span-2`} name="shortDescription" value={product.shortDescription} onChange={update(setProduct)} placeholder="Short description" required />
             <input className={fieldClass} name="colors" value={product.colors} onChange={update(setProduct)} placeholder="Colors, comma separated" />
             <input className={fieldClass} name="sizes" value={product.sizes} onChange={update(setProduct)} placeholder="Sizes, comma separated" />
             <input className={fieldClass} name="tags" value={product.tags} onChange={update(setProduct)} placeholder="Tags, comma separated" />
+
+            {/* Copywriting & Objection fields */}
+            <div className="md:col-span-2 grid gap-4 border-t border-slate-100 pt-4">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block">Copywriting & Details</span>
+              <div className="grid gap-4 md:grid-cols-2">
+                <input className={fieldClass} name="emotionalHook" value={product.emotionalHook} onChange={update(setProduct)} placeholder="Emotional Hook (e.g., For days when jeans feel like a punishment.)" />
+                <input className={fieldClass} name="fitDetailLine" value={product.fitDetailLine} onChange={update(setProduct)} placeholder="Fit Detail Line (e.g., The rise is set for sitting...)" />
+                <input className={fieldClass} name="careLine" value={product.careLine} onChange={update(setProduct)} placeholder="Care Line (e.g., Machine wash cold. Air dry. Gets softer with use.)" />
+                <textarea className={`${fieldClass} h-20 resize-none md:col-span-2`} name="shortCopy" value={product.shortCopy} onChange={update(setProduct)} placeholder="Short Copy / Proof Points (e.g., Soft joggers that look like you made an effort...)" />
+              </div>
+            </div>
+
+            <div className="md:col-span-2 grid gap-4 border-t border-slate-100 pt-4">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block">Objection Removals (Product Page Q&A)</span>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2 border border-slate-100 p-3 rounded-xl bg-slate-50/30">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase">Objection 1</span>
+                  <input className={fieldClass} name="objection1Question" value={product.objection1Question} onChange={update(setProduct)} placeholder='Question (e.g., "Will it look too casual?")' />
+                  <input className={fieldClass} name="objection1Answer" value={product.objection1Answer} onChange={update(setProduct)} placeholder="Answer (e.g., It's the jogger that reads as intentional...)" />
+                </div>
+                <div className="space-y-2 border border-slate-100 p-3 rounded-xl bg-slate-50/30">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase">Objection 2</span>
+                  <input className={fieldClass} name="objection2Question" value={product.objection2Question} onChange={update(setProduct)} placeholder='Question (e.g., "Will the waistband dig when I sit?")' />
+                  <input className={fieldClass} name="objection2Answer" value={product.objection2Answer} onChange={update(setProduct)} placeholder="Answer (e.g., Designed to sit flat...)" />
+                </div>
+                <div className="space-y-2 border border-slate-100 p-3 rounded-xl bg-slate-50/30 md:col-span-2">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase">Objection 3</span>
+                  <input className={fieldClass} name="objection3Question" value={product.objection3Question} onChange={update(setProduct)} placeholder='Question (e.g., "Will my thighs feel tight?")' />
+                  <input className={fieldClass} name="objection3Answer" value={product.objection3Answer} onChange={update(setProduct)} placeholder="Answer (e.g., Relaxed through the thigh...)" />
+                </div>
+              </div>
+            </div>
             
             {/* Variant Stock Planner */}
             {variantPlanner.length > 0 && (
@@ -612,6 +683,46 @@ const CatalogManagement = () => {
                       ))}
                     </div>
                   </label>
+
+                  {/* Edit Copywriting & Objection Fields */}
+                  <div className="border-t border-slate-100 pt-4 space-y-3">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Copywriting & Details</h4>
+                    <label className="block space-y-1">
+                      <span className="text-xs font-semibold text-slate-500">Emotional Hook</span>
+                      <input className={fieldClass} name="emotionalHook" value={editingProduct.emotionalHook || ''} onChange={updateEditingField} placeholder="For days when jeans feel like a punishment." />
+                    </label>
+                    <label className="block space-y-1">
+                      <span className="text-xs font-semibold text-slate-500">Fit Detail Line</span>
+                      <input className={fieldClass} name="fitDetailLine" value={editingProduct.fitDetailLine || ''} onChange={updateEditingField} placeholder="The rise is set for sitting..." />
+                    </label>
+                    <label className="block space-y-1">
+                      <span className="text-xs font-semibold text-slate-500">Care Line</span>
+                      <input className={fieldClass} name="careLine" value={editingProduct.careLine || ''} onChange={updateEditingField} placeholder="Machine wash cold. Air dry..." />
+                    </label>
+                    <label className="block space-y-1">
+                      <span className="text-xs font-semibold text-slate-500">Short Copy</span>
+                      <textarea className={`${fieldClass} h-20 resize-none`} name="shortCopy" value={editingProduct.shortCopy || ''} onChange={updateEditingField} placeholder="Soft joggers that look like you made an effort..." />
+                    </label>
+                  </div>
+
+                  <div className="border-t border-slate-100 pt-4 space-y-3">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Objection Removals</h4>
+                    <div className="space-y-2 border border-slate-100 p-2.5 rounded-xl bg-slate-50/30">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Objection 1</span>
+                      <input className={fieldClass} name="objection1Question" value={editingProduct.objection1Question || ''} onChange={updateEditingField} placeholder='Question (e.g., "Will it look too casual?")' />
+                      <input className={fieldClass} name="objection1Answer" value={editingProduct.objection1Answer || ''} onChange={updateEditingField} placeholder="Answer..." />
+                    </div>
+                    <div className="space-y-2 border border-slate-100 p-2.5 rounded-xl bg-slate-50/30">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Objection 2</span>
+                      <input className={fieldClass} name="objection2Question" value={editingProduct.objection2Question || ''} onChange={updateEditingField} placeholder='Question (e.g., "Will the waistband dig when I sit?")' />
+                      <input className={fieldClass} name="objection2Answer" value={editingProduct.objection2Answer || ''} onChange={updateEditingField} placeholder="Answer..." />
+                    </div>
+                    <div className="space-y-2 border border-slate-100 p-2.5 rounded-xl bg-slate-50/30">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Objection 3</span>
+                      <input className={fieldClass} name="objection3Question" value={editingProduct.objection3Question || ''} onChange={updateEditingField} placeholder='Question (e.g., "Will my thighs feel tight?")' />
+                      <input className={fieldClass} name="objection3Answer" value={editingProduct.objection3Answer || ''} onChange={updateEditingField} placeholder="Answer..." />
+                    </div>
+                  </div>
 
                   {/* Image Input in Edit Modal */}
                   <label className="block space-y-1">

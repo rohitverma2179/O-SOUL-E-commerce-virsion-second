@@ -215,9 +215,9 @@ const ProductDetails = () => {
               </div>
 
               <div className="mt-10 space-y-6 border-l-2 border-olive/20 pl-8">
-                <p className="font-serif text-2xl italic text-foreground leading-tight">
+                {/* <p className="font-serif text-2xl italic text-foreground leading-tight">
                   "{product.emotionalHook || product.shortDescription}"
-                </p>
+                </p> */}
                 <p className="text-base text-muted-foreground leading-relaxed italic">
                   {product.shortDescription}
                 </p>
@@ -312,47 +312,34 @@ const ProductDetails = () => {
                 </div>
               </div>
 
-              {/* Technical Details Accordion */}
-              <div className="mt-16 space-y-px border-t border-border pt-12">
-                <h4 className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-bold mb-6">Technical Details</h4>
-                {[
-                  { title: "Fit & Pattern", content: product.fitDetail },
-                  { title: "Fabric Feel", content: product.details?.fabric || "Comfort-focused everyday fabric." },
-                  { title: "Best For", content: product.bestFor },
-                  { title: "Care Instructions", content: product.details?.care || "Follow the care label for best results." }
-                ].map((item, idx) => (
-                  <details key={idx} className="group border-b border-border/60">
-                    <summary className="flex cursor-pointer items-center justify-between py-4 text-sm font-medium hover:text-olive transition-colors list-none">
-                      <span className="italic">{item.title}</span>
-                      <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180 opacity-40" />
-                    </summary>
-                    <div className="pb-4 text-sm text-muted-foreground italic leading-relaxed">
-                      {item.content}
-                    </div>
-                  </details>
-                ))}
-              </div>
+              {/* Technical Details Accordion (Dynamic Q&A or Default Details) */}
+              {(() => {
+                const items = (product.objections && product.objections.length > 0)
+                  ? product.objections.map(obj => ({ title: obj.question, content: obj.answer }))
+                  : [
+                      { title: "Fit & Pattern", content: product.fitDetailLine || product.fitDetail },
+                      { title: "Fabric Feel", content: product.shortCopy || product.details?.fabric || "Comfort-focused everyday fabric." },
+                      { title: "Best For", content: product.bestFor },
+                      { title: "Care Instructions", content: product.careLine || product.details?.care || "Follow the care label for best results." }
+                    ].filter(item => item.content);
 
-              {/* Objection Removal Section */}
-              <div className="mt-12 space-y-4">
-                <h4 className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-bold mb-2">Honest Doubts</h4>
-                {product.objections?.map((obj, idx) => (
-                  <div key={idx} className="overflow-hidden rounded-xl border border-border/60 bg-secondary/20">
-                    <button 
-                      onClick={() => setOpenObjection(openObjection === idx ? null : idx)}
-                      className="flex w-full items-center justify-between p-5 text-left text-sm font-bold transition-colors hover:text-olive"
-                    >
-                      <span className="font-serif italic text-base">"{obj.q}"</span>
-                      {openObjection === idx ? <ChevronUp className="h-4 w-4 opacity-40" /> : <ChevronDown className="h-4 w-4 opacity-40" />}
-                    </button>
-                    {openObjection === idx && (
-                      <div className="border-t border-border/40 p-5 pt-4 text-sm text-muted-foreground italic leading-relaxed bg-background/40">
-                        {obj.a}
-                      </div>
-                    )}
+                return items.length > 0 && (
+                  <div className="mt-16 space-y-px border-t border-border pt-12">
+                    <h4 className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-bold mb-6">Technical Details</h4>
+                    {items.map((item, idx) => (
+                      <details key={idx} className="group border-b border-border/60">
+                        <summary className="flex cursor-pointer items-center justify-between py-4 text-sm font-medium hover:text-olive transition-colors list-none">
+                          <span className="italic">{item.title}</span>
+                          <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180 opacity-40" />
+                        </summary>
+                        <div className="pb-4 text-sm text-muted-foreground italic leading-relaxed">
+                          {item.content}
+                        </div>
+                      </details>
+                    ))}
                   </div>
-                ))}
-              </div>
+                );
+              })()}
             </div>
           </div>
         </div>
