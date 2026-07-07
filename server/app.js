@@ -23,7 +23,8 @@ app.use(cors({
   credentials: true,
   origin(origin, callback) {
     const isLocalClient = /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin || "");
-    if (!origin || isLocalClient || origin === allowedOrigin) return callback(null, true);
+    const isVercelPreview = /\.vercel\.app$/.test(origin || "");
+    if (!origin || isLocalClient || isVercelPreview || origin === allowedOrigin) return callback(null, true);
     callback(new Error("This origin is not allowed by CORS"));
   }
 }));
