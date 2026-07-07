@@ -4,7 +4,7 @@ const AnnouncementBar = () => {
   return (
     <div className="bg-foreground text-background">
       <div className="container-osoul flex h-9 items-center justify-center text-center text-[11px] uppercase tracking-[0.18em]">
-        First drop live · Free shipping on all orders · No more adjusting
+        {/* First drop live · Free shipping on all orders · No more adjusting */}
       </div>
     </div>
   );

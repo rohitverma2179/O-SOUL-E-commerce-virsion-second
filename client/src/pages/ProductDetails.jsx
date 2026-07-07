@@ -20,6 +20,7 @@ const ProductDetails = () => {
   const [selectedColor, setSelectedColor] = useState('');
   const [openObjection, setOpenObjection] = useState(null);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   useEffect(() => {
     if (product && user) {
@@ -53,13 +54,24 @@ const ProductDetails = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     setLoadingProduct(true);
+    setActiveImageIndex(0);
     fetch(`${API_BASE_URL}/products/${slug}`)
       .then(async (response) => {
         const payload = await response.json();
         if (!response.ok) throw new Error(payload.message);
-        setProduct(payload.data);
-        setSelectedSize(payload.data.sizes?.[0] || '');
-        setSelectedColor(payload.data.colors?.[0] || '');
+        const initialProd = payload.data;
+        setProduct(initialProd);
+        let initSize = initialProd.sizes?.[0] || '';
+        let initColor = initialProd.colors?.[0] || '';
+        if (initialProd.variants && initialProd.variants.length > 0) {
+          const firstInStock = initialProd.variants.find((v) => v.stock > 0);
+          if (firstInStock) {
+            initSize = firstInStock.size;
+            initColor = firstInStock.color;
+          }
+        }
+        setSelectedSize(initSize);
+        setSelectedColor(initColor);
       })
       .catch(() => setProduct(null))
       .finally(() => setLoadingProduct(false));
@@ -81,10 +93,16 @@ const ProductDetails = () => {
       navigate('/login', { state: { from: location } });
       return;
     }
-    for(let i=0; i<quantity; i++) {
-      addToCart({ ...product, id: product._id }, selectedSize, selectedColor);
-    }
+    addToCart({ ...product, id: product._id }, selectedSize, selectedColor, quantity);
   };
+
+  const selectedVariant = product.variants?.find(
+    (v) => 
+      (!selectedSize || v.size?.toLowerCase() === selectedSize.toLowerCase()) &&
+      (!selectedColor || v.color?.toLowerCase() === selectedColor.toLowerCase())
+  );
+  const variantStock = selectedVariant !== undefined ? selectedVariant.stock : product.stock;
+  const isOutOfStock = variantStock < 1;
 
   return (
     <div className="bg-background">
@@ -105,17 +123,49 @@ const ProductDetails = () => {
         <div className="grid gap-12 lg:grid-cols-12">
           {/* Product Images & Features */}
           <div className="lg:col-span-7 space-y-8">
-            <div className={`relative w-full overflow-hidden rounded-2xl bg-secondary aspect-[4/5] shadow-sm`}>
-              {product.image && (
-                <OptimizedImage 
-                  src={product.image} 
-                  alt={product.name} 
-                  aspectRatio="aspect-[4/5]"
-                  priority={true}
-                  className="h-full w-full"
-                />
-              )}
-              <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
+            <div className={`relative w-full overflow-hidden rounded-2xl bg-secondary aspect-[4/5] shadow-sm group`}>
+              {(() => {
+                const images = [product.image, product.backImage].filter(Boolean);
+                return (
+                  <>
+                    {images.length > 0 && (
+                      <OptimizedImage 
+                        src={images[activeImageIndex]} 
+                        alt={product.name} 
+                        aspectRatio="aspect-[4/5]"
+                        priority={true}
+                        className="h-full w-full object-cover transition-all duration-500"
+                      />
+                    )}
+                    <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
+                    {images.length > 1 && (
+                      <>
+                        <button 
+                          onClick={() => setActiveImageIndex((curr) => (curr === 0 ? images.length - 1 : curr - 1))}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 hover:bg-white text-slate-800 shadow-md hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer"
+                        >
+                          ←
+                        </button>
+                        <button 
+                          onClick={() => setActiveImageIndex((curr) => (curr === images.length - 1 ? 0 : curr + 1))}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 hover:bg-white text-slate-800 shadow-md hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer"
+                        >
+                          →
+                        </button>
+                        <div className="absolute bottom-4 inset-x-0 flex justify-center gap-1.5 z-10">
+                          {images.map((_, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => setActiveImageIndex(idx)}
+                              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${activeImageIndex === idx ? 'w-6 bg-white' : 'w-2 bg-white/50'}`}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </>
+                );
+              })()}
             </div>
             
             {/* Feature Tags Grid */}
@@ -140,6 +190,15 @@ const ProductDetails = () => {
               </div>
               <h1 className="font-serif text-4xl md:text-5xl tracking-tight leading-tight">{product.name}</h1>
               
+              {/* Product Rating Stars */}
+              <div className="mt-2 flex items-center gap-0.5 text-amber-500">
+                {[...Array(5)].map((_, i) => (
+                  <span key={i} className="text-base">
+                    {i < (product.rating || 5) ? '★' : '☆'}
+                  </span>
+                ))}
+              </div>
+              
               <div className="mt-6 flex items-center gap-5">
                 <div className="flex items-baseline gap-3">
                   <span className="text-3xl font-serif text-foreground">₹{product.price}</span>
@@ -148,8 +207,10 @@ const ProductDetails = () => {
                   )}
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-olive animate-pulse"></span>
-                  <span className="text-[10px] uppercase tracking-widest font-bold text-olive">{product.stock > 0 ? `${product.stock} In Stock` : 'Out of Stock'}</span>
+                  <span className={`h-1.5 w-1.5 rounded-full ${isOutOfStock ? 'bg-clay' : 'bg-olive'} animate-pulse`}></span>
+                  <span className={`text-[10px] uppercase tracking-widest font-bold ${isOutOfStock ? 'text-clay' : 'text-olive'}`}>
+                    {!isOutOfStock ? `${variantStock} In Stock` : 'Out of Stock'}
+                  </span>
                 </div>
               </div>
 
@@ -221,15 +282,15 @@ const ProductDetails = () => {
                   <div className="inline-flex h-14 items-center rounded-md border border-border bg-card">
                     <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-5 hover:text-olive transition-colors"><Minus className="h-4 w-4" /></button>
                     <span className="min-w-[2rem] text-center font-bold text-lg">{quantity}</span>
-                    <button disabled={quantity >= product.stock} onClick={() => setQuantity(Math.min(product.stock, quantity + 1))} className="px-5 hover:text-olive transition-colors disabled:cursor-not-allowed disabled:opacity-30"><Plus className="h-4 w-4" /></button>
+                    <button disabled={isOutOfStock || quantity >= variantStock} onClick={() => setQuantity(Math.min(variantStock, quantity + 1))} className="px-5 hover:text-olive transition-colors disabled:cursor-not-allowed disabled:opacity-30"><Plus className="h-4 w-4" /></button>
                   </div>
                   <button 
                     onClick={handleAddToCart}
-                    disabled={product.stock < 1 || !selectedSize || !selectedColor}
+                    disabled={isOutOfStock || !selectedSize || !selectedColor}
                     className="flex-1 h-14 rounded-md bg-foreground text-background font-bold uppercase tracking-widest text-[11px] transition-all hover:bg-foreground/90 active:scale-[0.98] flex items-center justify-center gap-3 shadow-xl shadow-charcoal/10 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <ShoppingBag className="h-4 w-4" />
-                    {product.stock > 0 ? 'Add to Bag' : 'Out of Stock'}
+                    {!isOutOfStock ? 'Add to Bag' : 'Out of Stock'}
                   </button>
                   <button 
                     onClick={handleToggleWishlist}

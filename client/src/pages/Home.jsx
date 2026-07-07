@@ -19,15 +19,11 @@ import catImgCombos from '../assets/product/(10).png';
 const products = allProducts;
 
 
-import { allCombos } from '../data/comboData';
-
-const combos = allCombos;
-
-
 const Home = () => {
   const [popup, setPopup] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [liveProducts, setLiveProducts] = useState([]);
+  const [liveCombos, setLiveCombos] = useState([]);
   const [heroContent, setHeroContent] = useState({
     tagline: 'Bottomwear that you don’t need to adjust.',
     titleLine1: 'Welcome to an  adjust-free world',
@@ -92,9 +88,22 @@ const Home = () => {
       }
     };
 
+    const fetchCombosData = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/combos`);
+        const data = await response.json();
+        if (data.success && data.data) {
+          setLiveCombos(data.data);
+        }
+      } catch (error) {
+        console.log("Could not load dynamic combos");
+      }
+    };
+
     fetchHomepageData();
     fetchPopupData();
     fetchProductsData();
+    fetchCombosData();
   }, []);
 
   const reviewsData = [
@@ -244,10 +253,17 @@ const Home = () => {
             <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground italic">Combos for the days you don't want to think too much about what to wear.</p>
           </div>
           <div className="mt-10 grid gap-6 md:grid-cols-2">
-            {combos.map(combo => (
-              <ComboCard key={combo.id} combo={combo} />
+            {liveCombos.slice(0, 6).map(combo => (
+              <ComboCard key={combo._id || combo.id} combo={combo} />
             ))}
           </div>
+          {liveCombos.length > 6 && (
+            <div className="mt-10 text-center">
+              <Link to="/combos" className="inline-flex h-11 items-center rounded-md border border-foreground px-6 text-sm hover:bg-foreground hover:text-background transition-colors">
+                View All Combos
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
@@ -569,7 +585,7 @@ const Home = () => {
       <section className="container-osoul py-24 md:py-32 text-center">
         <h2 className="font-serif text-4xl md:text-5xl italic tracking-tight">Start with one piece you'll actually repeat.</h2>
         <p className="mt-6 text-muted-foreground italic text-lg leading-relaxed">
-          First drop live. Free shipping on all orders. <br className="md:hidden" />
+          First drop live on all orders. <br className="md:hidden" />
           <span className="text-olive font-medium">Small batch — no restocks.</span>
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-4">

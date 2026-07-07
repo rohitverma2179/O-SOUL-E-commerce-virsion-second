@@ -337,8 +337,12 @@ const UserDashboard = () => {
                             {order.items.map((item, idx) => (
                               <div key={idx} className="flex gap-4 py-4 first:pt-0 last:pb-0 items-start justify-between">
                                 <div className="flex gap-4">
-                                  <div className="h-16 w-14 rounded bg-secondary flex-shrink-0 flex items-center justify-center text-xs font-bold font-serif shadow-inner">
-                                    {item.name[0]}
+                                  <div className="h-16 w-14 rounded bg-secondary flex-shrink-0 flex items-center justify-center overflow-hidden shadow-inner relative">
+                                    {item.image ? (
+                                      <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
+                                    ) : (
+                                      <span className="text-xs font-bold font-serif">{item.name[0]}</span>
+                                    )}
                                   </div>
                                   <div>
                                     <h4 className="text-sm font-semibold text-foreground">{item.name}</h4>
@@ -949,11 +953,17 @@ const UserDashboard = () => {
                 <div className="w-full sm:w-[240px] space-y-2 text-right">
                   <div className="flex justify-between border-b border-border/40 pb-2 text-muted-foreground">
                     <span>Subtotal</span>
-                    <span className="font-semibold">₹{activeInvoice.totalAmount}</span>
+                    <span className="font-semibold">₹{activeInvoice.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)}</span>
                   </div>
                   <div className="flex justify-between border-b border-border/40 pb-2 text-muted-foreground">
                     <span>Shipping</span>
-                    <span className="text-olive italic font-semibold">Free</span>
+                    <span className="font-semibold">
+                      {activeInvoice.totalAmount - activeInvoice.items.reduce((sum, item) => sum + (item.price * item.quantity), 0) > 0 ? (
+                        `₹${activeInvoice.totalAmount - activeInvoice.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)}`
+                      ) : (
+                        <span className="text-olive italic">Free</span>
+                      )}
+                    </span>
                   </div>
                   <div className="flex justify-between text-base font-bold pt-1">
                     <span className="font-serif">Grand Total</span>

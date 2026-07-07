@@ -55,8 +55,12 @@ const CartDrawer = () => {
             <div className="space-y-6">
               {cartItems.map((item, idx) => (
                 <div key={`${item.id}-${item.size}-${item.color}-${idx}`} className="flex gap-4">
-                  <div className={`h-24 w-20 flex-shrink-0 overflow-hidden rounded-md tile-${item.tile} relative`}>
-                    <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
+                  <div className={`h-24 w-20 flex-shrink-0 overflow-hidden rounded-md bg-secondary ${item.image ? '' : `tile-${item.tile}`} relative`}>
+                    {item.image ? (
+                      <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
+                    )}
                   </div>
                   <div className="flex flex-1 flex-col">
                     <div className="flex justify-between text-base font-medium">
@@ -103,7 +107,7 @@ const CartDrawer = () => {
               <p>Subtotal</p>
               <p>₹{cartTotal}</p>
             </div>
-            <p className="text-xs text-muted-foreground italic">Free shipping on all comfort drops.</p>
+            <p className="text-xs text-muted-foreground italic"> All comfort drops.</p>
             <div className="grid gap-3">
               <button 
                 onClick={handleCheckout}

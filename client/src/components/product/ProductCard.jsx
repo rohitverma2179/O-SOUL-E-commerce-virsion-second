@@ -11,8 +11,16 @@ const ProductCard = ({ product }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const defaultSize = product.sizes?.[0] || 'One size';
-  const defaultColor = product.colors?.[0] || 'Default';
+  let defaultSize = product.sizes?.[0] || 'One size';
+  let defaultColor = product.colors?.[0] || 'Default';
+
+  if (product.variants && product.variants.length > 0) {
+    const availableVariant = product.variants.find((v) => v.stock > 0);
+    if (availableVariant) {
+      defaultSize = availableVariant.size;
+      defaultColor = availableVariant.color;
+    }
+  }
 
   const handleAddToCart = () => {
     if (!user) return navigate('/login', { state: { from: location } });
@@ -55,6 +63,13 @@ const ProductCard = ({ product }) => {
           <Link to={`/products/${slug}`} className="font-serif text-base leading-tight text-foreground hover:underline underline-offset-4">
             {name}
           </Link>
+          <div className="mt-1 flex items-center gap-0.5 text-amber-500">
+            {[...Array(5)].map((_, i) => (
+              <span key={i} className="text-xs">
+                {i < (product.rating || 5) ? '★' : '☆'}
+              </span>
+            ))}
+          </div>
           <div className="mt-1 text-sm flex items-center gap-2">
             <span className="text-muted-foreground font-semibold">₹{price}</span>
             {originalPrice && Number(originalPrice) > Number(price) && (

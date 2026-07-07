@@ -20,14 +20,33 @@ exports.getProductBySlug = async (req, res, next) => {
 
 exports.createProduct = async (req, res, next) => {
   try {
-    if (!req.file) return res.status(400).json({ success: false, message: "Product image is required" });
+    const imageFile = req.files?.image?.[0];
+    const backImageFile = req.files?.backImage?.[0];
+
+    if (!imageFile) return res.status(400).json({ success: false, message: "Product image is required" });
     
     // Server-side double validation for 3MB limit
-    if (req.file.size > 3 * 1024 * 1024) {
+    if (imageFile.size > 3 * 1024 * 1024) {
       return res.status(400).json({ success: false, message: "Image size must be less than 3MB" });
     }
+    if (backImageFile && backImageFile.size > 3 * 1024 * 1024) {
+      return res.status(400).json({ success: false, message: "Secondary image size must be less than 3MB" });
+    }
 
-    const stock = Number(req.body.stock);
+    let variants = [];
+    if (req.body.variants) {
+      try {
+        variants = typeof req.body.variants === "string" ? JSON.parse(req.body.variants) : req.body.variants;
+      } catch (e) {
+        console.error("Failed to parse variants:", e.message);
+      }
+    }
+
+    let stock = Number(req.body.stock);
+    if (variants && variants.length > 0) {
+      stock = variants.reduce((sum, v) => sum + Number(v.stock || 0), 0);
+    }
+
     if (!Number.isInteger(stock) || stock < 0) return res.status(400).json({ success: false, message: "Stock must be a non-negative whole number" });
 
     const baseSlug = String(req.body.slug || req.body.name)
@@ -42,37 +61,160 @@ exports.createProduct = async (req, res, next) => {
       suffix += 1;
     }
 
-    // Upload to Cloudinary
-    const uploadResult = await uploadToCloudinary(req.file.buffer, "osou/products");
+    // Upload main image to Cloudinary
+    const uploadResult = await uploadToCloudinary(imageFile.buffer, "osou/products");
+
+    // Upload back image to Cloudinary if available
+    let backImageUrl = undefined;
+    if (backImageFile) {
+      const uploadBackResult = await uploadToCloudinary(backImageFile.buffer, "osou/products");
+      backImageUrl = uploadBackResult.secure_url;
+    }
 
     const originalPrice = req.body.originalPrice ? Number(req.body.originalPrice) : undefined;
+    
+    // Parse weight and dimensions (ensure positive numbers, fallback to defaults if invalid)
+    const weight = req.body.weight && Number(req.body.weight) > 0 ? Number(req.body.weight) : 500;
+    const length = req.body.length && Number(req.body.length) > 0 ? Number(req.body.length) : 10;
+    const width = req.body.width && Number(req.body.width) > 0 ? Number(req.body.width) : 10;
+    const height = req.body.height && Number(req.body.height) > 0 ? Number(req.body.height) : 10;
+
+    const rating = req.body.rating ? Number(req.body.rating) : 5;
 
     const product = await Product.create({
       ...req.body,
       slug,
       image: uploadResult.secure_url,
+      backImage: backImageUrl,
       colors: splitList(req.body.colors),
       sizes: splitList(req.body.sizes),
       tags: splitList(req.body.tags),
+      variants,
       stock,
       inStock: stock > 0,
       onSale: false,
-      originalPrice
+      originalPrice,
+      weight,
+      length,
+      width,
+      height,
+      rating
     });
     res.status(201).json({ success: true, data: product, message: "Product created" });
   } catch (error) { next(error); }
 };
 
+exports.updateProduct = async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
+
+    const imageFile = req.files?.image?.[0];
+    const backImageFile = req.files?.backImage?.[0];
+
+    let imageUrl = product.image;
+    if (imageFile) {
+      if (imageFile.size > 3 * 1024 * 1024) {
+        return res.status(400).json({ success: false, message: "Image size must be less than 3MB" });
+      }
+      const uploadResult = await uploadToCloudinary(imageFile.buffer, "osou/products");
+      if (product.image) {
+        try {
+          await deleteFromCloudinary(product.image);
+        } catch (delErr) {
+          console.error("Cloudinary old image delete failed:", delErr.message);
+        }
+      }
+      imageUrl = uploadResult.secure_url;
+    }
+
+    let backImageUrl = product.backImage;
+    if (backImageFile) {
+      if (backImageFile.size > 3 * 1024 * 1024) {
+        return res.status(400).json({ success: false, message: "Secondary image size must be less than 3MB" });
+      }
+      const uploadBackResult = await uploadToCloudinary(backImageFile.buffer, "osou/products");
+      if (product.backImage) {
+        try {
+          await deleteFromCloudinary(product.backImage);
+        } catch (delErr) {
+          console.error("Cloudinary old secondary image delete failed:", delErr.message);
+        }
+      }
+      backImageUrl = uploadBackResult.secure_url;
+    }
+
+    let variants = [];
+    if (req.body.variants) {
+      try {
+        variants = typeof req.body.variants === "string" ? JSON.parse(req.body.variants) : req.body.variants;
+      } catch (e) {
+        console.error("Failed to parse variants:", e.message);
+      }
+    } else if (product.variants) {
+      variants = product.variants;
+    }
+
+    let stock = req.body.stock !== undefined ? Number(req.body.stock) : product.stock;
+    if (variants && variants.length > 0) {
+      stock = variants.reduce((sum, v) => sum + Number(v.stock || 0), 0);
+    }
+
+    if (req.body.slug && req.body.slug !== product.slug) {
+      const baseSlug = String(req.body.slug)
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+      let slug = baseSlug;
+      let suffix = 2;
+      while (await Product.exists({ slug, _id: { $ne: product._id } })) {
+        slug = `${baseSlug}-${suffix}`;
+        suffix += 1;
+      }
+      product.slug = slug;
+    }
+
+    product.name = req.body.name || product.name;
+    product.price = req.body.price !== undefined ? Number(req.body.price) : product.price;
+    product.originalPrice = req.body.originalPrice !== undefined ? (req.body.originalPrice ? Number(req.body.originalPrice) : undefined) : product.originalPrice;
+    product.category = req.body.category || product.category;
+    product.type = req.body.type || product.type;
+    product.shortDescription = req.body.shortDescription || product.shortDescription;
+    product.bestFor = req.body.bestFor || product.bestFor;
+    product.colors = req.body.colors !== undefined ? splitList(req.body.colors) : product.colors;
+    product.sizes = req.body.sizes !== undefined ? splitList(req.body.sizes) : product.sizes;
+    product.tags = req.body.tags !== undefined ? splitList(req.body.tags) : product.tags;
+    product.weight = req.body.weight !== undefined ? Number(req.body.weight) : product.weight;
+    product.length = req.body.length !== undefined ? Number(req.body.length) : product.length;
+    product.width = req.body.width !== undefined ? Number(req.body.width) : product.width;
+    product.height = req.body.height !== undefined ? Number(req.body.height) : product.height;
+    product.image = imageUrl;
+    product.backImage = backImageUrl;
+    product.variants = variants;
+    product.stock = stock;
+    product.inStock = stock > 0;
+    product.rating = req.body.rating !== undefined ? Number(req.body.rating) : product.rating;
+
+    await product.save();
+    res.json({ success: true, data: product, message: "Product updated successfully" });
+  } catch (error) { next(error); }
+};
+
 exports.deleteProduct = async (req, res, next) => {
   try {
-    const product = await Product.findByIdAndDelete(req.params.id);
+    const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ success: false, message: "Product not found" });
     
-    // Delete from Cloudinary if it is a Cloudinary URL (falls back gracefully otherwise)
+    // Delete from Cloudinary if URLs exist
     if (product.image) {
-      await deleteFromCloudinary(product.image);
+      try { await deleteFromCloudinary(product.image); } catch (e) { console.error(e); }
+    }
+    if (product.backImage) {
+      try { await deleteFromCloudinary(product.backImage); } catch (e) { console.error(e); }
     }
     
+    await Product.findByIdAndDelete(req.params.id);
     res.json({ success: true, message: "Product deleted" });
   } catch (error) { next(error); }
 };

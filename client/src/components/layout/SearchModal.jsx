@@ -1,16 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Search as SearchIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { allProducts } from '../../data/productData';
 
 const SearchModal = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
-  
+  const [dbProducts, setDbProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    setLoading(true);
+    fetch(`${import.meta.env.VITE_API_URL}/products`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) {
+          setDbProducts(data.data);
+        }
+      })
+      .catch(err => console.error("Error loading products for search:", err))
+      .finally(() => setLoading(false));
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
-  const filteredProducts = allProducts.filter(p => 
+  const filteredProducts = dbProducts.filter(p => 
     p.name.toLowerCase().includes(query.toLowerCase()) || 
-    p.category.toLowerCase().includes(query.toLowerCase())
+    p.category.toLowerCase().includes(query.toLowerCase()) ||
+    (p.tags && p.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase())))
   ).slice(0, 4);
 
   return (
@@ -42,22 +59,28 @@ const SearchModal = ({ isOpen, onClose }) => {
             </h4>
             
             <div className="space-y-4">
-              {query && filteredProducts.length === 0 ? (
+              {loading ? (
+                <p className="py-10 text-center text-sm text-muted-foreground italic">Loading products...</p>
+              ) : query && filteredProducts.length === 0 ? (
                 <p className="py-10 text-center text-sm text-muted-foreground italic">No results found for "{query}"</p>
               ) : (
-                (query ? filteredProducts : allProducts.slice(0, 3)).map(product => (
+                (query ? filteredProducts : dbProducts.slice(0, 3)).map(product => (
                   <Link 
-                    key={product.id} 
+                    key={product._id || product.id} 
                     to={`/products/${product.slug}`} 
                     onClick={onClose}
                     className="flex items-center gap-4 group p-2 rounded-lg hover:bg-secondary/50 transition-colors"
                   >
-                    <div className={`h-12 w-12 rounded bg-secondary flex-shrink-0 tile-${product.tile} relative`}>
-                      <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
+                    <div className={`h-12 w-12 rounded bg-secondary flex-shrink-0 ${product.image ? 'overflow-hidden' : `tile-${product.tileClass || product.tile}`} relative`}>
+                      {product.image ? (
+                        <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+                      ) : (
+                        <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
+                      )}
                     </div>
                     <div>
                       <h5 className="text-sm font-medium group-hover:underline">{product.name}</h5>
-                      <p className="text-xs text-muted-foreground italic">{product.emotional}</p>
+                      <p className="text-xs text-muted-foreground italic line-clamp-1">{product.shortDescription}</p>
                     </div>
                     <div className="ml-auto text-sm font-medium">₹{product.price}</div>
                   </Link>

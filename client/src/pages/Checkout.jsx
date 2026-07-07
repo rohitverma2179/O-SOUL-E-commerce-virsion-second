@@ -90,7 +90,7 @@ const Checkout = () => {
         },
         credentials: 'include',
         body: JSON.stringify({
-          amount: cartTotal,
+          amount: cartTotal + 50,
           items: cartItems,
           shippingDetails: formData
         })
@@ -463,11 +463,11 @@ const Checkout = () => {
                 className="flex h-14 w-full items-center justify-center gap-3 rounded-md bg-foreground text-sm font-semibold text-background hover:bg-foreground/90 transition-all disabled:opacity-50"
               >
                 <CreditCard className="h-4 w-4" />
-                {isProcessing ? "Processing..." : `Proceed to Payment (₹${cartTotal})`}
+                {isProcessing ? "Processing..." : `Proceed to Payment (₹${cartTotal + 50})`}
               </button>
               <div className="mt-4 flex items-center justify-center gap-6 text-[10px] text-muted-foreground uppercase tracking-wider">
                 <span className="flex items-center gap-1.5"><ShieldCheck className="h-3 w-3" /> Secure Payment</span>
-                <span className="flex items-center gap-1.5"><Truck className="h-3 w-3" /> Free Shipping</span>
+                {/* <span className="flex items-center gap-1.5"><Truck className="h-3 w-3" /> Free Shipping</span> */}
               </div>
             </div>
           </form>
@@ -479,8 +479,12 @@ const Checkout = () => {
           <div className="space-y-4">
             {cartItems.map((item, idx) => (
               <div key={idx} className="flex gap-4">
-                <div className={`h-16 w-14 rounded bg-secondary flex-shrink-0 tile-${item.tile} relative`}>
-                  <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
+                <div className={`h-16 w-14 rounded bg-secondary flex-shrink-0 ${item.image ? 'overflow-hidden' : `tile-${item.tile}`} relative`}>
+                  {item.image ? (
+                    <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
+                  )}
                 </div>
                 <div className="flex-1">
                   <h4 className="text-sm font-medium">{item.name}</h4>
@@ -498,11 +502,11 @@ const Checkout = () => {
             </div>
             <div className="flex justify-between text-muted-foreground">
               <span>Shipping</span>
-              <span className="text-olive italic">Free</span>
+              <span>₹50</span>
             </div>
             <div className="flex justify-between border-t border-border/50 pt-3 text-lg font-semibold">
               <span className="font-serif">Total</span>
-              <span>₹{cartTotal}</span>
+              <span>₹{cartTotal + 50}</span>
             </div>
           </div>
         </aside>

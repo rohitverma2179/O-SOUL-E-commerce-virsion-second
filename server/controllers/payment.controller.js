@@ -2,6 +2,7 @@ const Razorpay = require("razorpay");
 const crypto = require("crypto");
 const Order = require("../models/order.model");
 const Cart = require("../models/cart.model");
+const Product = require("../models/product.model");
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -20,6 +21,46 @@ exports.createOrder = async (req, res, next) => {
     }
     if (!shippingDetails) {
       return res.status(400).json({ success: false, message: "Shipping details are required" });
+    }
+
+    // Validate stock for all items
+    for (const item of items) {
+      const prodId = item.id || item.productId || item._id;
+      const product = await Product.findById(prodId);
+      if (!product) {
+        return res.status(404).json({ success: false, message: `Product ${item.name || "unknown"} not found` });
+      }
+
+      // Check variant stock if size/color specified
+      if ((item.size || item.color) && product.variants && product.variants.length > 0) {
+        const variant = product.variants.find(
+          (v) => 
+            (!item.size || v.size?.toLowerCase() === item.size.toLowerCase()) &&
+            (!item.color || v.color?.toLowerCase() === item.color.toLowerCase())
+        );
+
+        if (!variant) {
+          return res.status(400).json({ 
+            success: false, 
+            message: `Variant not found for ${product.name} (Size: ${item.size || "N/A"}, Color: ${item.color || "N/A"})` 
+          });
+        }
+
+        if (variant.stock < item.quantity) {
+          return res.status(400).json({ 
+            success: false, 
+            message: `Insufficient stock for ${product.name} (${item.color} - ${item.size}). Available: ${variant.stock}` 
+          });
+        }
+      } else {
+        // Fallback to general stock
+        if (product.stock < item.quantity) {
+          return res.status(400).json({ 
+            success: false, 
+            message: `Insufficient stock for ${product.name}. Available: ${product.stock}` 
+          });
+        }
+      }
     }
 
     const amountInPaise = Math.round(amount * 100);
@@ -41,7 +82,8 @@ exports.createOrder = async (req, res, next) => {
         price: item.price,
         quantity: item.quantity,
         size: item.size,
-        color: item.color
+        color: item.color,
+        image: item.image
       })),
       shippingDetails,
       totalAmount: amount,
@@ -80,18 +122,48 @@ exports.verifyPayment = async (req, res, next) => {
       .digest("hex");
 
     if (razorpay_signature === expectedSign) {
-      const order = await Order.findOneAndUpdate(
-        { razorpayOrderId: razorpay_order_id },
-        {
-          razorpayPaymentId: razorpay_payment_id,
-          razorpaySignature: razorpay_signature,
-          status: "paid"
-        },
-        { new: true }
-      );
+      const order = await Order.findOne({ razorpayOrderId: razorpay_order_id });
 
       if (!order) {
         return res.status(404).json({ success: false, message: "Order not found" });
+      }
+
+      // Check and update order status to paid, and deduct stock
+      if (order.status !== "paid") {
+        order.status = "paid";
+        order.razorpayPaymentId = razorpay_payment_id;
+        order.razorpaySignature = razorpay_signature;
+        await order.save();
+
+        // Deduct stock for all items
+        for (const item of order.items) {
+          const product = await Product.findById(item.productId);
+          if (product) {
+            let updated = false;
+
+            if ((item.size || item.color) && product.variants && product.variants.length > 0) {
+              const variantIndex = product.variants.findIndex(
+                (v) =>
+                  (!item.size || v.size?.toLowerCase() === item.size.toLowerCase()) &&
+                  (!item.color || v.color?.toLowerCase() === item.color.toLowerCase())
+              );
+
+              if (variantIndex !== -1) {
+                product.variants[variantIndex].stock = Math.max(0, product.variants[variantIndex].stock - item.quantity);
+                updated = true;
+              }
+            }
+
+            if (updated) {
+              product.stock = product.variants.reduce((sum, v) => sum + v.stock, 0);
+            } else {
+              product.stock = Math.max(0, product.stock - item.quantity);
+            }
+
+            product.inStock = product.stock > 0;
+            await product.save();
+          }
+        }
       }
 
       // Empty user's cart items in database

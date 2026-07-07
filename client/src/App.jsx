@@ -17,6 +17,9 @@ import SizeGuide from './pages/SizeGuide';
 import FAQ from './pages/FAQ';
 import FounderNote from './pages/FounderNote';
 import ExchangePolicy from './pages/ExchangePolicy';
+import CustomerPolicy from './pages/CustomerPolicy';
+import TermsConditions from './pages/TermsConditions';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import Support from './pages/Support';
 import TrackOrder from './pages/TrackOrder';
 import UserDashboard from './pages/UserDashboard';
@@ -60,6 +63,9 @@ function App() {
             <Route path="find-my-fit" element={<FindMyFit />} />
             <Route path="gallery" element={<Gallery />} />
             <Route path="exchange" element={<ExchangePolicy />} />
+            <Route path="policy" element={<CustomerPolicy />} />
+            <Route path="terms" element={<TermsConditions />} />
+            <Route path="privacy" element={<PrivacyPolicy />} />
             <Route path="support" element={<Support />} />
             <Route path="track" element={<TrackOrder />} />
 

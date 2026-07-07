@@ -253,9 +253,9 @@ const FindMyFit = () => {
                   <div className="md:col-span-7 space-y-6">
                     <div>
                       <span className="text-2xl font-serif text-foreground font-medium">₹{product.price}</span>
-                      {product.onSale && (
+                      {/* {product.onSale && (
                         <span className="ml-2 text-xs uppercase tracking-wider text-olive font-semibold">Free Shipping Included</span>
-                      )}
+                      )} */}
                     </div>
 
                     {/* Color Selector */}

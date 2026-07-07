@@ -24,7 +24,7 @@ const Footer = () => {
             quote: data.data.quote || 'If it makes you adjust, it failed.',
             instagramUrl: data.data.instagramUrl || 'https://instagram.com/osoul.in',
             copyrightText: data.data.copyrightText || '© 2026 O\'Soul. All rights reserved.',
-            copyrightSubtext: data.data.copyrightSubtext || 'Everyday comfort that still looks clean.',
+            // copyrightSubtext: data.data.copyrightSubtext || 'Everyday comfort that still looks clean.',
             trustLabel1: data.data.trustLabel1 || 'Secure Razorpay checkout',
             trustLabel2: data.data.trustLabel2 || 'Easy exchange support'
           });
@@ -68,7 +68,9 @@ const Footer = () => {
               <ul className="space-y-3 text-sm text-muted-foreground italic">
                 <li><Link to="/size-guide" className="hover:text-olive transition-colors">Size Guide</Link></li>
                 <li><Link to="/faq" className="hover:text-olive transition-colors">FAQ</Link></li>
-                <li><Link to="/exchange" className="hover:text-olive transition-colors">Exchange Support</Link></li>
+                <li><Link to="/policy" className="hover:text-olive transition-colors">Customer Policy</Link></li>
+                <li><Link to="/terms" className="hover:text-olive transition-colors">Terms & Conditions</Link></li>
+                <li><Link to="/privacy" className="hover:text-olive transition-colors font-medium text-foreground/80">Privacy Policy</Link></li>
                 <li><Link to="/support" className="hover:text-olive transition-colors">Customer Support</Link></li>
                 <li><Link to="/track" className="hover:text-olive transition-colors">Track Order</Link></li>
               </ul>
@@ -88,7 +90,7 @@ const Footer = () => {
 
         <div className="mt-16 flex flex-col items-center justify-between gap-6 border-t border-border pt-10 md:flex-row">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">
-            {settings.copyrightText} <span className="mx-2 opacity-30">|</span> {settings.copyrightSubtext}
+            {settings.copyrightText} <span className="mx-2 opacity-30">|</span> {settings.copyrightSubtext} <span className="mx-2 opacity-30">|</span> <Link to="/policy" className="hover:text-olive transition-colors underline underline-offset-4">Customer Policy</Link> <span className="mx-2 opacity-30">|</span> <Link to="/terms" className="hover:text-olive transition-colors underline underline-offset-4">Terms & Conditions</Link> <span className="mx-2 opacity-30">|</span> <Link to="/privacy" className="hover:text-olive transition-colors underline underline-offset-4">Privacy Policy</Link>
           </div>
           <div className="flex gap-6 text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">
             <span>{settings.trustLabel1}</span>
