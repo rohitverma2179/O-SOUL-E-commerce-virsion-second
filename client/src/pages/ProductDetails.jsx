@@ -270,6 +270,7 @@ const ProductDetails = () => {
                         onClick={() => setSelectedColor(color)}
                         className={`group relative flex h-11 items-center gap-3 rounded-full border px-5 text-sm transition-all ${selectedColor === color ? 'border-foreground bg-secondary/50 font-bold' : 'border-border hover:border-foreground/30 text-muted-foreground'}`}
                       >
+
                         <span className={`h-3 w-3 rounded-full shadow-inner ${color === 'Black' ? 'bg-zinc-900' : color === 'Olive' ? 'bg-olive' : 'bg-stone-400'}`}></span>
                         {color}
                       </button>
