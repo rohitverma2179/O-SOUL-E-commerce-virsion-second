@@ -12,8 +12,8 @@ import heroImg2 from '../assets/product/(62).png';
 import heroImg3 from '../assets/product/(67).png';
 
 import catImgMen from '../assets/product/(4).png';
-import catImgWomen from '../assets/product/(50).png';
-import catImgUnisex from '../assets/product/(32).png';
+import catImgWomen from '../assets/product/(64).png';
+import catImgUnisex from '../assets/product/68.png';
 import catImgCombos from '../assets/product/(10).png';
 
 const products = allProducts;

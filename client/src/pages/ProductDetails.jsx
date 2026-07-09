@@ -14,7 +14,7 @@ const ProductDetails = () => {
   const { user, checkAuth } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
@@ -97,7 +97,7 @@ const ProductDetails = () => {
   };
 
   const selectedVariant = product.variants?.find(
-    (v) => 
+    (v) =>
       (!selectedSize || v.size?.toLowerCase() === selectedSize.toLowerCase()) &&
       (!selectedColor || v.color?.toLowerCase() === selectedColor.toLowerCase())
   );
@@ -129,9 +129,9 @@ const ProductDetails = () => {
                 return (
                   <>
                     {images.length > 0 && (
-                      <OptimizedImage 
-                        src={images[activeImageIndex]} 
-                        alt={product.name} 
+                      <OptimizedImage
+                        src={images[activeImageIndex]}
+                        alt={product.name}
                         aspectRatio="aspect-[4/5]"
                         priority={true}
                         className="h-full w-full object-cover transition-all duration-500"
@@ -140,13 +140,13 @@ const ProductDetails = () => {
                     <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
                     {images.length > 1 && (
                       <>
-                        <button 
+                        <button
                           onClick={() => setActiveImageIndex((curr) => (curr === 0 ? images.length - 1 : curr - 1))}
                           className="absolute left-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 hover:bg-white text-slate-800 shadow-md hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer"
                         >
                           ←
                         </button>
-                        <button 
+                        <button
                           onClick={() => setActiveImageIndex((curr) => (curr === images.length - 1 ? 0 : curr + 1))}
                           className="absolute right-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 hover:bg-white text-slate-800 shadow-md hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer"
                         >
@@ -167,7 +167,7 @@ const ProductDetails = () => {
                 );
               })()}
             </div>
-            
+
             {/* Feature Tags Grid */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {product.featureTags?.map((tag, idx) => (
@@ -189,7 +189,7 @@ const ProductDetails = () => {
                 <span className="h-px w-8 bg-border"></span>
               </div>
               <h1 className="font-serif text-4xl md:text-5xl tracking-tight leading-tight">{product.name}</h1>
-              
+
               {/* Product Rating Stars */}
               <div className="mt-2 flex items-center gap-0.5 text-amber-500">
                 {[...Array(5)].map((_, i) => (
@@ -198,7 +198,7 @@ const ProductDetails = () => {
                   </span>
                 ))}
               </div>
-              
+
               <div className="mt-6 flex items-center gap-5">
                 <div className="flex items-baseline gap-3">
                   <span className="text-3xl font-serif text-foreground">₹{product.price}</span>
@@ -221,7 +221,7 @@ const ProductDetails = () => {
                 <p className="text-base text-muted-foreground leading-relaxed italic">
                   {product.shortDescription}
                 </p>
-                  {product.fitDetail && (
+                {product.fitDetail && (
                   <p className="text-sm font-bold text-olive/80 uppercase tracking-widest">
                     The Fit Truth: <span className="normal-case italic font-medium ml-1 text-foreground/80">{product.fitDetail}</span>
                   </p>
@@ -236,7 +236,7 @@ const ProductDetails = () => {
                     <div className="flex items-center gap-3">
                       <Link to="/size-guide" className="text-xs font-bold uppercase tracking-widest text-olive/70 hover:text-olive transition-colors">Size Guide</Link>
                       <span className="text-border text-xs">|</span>
-                      <a 
+                      <a
                         href={`https://wa.me/919999999999?text=${encodeURIComponent(`Hi O'Soul, I am looking at "${product.name}" and need help choosing my size.`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -248,8 +248,8 @@ const ProductDetails = () => {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {product.sizes?.map(size => (
-                      <button 
-                        key={size} 
+                      <button
+                        key={size}
                         onClick={() => setSelectedSize(size)}
                         className={`h-12 min-w-14 rounded-md border text-sm transition-all duration-200 ${selectedSize === size ? 'border-foreground bg-foreground text-background font-bold shadow-lg' : 'border-border hover:border-foreground/40 text-foreground/70 bg-card'}`}
                       >
@@ -265,12 +265,11 @@ const ProductDetails = () => {
                   <div className="mb-4 text-[11px] uppercase tracking-widest text-muted-foreground font-bold">Color: <span className="text-foreground ml-1">{selectedColor}</span></div>
                   <div className="flex gap-3">
                     {product.colors?.map(color => (
-                      <button 
-                        key={color} 
+                      <button
+                        key={color}
                         onClick={() => setSelectedColor(color)}
                         className={`group relative flex h-11 items-center gap-3 rounded-full border px-5 text-sm transition-all ${selectedColor === color ? 'border-foreground bg-secondary/50 font-bold' : 'border-border hover:border-foreground/30 text-muted-foreground'}`}
                       >
-
                         <span className={`h-3 w-3 rounded-full shadow-inner ${color === 'Black' ? 'bg-zinc-900' : color === 'Olive' ? 'bg-olive' : 'bg-stone-400'}`}></span>
                         {color}
                       </button>
@@ -285,7 +284,7 @@ const ProductDetails = () => {
                     <span className="min-w-[2rem] text-center font-bold text-lg">{quantity}</span>
                     <button disabled={isOutOfStock || quantity >= variantStock} onClick={() => setQuantity(Math.min(variantStock, quantity + 1))} className="px-5 hover:text-olive transition-colors disabled:cursor-not-allowed disabled:opacity-30"><Plus className="h-4 w-4" /></button>
                   </div>
-                  <button 
+                  <button
                     onClick={handleAddToCart}
                     disabled={isOutOfStock || !selectedSize || !selectedColor}
                     className="flex-1 h-14 rounded-md bg-foreground text-background font-bold uppercase tracking-widest text-[11px] transition-all hover:bg-foreground/90 active:scale-[0.98] flex items-center justify-center gap-3 shadow-xl shadow-charcoal/10 disabled:cursor-not-allowed disabled:opacity-50"
@@ -293,19 +292,18 @@ const ProductDetails = () => {
                     <ShoppingBag className="h-4 w-4" />
                     {!isOutOfStock ? 'Add to Bag' : 'Out of Stock'}
                   </button>
-                  <button 
+                  <button
                     onClick={handleToggleWishlist}
-                    className={`h-14 w-14 flex items-center justify-center rounded-md border transition-all duration-200 shrink-0 ${
-                      isWishlisted 
-                        ? 'border-clay bg-clay text-background hover:bg-clay/90' 
+                    className={`h-14 w-14 flex items-center justify-center rounded-md border transition-all duration-200 shrink-0 ${isWishlisted
+                        ? 'border-clay bg-clay text-background hover:bg-clay/90'
                         : 'border-border bg-card hover:border-foreground/30 text-muted-foreground hover:text-foreground'
-                    }`}
+                      }`}
                     title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
                   >
                     <Heart className={`h-5 w-5 ${isWishlisted ? 'fill-current' : ''}`} />
                   </button>
                 </div>
-                
+
                 <div className="flex items-center justify-center gap-6 text-[9px] uppercase tracking-[0.2em] text-muted-foreground/60 font-bold">
                   <span>Secure Razorpay Checkout</span>
                   <span className="h-1 w-1 rounded-full bg-border"></span>
@@ -318,11 +316,11 @@ const ProductDetails = () => {
                 const items = (product.objections && product.objections.length > 0)
                   ? product.objections.map(obj => ({ title: obj.question, content: obj.answer }))
                   : [
-                      { title: "Fit & Pattern", content: product.fitDetailLine || product.fitDetail },
-                      { title: "Fabric Feel", content: product.shortCopy || product.details?.fabric || "Comfort-focused everyday fabric." },
-                      { title: "Best For", content: product.bestFor },
-                      { title: "Care Instructions", content: product.careLine || product.details?.care || "Follow the care label for best results." }
-                    ].filter(item => item.content);
+                    { title: "Fit & Pattern", content: product.fitDetailLine || product.fitDetail },
+                    { title: "Fabric Feel", content: product.shortCopy || product.details?.fabric || "Comfort-focused everyday fabric." },
+                    { title: "Best For", content: product.bestFor },
+                    { title: "Care Instructions", content: product.careLine || product.details?.care || "Follow the care label for best results." }
+                  ].filter(item => item.content);
 
                 return items.length > 0 && (
                   <div className="mt-16 space-y-px border-t border-border pt-12">
@@ -352,21 +350,21 @@ const ProductDetails = () => {
             <h2 className="mt-4 font-serif text-3xl md:text-5xl italic leading-tight">What early buyers noticed about this piece.</h2>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-             {/* Dynamic Reviews can be mapped here, showing 3 specific for the product */}
-             {[
-               { q: "Will it actually fit me right?", a: "I didn't have to keep fixing it. First pair I've worn through a full college day without thinking about my pants once.", author: "Aanya, 22 · Mumbai" },
-               { q: "Will the fabric feel cheap?", a: "Expected it to feel like any ₹999 basic. It doesn't. The fabric is soft but it has weight to it. Not cheap at all.", author: "Kartik, 31 · Mumbai" },
-               { q: "Will I actually wear it again?", a: "I've worn these four times this week. I keep reaching for them. They're not the most exciting thing I own — but they're the most useful.", author: "Meera, 27 · Hyderabad" }
-             ].map((rev, i) => (
-               <div key={i} className="rounded-2xl border border-border bg-card p-8 shadow-sm">
-                 <p className="text-[10px] uppercase tracking-widest text-olive/60 font-bold mb-4">Real Doubt</p>
-                 <h4 className="font-serif text-lg italic mb-4 leading-tight">"{rev.q}"</h4>
-                 <div className="mt-6 pt-6 border-t border-border/40">
-                   <p className="text-sm text-muted-foreground italic leading-relaxed mb-4">"{rev.a}"</p>
-                   <p className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">— {rev.author}</p>
-                 </div>
-               </div>
-             ))}
+            {/* Dynamic Reviews can be mapped here, showing 3 specific for the product */}
+            {[
+              { q: "Will it actually fit me right?", a: "I didn't have to keep fixing it. First pair I've worn through a full college day without thinking about my pants once.", author: "Aanya, 22 · Mumbai" },
+              { q: "Will the fabric feel cheap?", a: "Expected it to feel like any ₹999 basic. It doesn't. The fabric is soft but it has weight to it. Not cheap at all.", author: "Kartik, 31 · Mumbai" },
+              { q: "Will I actually wear it again?", a: "I've worn these four times this week. I keep reaching for them. They're not the most exciting thing I own — but they're the most useful.", author: "Meera, 27 · Hyderabad" }
+            ].map((rev, i) => (
+              <div key={i} className="rounded-2xl border border-border bg-card p-8 shadow-sm">
+                <p className="text-[10px] uppercase tracking-widest text-olive/60 font-bold mb-4">Real Doubt</p>
+                <h4 className="font-serif text-lg italic mb-4 leading-tight">"{rev.q}"</h4>
+                <div className="mt-6 pt-6 border-t border-border/40">
+                  <p className="text-sm text-muted-foreground italic leading-relaxed mb-4">"{rev.a}"</p>
+                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">— {rev.author}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

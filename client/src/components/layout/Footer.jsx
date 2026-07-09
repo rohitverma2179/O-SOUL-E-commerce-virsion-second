@@ -8,9 +8,9 @@ const Footer = () => {
     quote: 'If it makes you adjust, it failed.',
     instagramUrl: 'https://instagram.com/osoul.in',
     copyrightText: '© 2026 O\'Soul. All rights reserved.',
-    copyrightSubtext: 'Everyday comfort that still looks clean.',
+    // copyrightSubtext: 'Everyday comfort that still looks clean.',
     trustLabel1: 'Secure Razorpay checkout',
-    trustLabel2: 'Easy exchange support'
+    // trustLabel2: 'Easy exchange support'
   });
 
   useEffect(() => {

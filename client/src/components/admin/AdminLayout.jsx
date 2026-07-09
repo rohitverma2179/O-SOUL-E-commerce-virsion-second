@@ -102,19 +102,19 @@ const AdminLayout = () => {
         {/* Header */}
         <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8">
           <div className="flex items-center bg-slate-100 px-3 py-2 rounded-lg w-96">
-            <Search size={18} className="text-slate-400" />
+            {/* <Search size={18} className="text-slate-400" />
             <input 
               type="text" 
               placeholder="Search anything..." 
               className="bg-transparent border-none focus:ring-0 text-sm ml-2 w-full"
-            />
+            /> */}
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="p-2 text-slate-400 hover:text-olive transition-colors relative">
+            {/* <button className="p-2 text-slate-400 hover:text-olive transition-colors relative">
               <Bell size={20} />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-            </button>
+            </button> */}
             <div className="h-8 w-px bg-slate-200 mx-2"></div>
             <div className="flex items-center gap-3">
               <div className="text-right hidden md:block">
