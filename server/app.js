@@ -19,12 +19,20 @@ const footerRoutes = require("./routes/footer.routes");
 const app = express();
 
 const allowedOrigin = process.env.CLIENT_URL;
+const allowedOriginsList = [
+  allowedOrigin,
+  "https://osoul.in",
+  "https://www.osoul.in"
+].filter(Boolean);
+
 app.use(cors({
   credentials: true,
   origin(origin, callback) {
     const isLocalClient = /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin || "");
     const isVercelPreview = /\.vercel\.app$/.test(origin || "");
-    if (!origin || isLocalClient || isVercelPreview || origin === allowedOrigin) return callback(null, true);
+    if (!origin || isLocalClient || isVercelPreview || allowedOriginsList.includes(origin)) {
+      return callback(null, true);
+    }
     callback(new Error("This origin is not allowed by CORS"));
   }
 }));

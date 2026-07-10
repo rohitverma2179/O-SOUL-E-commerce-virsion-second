@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../../lib/api';
 import { 
   Save, 
   RotateCcw, 
@@ -40,7 +41,7 @@ const HomepageEditor = () => {
   const fetchContent = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/users/homepage`, {
+      const response = await fetch(`${API_BASE_URL}/users/homepage`, {
         credentials: 'include'
       });
       const data = await response.json();
@@ -60,7 +61,7 @@ const HomepageEditor = () => {
     setIsSaving(true);
     setMessage({ text: '', type: '' });
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/homepage/section`, {
+      const response = await fetch(`${API_BASE_URL}/admin/homepage/section`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

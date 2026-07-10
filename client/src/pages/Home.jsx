@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../lib/api';
 import { allProducts } from '../data/productData';
 import ProductCard from '../components/product/ProductCard';
 import ComboCard from '../components/product/ComboCard';
@@ -42,7 +43,7 @@ const Home = () => {
   useEffect(() => {
     const fetchHomepageData = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/users/homepage`, {
+        const response = await fetch(`${API_BASE_URL}/users/homepage`, {
           credentials: 'include'
         });
         const data = await response.json();
@@ -57,7 +58,7 @@ const Home = () => {
 
     const fetchPopupData = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/popup`);
+        const response = await fetch(`${API_BASE_URL}/popup`);
         const data = await response.json();
         if (data.success && data.data && data.data.isActive) {
           const activePopup = data.data;
@@ -78,7 +79,7 @@ const Home = () => {
 
     const fetchProductsData = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/products`);
+        const response = await fetch(`${API_BASE_URL}/products`);
         const data = await response.json();
         if (data.success && data.data) {
           setLiveProducts(data.data);
@@ -90,7 +91,7 @@ const Home = () => {
 
     const fetchCombosData = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/combos`);
+        const response = await fetch(`${API_BASE_URL}/combos`);
         const data = await response.json();
         if (data.success && data.data) {
           setLiveCombos(data.data);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../lib/api';
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -113,7 +114,7 @@ const Signup = () => {
     setMessage(null);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/users/resend-otp`, {
+      const response = await fetch(`${API_BASE_URL}/users/resend-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

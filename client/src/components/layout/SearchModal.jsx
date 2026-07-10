@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Search as SearchIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../../lib/api';
 
 const SearchModal = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
@@ -11,7 +12,7 @@ const SearchModal = ({ isOpen, onClose }) => {
     if (!isOpen) return;
 
     setLoading(true);
-    fetch(`${import.meta.env.VITE_API_URL}/products`)
+    fetch(`${API_BASE_URL}/products`)
       .then(res => res.json())
       .then(data => {
         if (data.success && data.data) {
