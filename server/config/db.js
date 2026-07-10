@@ -1,4 +1,3 @@
-const { MongoClient } = require('mongodb');
 const mongoose = require("mongoose");
 
 let isConnected = false;
@@ -26,4 +25,3 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
-
