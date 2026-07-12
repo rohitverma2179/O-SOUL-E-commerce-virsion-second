@@ -357,8 +357,8 @@ const CatalogManagement = () => {
   const handleProductImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      if (file.size > 3 * 1024 * 1024) {
-        setMessage('Product image must be less than 3MB.');
+      if (file.size > 8 * 1024 * 1024) {
+        setMessage('Product image must be less than 8MB.');
         event.target.value = null;
         setProductImage(null);
       } else {
@@ -371,8 +371,8 @@ const CatalogManagement = () => {
   const handleProductBackImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      if (file.size > 3 * 1024 * 1024) {
-        setMessage('Secondary product image must be less than 3MB.');
+      if (file.size > 8 * 1024 * 1024) {
+        setMessage('Secondary product image must be less than 8MB.');
         event.target.value = null;
         setProductBackImage(null);
       } else {
@@ -390,9 +390,9 @@ const CatalogManagement = () => {
       setProductBlackImages([]);
       return;
     }
-    const oversized = files.some((file) => file.size > 3 * 1024 * 1024);
+    const oversized = files.some((file) => file.size > 8 * 1024 * 1024);
     if (oversized) {
-      setMessage('Each image must be less than 3MB.');
+      setMessage('Each image must be less than 8MB.');
       event.target.value = null;
       setProductBlackImages([]);
     } else {
@@ -409,9 +409,9 @@ const CatalogManagement = () => {
       setProductOliveImages([]);
       return;
     }
-    const oversized = files.some((file) => file.size > 3 * 1024 * 1024);
+    const oversized = files.some((file) => file.size > 8 * 1024 * 1024);
     if (oversized) {
-      setMessage('Each image must be less than 3MB.');
+      setMessage('Each image must be less than 8MB.');
       event.target.value = null;
       setProductOliveImages([]);
     } else {
@@ -428,9 +428,9 @@ const CatalogManagement = () => {
       setEditProductBlackImages([]);
       return;
     }
-    const oversized = files.some((file) => file.size > 3 * 1024 * 1024);
+    const oversized = files.some((file) => file.size > 8 * 1024 * 1024);
     if (oversized) {
-      setMessage('Each image must be less than 3MB.');
+      setMessage('Each image must be less than 8MB.');
       event.target.value = null;
       setEditProductBlackImages([]);
     } else {
@@ -447,9 +447,9 @@ const CatalogManagement = () => {
       setEditProductOliveImages([]);
       return;
     }
-    const oversized = files.some((file) => file.size > 3 * 1024 * 1024);
+    const oversized = files.some((file) => file.size > 8 * 1024 * 1024);
     if (oversized) {
-      setMessage('Each image must be less than 3MB.');
+      setMessage('Each image must be less than 8MB.');
       event.target.value = null;
       setEditProductOliveImages([]);
     } else {
@@ -460,9 +460,9 @@ const CatalogManagement = () => {
 
   const handleComboImagesChange = (event) => {
     const files = Array.from(event.target.files);
-    const oversized = files.some((file) => file.size > 3 * 1024 * 1024);
+    const oversized = files.some((file) => file.size > 8 * 1024 * 1024);
     if (oversized) {
-      setMessage('Each combo image must be less than 3MB.');
+      setMessage('Each combo image must be less than 8MB.');
       event.target.value = null;
       setComboImages([]);
     } else {

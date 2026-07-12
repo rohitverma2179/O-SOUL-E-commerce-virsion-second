@@ -25,12 +25,12 @@ exports.createProduct = async (req, res, next) => {
 
     if (!imageFile) return res.status(400).json({ success: false, message: "Product image is required" });
     
-    // Server-side double validation for 3MB limit
-    if (imageFile.size > 3 * 1024 * 1024) {
-      return res.status(400).json({ success: false, message: "Image size must be less than 3MB" });
+    // Server-side double validation for 8MB limit
+    if (imageFile.size > 8 * 1024 * 1024) {
+      return res.status(400).json({ success: false, message: "Image size must be less than 8MB" });
     }
-    if (backImageFile && backImageFile.size > 3 * 1024 * 1024) {
-      return res.status(400).json({ success: false, message: "Secondary image size must be less than 3MB" });
+    if (backImageFile && backImageFile.size > 8 * 1024 * 1024) {
+      return res.status(400).json({ success: false, message: "Secondary image size must be less than 8MB" });
     }
 
     let variants = [];
@@ -75,7 +75,7 @@ exports.createProduct = async (req, res, next) => {
     const blackImages = [];
     if (req.files?.blackImages) {
       for (const file of req.files.blackImages) {
-        if (file.size <= 3 * 1024 * 1024) {
+        if (file.size <= 8 * 1024 * 1024) {
           const resUpload = await uploadToCloudinary(file.buffer, "osou/products");
           blackImages.push(resUpload.secure_url);
         }
@@ -86,7 +86,7 @@ exports.createProduct = async (req, res, next) => {
     const oliveImages = [];
     if (req.files?.oliveImages) {
       for (const file of req.files.oliveImages) {
-        if (file.size <= 3 * 1024 * 1024) {
+        if (file.size <= 8 * 1024 * 1024) {
           const resUpload = await uploadToCloudinary(file.buffer, "osou/products");
           oliveImages.push(resUpload.secure_url);
         }
@@ -148,8 +148,8 @@ exports.updateProduct = async (req, res, next) => {
 
     let imageUrl = product.image;
     if (imageFile) {
-      if (imageFile.size > 3 * 1024 * 1024) {
-        return res.status(400).json({ success: false, message: "Image size must be less than 3MB" });
+      if (imageFile.size > 8 * 1024 * 1024) {
+        return res.status(400).json({ success: false, message: "Image size must be less than 8MB" });
       }
       const uploadResult = await uploadToCloudinary(imageFile.buffer, "osou/products");
       if (product.image) {
@@ -164,8 +164,8 @@ exports.updateProduct = async (req, res, next) => {
 
     let backImageUrl = product.backImage;
     if (backImageFile) {
-      if (backImageFile.size > 3 * 1024 * 1024) {
-        return res.status(400).json({ success: false, message: "Secondary image size must be less than 3MB" });
+      if (backImageFile.size > 8 * 1024 * 1024) {
+        return res.status(400).json({ success: false, message: "Secondary image size must be less than 8MB" });
       }
       const uploadBackResult = await uploadToCloudinary(backImageFile.buffer, "osou/products");
       if (product.backImage) {
@@ -229,7 +229,7 @@ exports.updateProduct = async (req, res, next) => {
       }
       blackImagesUrls = [];
       for (const file of req.files.blackImages) {
-        if (file.size <= 3 * 1024 * 1024) {
+        if (file.size <= 8 * 1024 * 1024) {
           const resUpload = await uploadToCloudinary(file.buffer, "osou/products");
           blackImagesUrls.push(resUpload.secure_url);
         }
@@ -245,7 +245,7 @@ exports.updateProduct = async (req, res, next) => {
       }
       oliveImagesUrls = [];
       for (const file of req.files.oliveImages) {
-        if (file.size <= 3 * 1024 * 1024) {
+        if (file.size <= 8 * 1024 * 1024) {
           const resUpload = await uploadToCloudinary(file.buffer, "osou/products");
           oliveImagesUrls.push(resUpload.secure_url);
         }

@@ -47,7 +47,7 @@ exports.updatePopup = async (req, res, next) => {
 
     if (req.file) {
       // Validate 3MB file size limit
-      if (req.file.size > 3 * 1024 * 1024) {
+      if (req.file.size > 8 * 1024 * 1024) {
         return res.status(400).json({ success: false, message: "Image size must be less than 3MB" });
       }
 

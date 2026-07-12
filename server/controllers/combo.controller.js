@@ -13,7 +13,7 @@ exports.createCombo = async (req, res, next) => {
     if (!req.files?.length) return res.status(400).json({ success: false, message: "At least one combo image is required" });
 
     // Server-side double validation for 3MB limit per image
-    const oversized = req.files.some((file) => file.size > 3 * 1024 * 1024);
+    const oversized = req.files.some((file) => file.size > 8 * 1024 * 1024);
     if (oversized) {
       return res.status(400).json({ success: false, message: "Each combo image must be less than 3MB" });
     }
