@@ -26,6 +26,7 @@ const ComboCard = ({ combo }) => {
   // Default selection state for each item (default size: S, default color: Black)
   const [selectedSizes, setSelectedSizes] = useState(() => (items || []).map(() => 'S'));
   const [selectedColors, setSelectedColors] = useState(() => (items || []).map(() => 'Black'));
+  const [activePreviewImage, setActivePreviewImage] = useState(null);
 
   const handleSizeSelect = (itemIdx, size) => {
     setSelectedSizes(prev => {
@@ -90,13 +91,17 @@ const ComboCard = ({ combo }) => {
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {combo.images?.map((img, idx) => (
-          <div key={idx} className={`relative w-full overflow-hidden rounded-lg bg-secondary aspect-square shadow-sm transition-transform hover:scale-[1.02]`} aria-hidden="true">
+          <div 
+            key={idx} 
+            onClick={() => setActivePreviewImage(img)}
+            className="relative w-full overflow-hidden rounded-lg bg-secondary aspect-square shadow-sm transition-transform hover:scale-[1.02] cursor-pointer"
+          >
             <OptimizedImage
               src={img} 
               alt={combo.alts ? combo.alts[idx] : `${combo.title} item ${idx + 1}`} 
-              className="h-full w-full"
+              className="h-full w-full pointer-events-none"
             />
-            <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
+            <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
           </div>
         ))}
       </div>
@@ -142,7 +147,7 @@ const ComboCard = ({ combo }) => {
                   {['S', 'M', 'L', 'XL', 'XXL'].map(size => {
                     const isSelected = selectedSizes[idx] === size;
                     return (
-                      <button 
+                      <button
                         key={size} 
                         type="button" 
                         onClick={() => handleSizeSelect(idx, size)}
@@ -167,6 +172,29 @@ const ComboCard = ({ combo }) => {
         <button type="button" onClick={handleAddCombo} className="h-11 rounded-md border border-foreground bg-background text-sm font-medium text-foreground transition hover:bg-foreground hover:text-background">Add Combo</button>
         <button type="button" onClick={handleBuyCombo} className="h-11 rounded-md bg-foreground text-sm font-medium text-background transition hover:bg-foreground/90">Buy Now</button>
       </div>
+
+      {/* Image Preview Modal */}
+      {activePreviewImage && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setActivePreviewImage(null)}
+        >
+          <div className="relative max-w-md w-full bg-background border border-border rounded-xl p-2 shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col">
+            <button 
+              onClick={() => setActivePreviewImage(null)} 
+              className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/60 transition cursor-pointer outline-none font-bold text-xs"
+              aria-label="Close image preview"
+            >
+              ✕
+            </button>
+            <img 
+              src={activePreviewImage} 
+              alt="Preview" 
+              className="w-full h-auto rounded-lg object-contain max-h-[70vh]"
+            />
+          </div>
+        </div>
+      )}
     </article>
   );
 };

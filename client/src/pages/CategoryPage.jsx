@@ -1,16 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import ProductCard from '../components/product/ProductCard';
-
-import { allProducts } from '../data/productData';
+import { fetchCatalog } from '../lib/api';
 
 const CategoryPage = ({ categoryName }) => {
   const { category: paramCategory } = useParams();
   const category = categoryName || paramCategory;
+
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchCatalog('products')
+      .then(setProducts)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
   
   if (!category) return null;
 
-  const filteredProducts = allProducts.filter(p => p.category.toLowerCase() === category.toLowerCase());
+  const filteredProducts = products.filter(
+    (p) => p.category?.toLowerCase() === category.toLowerCase()
+  );
   
   const categoryTitles = {
     men: "Bottoms built for your actual day.",
@@ -26,9 +38,13 @@ const CategoryPage = ({ categoryName }) => {
       </header>
 
       <div className="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-        {filteredProducts.length > 0 ? (
+        {loading ? (
+          <p className="col-span-full py-20 text-center text-muted-foreground italic">Loading products...</p>
+        ) : error ? (
+          <p className="col-span-full py-20 text-center text-destructive italic">{error}</p>
+        ) : filteredProducts.length > 0 ? (
           filteredProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product._id} product={{ ...product, id: product._id }} />
           ))
         ) : (
           <p className="col-span-full py-20 text-center text-muted-foreground italic">No products found in this category.</p>
@@ -39,3 +55,4 @@ const CategoryPage = ({ categoryName }) => {
 };
 
 export default CategoryPage;
+

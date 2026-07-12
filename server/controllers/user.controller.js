@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const User = require("../models/user.model");
-const { sendVerificationEmail } = require("../utils/send-email");
+const { sendVerificationEmail, sendResetPasswordEmail } = require("../utils/send-email");
 
 const cookieOptions = () => ({
   httpOnly: true,
@@ -256,4 +256,60 @@ exports.toggleWishlist = async (req, res, next) => {
     await user.save();
     res.json({ success: true, added, message, data: user.wishlist });
   } catch (error) { next(error); }
+};
+
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: "Email is required" });
+
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    if (!user) {
+      return res.json({ success: true, message: "If this email is registered, a password reset link has been sent." });
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+    user.resetPasswordTokenHash = tokenHash;
+    user.resetPasswordExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 mins expiry
+    await user.save();
+
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+    const resetLink = `${clientUrl}/reset-password?token=${token}`;
+
+    await sendResetPasswordEmail({ email: user.email, name: user.fullName, resetLink });
+
+    res.json({ success: true, message: "If this email is registered, a password reset link has been sent." });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) return res.status(400).json({ success: false, message: "Token and password are required" });
+    if (password.length < 8) return res.status(400).json({ success: false, message: "Password must contain at least 8 characters" });
+
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+      resetPasswordTokenHash: tokenHash,
+      resetPasswordExpiresAt: { $gt: new Date() }
+    }).select("+resetPasswordTokenHash +resetPasswordExpiresAt");
+
+    if (!user) {
+      return res.status(400).json({ success: false, message: "Password reset token is invalid or has expired." });
+    }
+
+    user.password = password; // Hashed automatically by pre-save hook
+    user.resetPasswordTokenHash = null;
+    user.resetPasswordExpiresAt = null;
+    await user.save();
+
+    res.json({ success: true, message: "Password has been reset successfully." });
+  } catch (error) {
+    next(error);
+  }
 };

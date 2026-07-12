@@ -13,6 +13,9 @@ const Footer = () => {
     // trustLabel2: 'Easy exchange support'
   });
 
+  const [mensTeeSlug, setMensTeeSlug] = useState('mens-boxy-tee-with-pocket');
+  const [unisexTeeSlug, setUnisexTeeSlug] = useState('unisex-boxy-tee');
+
   useEffect(() => {
     const fetchFooterSettings = async () => {
       try {
@@ -33,7 +36,33 @@ const Footer = () => {
         console.log("Using default footer layout fallbacks");
       }
     };
+
+    const fetchFooterProducts = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/products`);
+        const data = await response.json();
+        if (data.success && data.data) {
+          // Find Men's Boxy Tee
+          const mensProduct = data.data.find(p => 
+            p.slug === 'mens-boxy-tee-with-pocket' || 
+            (p.category?.toLowerCase() === 'men' && p.name?.toLowerCase().includes('boxy tee'))
+          );
+          if (mensProduct) setMensTeeSlug(mensProduct.slug);
+
+          // Find Unisex Boxy Tee
+          const unisexProduct = data.data.find(p => 
+            p.slug === 'unisex-boxy-tee' || 
+            (p.category?.toLowerCase() === 'unisex' && p.name?.toLowerCase().includes('boxy tee'))
+          );
+          if (unisexProduct) setUnisexTeeSlug(unisexProduct.slug);
+        }
+      } catch (error) {
+        console.log("Could not load products for footer links");
+      }
+    };
+
     fetchFooterSettings();
+    fetchFooterProducts();
   }, []);
 
   return (
@@ -54,11 +83,11 @@ const Footer = () => {
             <div>
               <h4 className="text-[11px] uppercase tracking-widest font-bold text-foreground mb-6">Shop</h4>
               <ul className="space-y-3 text-sm text-muted-foreground italic">
-                <li><Link to="/products/mens-boxy-tee-with-pocket" className="hover:text-olive transition-colors">Men's Boxy Tee</Link></li>
+                <li><Link to={`/products/${mensTeeSlug}`} className="hover:text-olive transition-colors">Men's Boxy Tee</Link></li>
                 <li><Link to="/men" className="hover:text-olive transition-colors">Men</Link></li>
                 <li><Link to="/women" className="hover:text-olive transition-colors">Women</Link></li>
                 <li><Link to="/gallery" className="hover:text-olive transition-colors">Gallery</Link></li>
-                <li><Link to="/products/unisex-boxy-tee" className="hover:text-olive transition-colors">Unisex Boxy Tee</Link></li>
+                <li><Link to={`/products/${unisexTeeSlug}`} className="hover:text-olive transition-colors">Unisex Boxy Tee</Link></li>
                 <li><Link to="/combos" className="hover:text-olive transition-colors font-medium text-foreground/80">Combos</Link></li>
               </ul>
             </div>
@@ -89,9 +118,9 @@ const Footer = () => {
         </div>
 
         <div className="mt-16 flex flex-col items-center justify-between gap-6 border-t border-border pt-10 md:flex-row">
-          <div className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">
+          {/* <div className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">
             {settings.copyrightText} <span className="mx-2 opacity-30">|</span> {settings.copyrightSubtext} <span className="mx-2 opacity-30">|</span> <Link to="/policy" className="hover:text-olive transition-colors underline underline-offset-4">Customer Policy</Link> <span className="mx-2 opacity-30">|</span> <Link to="/terms" className="hover:text-olive transition-colors underline underline-offset-4">Terms & Conditions</Link> <span className="mx-2 opacity-30">|</span> <Link to="/privacy" className="hover:text-olive transition-colors underline underline-offset-4">Privacy Policy</Link>
-          </div>
+          </div> */}
           <div className="flex gap-6 text-[10px] uppercase tracking-widest text-muted-foreground/60 font-bold">
             <span>{settings.trustLabel1}</span>
             <span>{settings.trustLabel2}</span>
@@ -106,3 +135,7 @@ const Footer = () => {
 };
 
 export default Footer;
+
+
+
+// a5a58d

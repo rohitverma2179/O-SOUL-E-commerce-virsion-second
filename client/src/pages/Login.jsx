@@ -181,7 +181,7 @@ const Login = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between ml-1">
                   <label className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold">Password</label>
-                  {/* <Link to="/forgot-password" size="sm" className="text-xs underline underline-offset-4 opacity-70 hover:opacity-100 font-medium">Forgot?</Link> */}
+                  <Link to="/forgot-password" size="sm" className="text-xs underline underline-offset-4 opacity-70 hover:opacity-100 font-medium">Forgot?</Link>
                 </div>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

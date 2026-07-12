@@ -71,6 +71,28 @@ exports.createProduct = async (req, res, next) => {
       backImageUrl = uploadBackResult.secure_url;
     }
 
+    // Upload black color images if available
+    const blackImages = [];
+    if (req.files?.blackImages) {
+      for (const file of req.files.blackImages) {
+        if (file.size <= 3 * 1024 * 1024) {
+          const resUpload = await uploadToCloudinary(file.buffer, "osou/products");
+          blackImages.push(resUpload.secure_url);
+        }
+      }
+    }
+
+    // Upload olive color images if available
+    const oliveImages = [];
+    if (req.files?.oliveImages) {
+      for (const file of req.files.oliveImages) {
+        if (file.size <= 3 * 1024 * 1024) {
+          const resUpload = await uploadToCloudinary(file.buffer, "osou/products");
+          oliveImages.push(resUpload.secure_url);
+        }
+      }
+    }
+
     const originalPrice = req.body.originalPrice ? Number(req.body.originalPrice) : undefined;
     
     // Parse weight and dimensions (ensure positive numbers, fallback to defaults if invalid)
@@ -95,6 +117,8 @@ exports.createProduct = async (req, res, next) => {
       slug,
       image: uploadResult.secure_url,
       backImage: backImageUrl,
+      blackImages,
+      oliveImages,
       colors: splitList(req.body.colors),
       sizes: splitList(req.body.sizes),
       tags: splitList(req.body.tags),
@@ -196,6 +220,38 @@ exports.updateProduct = async (req, res, next) => {
       product.slug = slug;
     }
 
+    let blackImagesUrls = product.blackImages || [];
+    if (req.files?.blackImages) {
+      if (product.blackImages && product.blackImages.length > 0) {
+        for (const img of product.blackImages) {
+          try { await deleteFromCloudinary(img); } catch (e) { console.error("Cloudinary delete failed:", e.message); }
+        }
+      }
+      blackImagesUrls = [];
+      for (const file of req.files.blackImages) {
+        if (file.size <= 3 * 1024 * 1024) {
+          const resUpload = await uploadToCloudinary(file.buffer, "osou/products");
+          blackImagesUrls.push(resUpload.secure_url);
+        }
+      }
+    }
+
+    let oliveImagesUrls = product.oliveImages || [];
+    if (req.files?.oliveImages) {
+      if (product.oliveImages && product.oliveImages.length > 0) {
+        for (const img of product.oliveImages) {
+          try { await deleteFromCloudinary(img); } catch (e) { console.error("Cloudinary delete failed:", e.message); }
+        }
+      }
+      oliveImagesUrls = [];
+      for (const file of req.files.oliveImages) {
+        if (file.size <= 3 * 1024 * 1024) {
+          const resUpload = await uploadToCloudinary(file.buffer, "osou/products");
+          oliveImagesUrls.push(resUpload.secure_url);
+        }
+      }
+    }
+
     product.name = req.body.name || product.name;
     product.price = req.body.price !== undefined ? Number(req.body.price) : product.price;
     product.originalPrice = req.body.originalPrice !== undefined ? (req.body.originalPrice ? Number(req.body.originalPrice) : undefined) : product.originalPrice;
@@ -212,6 +268,8 @@ exports.updateProduct = async (req, res, next) => {
     product.height = req.body.height !== undefined ? Number(req.body.height) : product.height;
     product.image = imageUrl;
     product.backImage = backImageUrl;
+    product.blackImages = blackImagesUrls;
+    product.oliveImages = oliveImagesUrls;
     product.variants = variants;
     product.stock = stock;
     product.inStock = stock > 0;
@@ -240,6 +298,16 @@ exports.deleteProduct = async (req, res, next) => {
     }
     if (product.backImage) {
       try { await deleteFromCloudinary(product.backImage); } catch (e) { console.error(e); }
+    }
+    if (product.blackImages && product.blackImages.length > 0) {
+      for (const img of product.blackImages) {
+        try { await deleteFromCloudinary(img); } catch (e) { console.error(e); }
+      }
+    }
+    if (product.oliveImages && product.oliveImages.length > 0) {
+      for (const img of product.oliveImages) {
+        try { await deleteFromCloudinary(img); } catch (e) { console.error(e); }
+      }
     }
     
     await Product.findByIdAndDelete(req.params.id);

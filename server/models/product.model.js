@@ -13,6 +13,8 @@ const productSchema = new mongoose.Schema({
   tags: [{ type: String, trim: true }],
   image: { type: String, required: true },
   backImage: { type: String },
+  blackImages: [{ type: String }],
+  oliveImages: [{ type: String }],
   stock: { type: Number, required: true, min: 0, default: 0 },
   inStock: { type: Boolean, default: true },
   onSale: { type: Boolean, default: false },

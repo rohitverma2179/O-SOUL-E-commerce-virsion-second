@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema({
   isEmailVerified: { type: Boolean, default: true },
   verificationCodeHash: { type: String, select: false, default: null },
   verificationCodeExpiresAt: { type: Date, select: false, default: null },
+  resetPasswordTokenHash: { type: String, select: false, default: null },
+  resetPasswordExpiresAt: { type: Date, select: false, default: null },
   lastLogin: { type: Date, default: null },
   addresses: [
     {

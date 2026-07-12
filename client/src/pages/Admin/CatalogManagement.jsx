@@ -38,6 +38,8 @@ const CatalogManagement = () => {
   const [combo, setCombo] = useState(initialCombo);
   const [productImage, setProductImage] = useState(null);
   const [productBackImage, setProductBackImage] = useState(null);
+  const [productBlackImages, setProductBlackImages] = useState([]);
+  const [productOliveImages, setProductOliveImages] = useState([]);
   const [comboImages, setComboImages] = useState([]);
   const [catalog, setCatalog] = useState([]);
   const [message, setMessage] = useState('');
@@ -49,6 +51,8 @@ const CatalogManagement = () => {
   const [editVariants, setEditVariants] = useState([]);
   const [editProductImage, setEditProductImage] = useState(null);
   const [editProductBackImage, setEditProductBackImage] = useState(null);
+  const [editProductBlackImages, setEditProductBlackImages] = useState([]);
+  const [editProductOliveImages, setEditProductOliveImages] = useState([]);
 
   const loadCatalog = useCallback(async () => {
     try { setCatalog(await fetchCatalog(tab)); }
@@ -107,6 +111,8 @@ const CatalogManagement = () => {
     setEditVariants(item.variants || []);
     setEditProductImage(null);
     setEditProductBackImage(null);
+    setEditProductBlackImages([]);
+    setEditProductOliveImages([]);
   };
 
   const updateEditingField = (event) => {
@@ -171,7 +177,8 @@ const CatalogManagement = () => {
     const form = new FormData();
     Object.entries(editingProduct).forEach(([key, value]) => {
       if (
-        key !== 'variants' && key !== 'image' && key !== 'backImage' && key !== 'objections' &&
+        key !== 'variants' && key !== 'image' && key !== 'backImage' &&
+        key !== 'blackImages' && key !== 'oliveImages' && key !== 'objections' &&
         !['objection1Question', 'objection1Answer', 'objection2Question', 'objection2Answer', 'objection3Question', 'objection3Answer'].includes(key)
       ) {
         form.append(key, value);
@@ -187,6 +194,12 @@ const CatalogManagement = () => {
     }
     if (editProductBackImage) {
       form.append('backImage', editProductBackImage);
+    }
+    if (editProductBlackImages && editProductBlackImages.length > 0) {
+      editProductBlackImages.forEach(file => form.append('blackImages', file));
+    }
+    if (editProductOliveImages && editProductOliveImages.length > 0) {
+      editProductOliveImages.forEach(file => form.append('oliveImages', file));
     }
 
     try {
@@ -224,6 +237,14 @@ const CatalogManagement = () => {
       setMessage('Secondary product image must be less than 3MB.');
       return;
     }
+    if (tab === 'products' && productBlackImages.some(file => file.size > 3 * 1024 * 1024)) {
+      setMessage('Each black color image must be less than 3MB.');
+      return;
+    }
+    if (tab === 'products' && productOliveImages.some(file => file.size > 3 * 1024 * 1024)) {
+      setMessage('Each olive color image must be less than 3MB.');
+      return;
+    }
     if (tab === 'combos' && comboImages.some((file) => file.size > 3 * 1024 * 1024)) {
       setMessage('Each combo image must be less than 3MB.');
       return;
@@ -251,6 +272,12 @@ const CatalogManagement = () => {
     if (tab === 'combos') form.append('items', JSON.stringify(manualComboItems.map((name) => ({ name, slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), price: 0 }))));
     if (tab === 'products' && productImage) form.append('image', productImage);
     if (tab === 'products' && productBackImage) form.append('backImage', productBackImage);
+    if (tab === 'products' && productBlackImages.length > 0) {
+      productBlackImages.forEach(file => form.append('blackImages', file));
+    }
+    if (tab === 'products' && productOliveImages.length > 0) {
+      productOliveImages.forEach(file => form.append('oliveImages', file));
+    }
     if (tab === 'combos') comboImages.forEach((image) => form.append('images', image));
 
     if (tab === 'products') {
@@ -266,6 +293,8 @@ const CatalogManagement = () => {
       setCombo(initialCombo);
       setProductImage(null);
       setProductBackImage(null);
+      setProductBlackImages([]);
+      setProductOliveImages([]);
       setComboImages([]);
       setVariantPlanner(generateCombinations(initialProduct.colors, initialProduct.sizes));
       formElement.reset();
@@ -350,6 +379,82 @@ const CatalogManagement = () => {
         setMessage('');
         setProductBackImage(file);
       }
+    }
+  };
+
+  const handleProductBlackImagesChange = (event) => {
+    const files = Array.from(event.target.files);
+    if (files.length > 5) {
+      setMessage('Maximum of 5 images allowed for Black color.');
+      event.target.value = null;
+      setProductBlackImages([]);
+      return;
+    }
+    const oversized = files.some((file) => file.size > 3 * 1024 * 1024);
+    if (oversized) {
+      setMessage('Each image must be less than 3MB.');
+      event.target.value = null;
+      setProductBlackImages([]);
+    } else {
+      setMessage('');
+      setProductBlackImages(files);
+    }
+  };
+
+  const handleProductOliveImagesChange = (event) => {
+    const files = Array.from(event.target.files);
+    if (files.length > 5) {
+      setMessage('Maximum of 5 images allowed for Olive color.');
+      event.target.value = null;
+      setProductOliveImages([]);
+      return;
+    }
+    const oversized = files.some((file) => file.size > 3 * 1024 * 1024);
+    if (oversized) {
+      setMessage('Each image must be less than 3MB.');
+      event.target.value = null;
+      setProductOliveImages([]);
+    } else {
+      setMessage('');
+      setProductOliveImages(files);
+    }
+  };
+
+  const handleEditProductBlackImagesChange = (event) => {
+    const files = Array.from(event.target.files);
+    if (files.length > 5) {
+      setMessage('Maximum of 5 images allowed for Black color.');
+      event.target.value = null;
+      setEditProductBlackImages([]);
+      return;
+    }
+    const oversized = files.some((file) => file.size > 3 * 1024 * 1024);
+    if (oversized) {
+      setMessage('Each image must be less than 3MB.');
+      event.target.value = null;
+      setEditProductBlackImages([]);
+    } else {
+      setMessage('');
+      setEditProductBlackImages(files);
+    }
+  };
+
+  const handleEditProductOliveImagesChange = (event) => {
+    const files = Array.from(event.target.files);
+    if (files.length > 5) {
+      setMessage('Maximum of 5 images allowed for Olive color.');
+      event.target.value = null;
+      setEditProductOliveImages([]);
+      return;
+    }
+    const oversized = files.some((file) => file.size > 3 * 1024 * 1024);
+    if (oversized) {
+      setMessage('Each image must be less than 3MB.');
+      event.target.value = null;
+      setEditProductOliveImages([]);
+    } else {
+      setMessage('');
+      setEditProductOliveImages(files);
     }
   };
 
@@ -484,6 +589,8 @@ const CatalogManagement = () => {
             <div className="grid gap-4 md:grid-cols-2 md:col-span-2">
               <label className={`${fieldClass} flex cursor-pointer items-center gap-3`}><Upload size={18} /><span className="truncate">{productImage?.name || 'Choose primary image (front)'}</span><input className="hidden" type="file" accept="image/*" onChange={handleProductImageChange} required /></label>
               <label className={`${fieldClass} flex cursor-pointer items-center gap-3`}><Upload size={18} /><span className="truncate">{productBackImage?.name || 'Choose secondary image (back/hover)'}</span><input className="hidden" type="file" accept="image/*" onChange={handleProductBackImageChange} /></label>
+              <label className={`${fieldClass} flex cursor-pointer items-center gap-3`}><Upload size={18} /><span className="truncate">{productBlackImages.length ? `${productBlackImages.length} black image(s) selected` : 'Choose up to 5 Black color images'}</span><input className="hidden" type="file" accept="image/*" multiple onChange={handleProductBlackImagesChange} /></label>
+              <label className={`${fieldClass} flex cursor-pointer items-center gap-3`}><Upload size={18} /><span className="truncate">{productOliveImages.length ? `${productOliveImages.length} olive image(s) selected` : 'Choose up to 5 Olive color images'}</span><input className="hidden" type="file" accept="image/*" multiple onChange={handleProductOliveImagesChange} /></label>
             </div>
           </div>
         ) : (
@@ -741,6 +848,26 @@ const CatalogManagement = () => {
                       <Upload size={18} />
                       <span className="truncate">{editProductBackImage?.name || 'Choose new secondary image'}</span>
                       <input className="hidden" type="file" accept="image/*" onChange={(e) => setEditProductBackImage(e.target.files[0])} />
+                    </label>
+                  </label>
+
+                  {/* Black Images Input in Edit Modal */}
+                  <label className="block space-y-1">
+                    <span className="text-xs font-semibold text-slate-500">Black Images (Leave blank to keep existing, max 5)</span>
+                    <label className={`${fieldClass} flex cursor-pointer items-center gap-3 bg-slate-50`}>
+                      <Upload size={18} />
+                      <span className="truncate">{editProductBlackImages.length ? `${editProductBlackImages.length} black image(s) selected` : 'Choose new Black color images'}</span>
+                      <input className="hidden" type="file" accept="image/*" multiple onChange={handleEditProductBlackImagesChange} />
+                    </label>
+                  </label>
+
+                  {/* Olive Images Input in Edit Modal */}
+                  <label className="block space-y-1">
+                    <span className="text-xs font-semibold text-slate-500">Olive Images (Leave blank to keep existing, max 5)</span>
+                    <label className={`${fieldClass} flex cursor-pointer items-center gap-3 bg-slate-50`}>
+                      <Upload size={18} />
+                      <span className="truncate">{editProductOliveImages.length ? `${editProductOliveImages.length} olive image(s) selected` : 'Choose new Olive color images'}</span>
+                      <input className="hidden" type="file" accept="image/*" multiple onChange={handleEditProductOliveImagesChange} />
                     </label>
                   </label>
                 </div>

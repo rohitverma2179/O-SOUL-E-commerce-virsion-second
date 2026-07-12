@@ -11,6 +11,8 @@ router.post("/login", userController.login);
 router.post("/logout", userController.logout);
 router.post("/verify-email", userController.verifyEmail);
 router.post("/resend-otp", userController.resendVerificationCode);
+router.post("/forgot-password", userController.forgotPassword);
+router.post("/reset-password", userController.resetPassword);
 router.get("/me", requireUser, userController.me);
 router.get("/cart", requireUser, cartController.getCart);
 router.put("/cart", requireUser, cartController.saveCart);

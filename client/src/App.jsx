@@ -9,6 +9,8 @@ import ProductDetails from './pages/ProductDetails';
 import About from './pages/About';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Checkout from './pages/Checkout';
 import FitTests from './pages/FitTests';
 import FindMyFit from './pages/FindMyFit';
@@ -72,6 +74,8 @@ function App() {
             {/* Auth & Checkout */}
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<Signup />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="reset-password" element={<ResetPassword />} />
             <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
             <Route path="account" element={<ProtectedRoute><UserDashboard /></ProtectedRoute>} />
           </Route>

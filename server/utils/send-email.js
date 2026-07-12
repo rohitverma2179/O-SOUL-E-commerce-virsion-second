@@ -19,4 +19,14 @@ const sendVerificationEmail = async ({ email, name, code }) => {
   });
 };
 
-module.exports = { sendVerificationEmail };
+const sendResetPasswordEmail = async ({ email, name, resetLink }) => {
+  await createTransporter().sendMail({
+    from: process.env.MAIL_FROM || `O'Soul <${process.env.SMTP_USER}>`,
+    to: email,
+    subject: "Reset your O'Soul account password",
+    text: `Hello ${name}, you requested a password reset. Use this link: ${resetLink}. It expires in 15 minutes.`,
+    html: `<div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;padding:32px"><h1>Password Reset Request</h1><p>Hello ${name},</p><p>We received a request to reset your password. Click the link below to set a new password:</p><div style="text-align:center;margin:32px 0"><a href="${resetLink}" style="background:#222;color:#fff;padding:12px 24px;text-decoration:none;border-radius:4px;font-weight:bold">Reset Password</a></div><p style="color:#666">This link expires in 15 minutes. If you did not request this, you can ignore this email.</p></div>`
+  });
+};
+
+module.exports = { sendVerificationEmail, sendResetPasswordEmail };

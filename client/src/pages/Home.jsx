@@ -408,7 +408,7 @@ const Home = () => {
       </section>
 
       {/* Movement Proof Section */}
-      <section className="container-osoul py-16">
+      {/* <section className="container-osoul py-16">
         <div className="text-center">
           <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-medium">Movement proof</p>
           <h2 className="mt-3 font-serif text-3xl md:text-4xl italic">Comfort should show when you move.</h2>
@@ -433,7 +433,7 @@ const Home = () => {
         <div className="mt-8 text-center">
           <Link to="/fit-tests" className="text-sm underline underline-offset-4 hover:text-olive transition-colors italic font-medium">See Fit Tests →</Link>
         </div>
-      </section>
+      </section> */}
 
       {/* Social Proof / Reviews Section */}
       <section id="reviews" className="bg-secondary/40 border-y border-border/60 py-20 sm:py-28">
