@@ -1,6 +1,7 @@
 node_modules/
-config/.env
+# config/.env
+config/
 uploads/*
 !uploads/.gitkeep
 *.log
-.env
+# .env
