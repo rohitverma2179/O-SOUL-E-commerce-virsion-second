@@ -16,6 +16,8 @@ const comboSchema = new mongoose.Schema({
   valueLine: { type: String, trim: true },
   images: [{ type: String, required: true }],
   items: { type: [comboItemSchema], default: [] },
+  stock: { type: Number, required: true, min: 0, default: 0 },
+  inStock: { type: Boolean, default: true },
   isActive: { type: Boolean, default: true }
 }, { timestamps: true, toJSON: { virtuals: true } });
 

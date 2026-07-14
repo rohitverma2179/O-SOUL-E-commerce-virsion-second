@@ -49,7 +49,7 @@ const ComboCard = ({ combo }) => {
     name: combo.title,
     price: discPriceNum,
     image: combo.images?.[0],
-    stock: 999,
+    stock: combo.stock !== undefined ? combo.stock : 999,
     isCombo: true
   };
 
@@ -77,13 +77,16 @@ const ComboCard = ({ combo }) => {
             <div className="font-serif text-xl text-foreground">₹{combo.discountedPrice}</div>
             <div className="mt-1 inline-block rounded-full bg-olive/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-olive">Save ₹{savingsNum} · {discountPercent}% off</div>
             <div className="mt-1 text-[10px] text-muted-foreground">₹{combo.originalPrice} − ₹{savingsNum} = ₹{combo.discountedPrice}</div>
+            {combo.stock !== undefined && combo.stock === 0 && (
+              <div className="mt-2 text-[10px] uppercase tracking-widest font-bold text-red-500">Out of Stock</div>
+            )}
           </div>
         </div>
-        <p className="mt-2 font-serif text-lg italic text-olive/80 leading-tight">{combo.headline}</p>
+        <p className="mt-2 font-serif text-lg   text-olive/80 leading-tight">{combo.headline}</p>
         <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{combo.description}</p>
         <p className="mt-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">{items.length} clothing item{items.length === 1 ? '' : 's'} included</p>
         {(combo.proofLine || combo.valueLine) && (
-          <p className="mt-3 text-xs font-medium text-foreground/70 italic border-l-2 border-olive/20 pl-3">
+          <p className="mt-3 text-xs font-medium text-foreground/70   border-l-2 border-olive/20 pl-3">
             {combo.proofLine || combo.valueLine}
           </p>
         )}
@@ -113,7 +116,7 @@ const ComboCard = ({ combo }) => {
               <div className="text-sm font-medium">
                 {idx + 1}. {item.name}
               </div>
-              <div className="text-xs text-muted-foreground italic font-medium">
+              <div className="text-xs text-muted-foreground   font-medium">
                 Size: {selectedSizes[idx]} | Color: {selectedColors[idx]}
               </div>
             </div>
@@ -169,8 +172,22 @@ const ComboCard = ({ combo }) => {
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-3">
-        <button type="button" onClick={handleAddCombo} className="h-11 rounded-md border border-foreground bg-background text-sm font-medium text-foreground transition hover:bg-foreground hover:text-background">Add Combo</button>
-        <button type="button" onClick={handleBuyCombo} className="h-11 rounded-md bg-foreground text-sm font-medium text-background transition hover:bg-foreground/90">Buy Now</button>
+        <button 
+          type="button" 
+          disabled={combo.stock !== undefined && combo.stock === 0} 
+          onClick={handleAddCombo} 
+          className="h-11 rounded-md border border-foreground bg-background text-sm font-medium text-foreground transition hover:bg-foreground hover:text-background disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:text-foreground"
+        >
+          {combo.stock !== undefined && combo.stock === 0 ? 'Out of Stock' : 'Add Combo'}
+        </button>
+        <button 
+          type="button" 
+          disabled={combo.stock !== undefined && combo.stock === 0} 
+          onClick={handleBuyCombo} 
+          className="h-11 rounded-md bg-foreground text-sm font-medium text-background transition hover:bg-foreground/90 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {combo.stock !== undefined && combo.stock === 0 ? 'Out of Stock' : 'Buy Now'}
+        </button>
       </div>
 
       {/* Image Preview Modal */}

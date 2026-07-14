@@ -164,21 +164,35 @@ const ProductDetails = () => {
         if (!response.ok) throw new Error(payload.message);
         const initialProd = payload.data;
         setProduct(initialProd);
-        let initSize = initialProd.sizes?.[0] || '';
-        let initColor = initialProd.colors?.[0] || '';
-        if (initialProd.variants && initialProd.variants.length > 0) {
-          const firstInStock = initialProd.variants.find((v) => v.stock > 0);
-          if (firstInStock) {
-            initSize = firstInStock.size;
-            initColor = firstInStock.color;
+        
+        // Parse search params to pre-select size and color if provided
+        const searchParams = new URLSearchParams(location.search);
+        const paramSize = searchParams.get('size');
+        const paramColor = searchParams.get('color');
+
+        let initSize = (paramSize && initialProd.sizes?.includes(paramSize)) ? paramSize : '';
+        let initColor = (paramColor && initialProd.colors?.includes(paramColor)) ? paramColor : '';
+
+        if (!initSize || !initColor) {
+          let fallbackSize = initialProd.sizes?.[0] || '';
+          let fallbackColor = initialProd.colors?.[0] || '';
+          if (initialProd.variants && initialProd.variants.length > 0) {
+            const firstInStock = initialProd.variants.find((v) => v.stock > 0);
+            if (firstInStock) {
+              fallbackSize = firstInStock.size;
+              fallbackColor = firstInStock.color;
+            }
           }
+          if (!initSize) initSize = fallbackSize;
+          if (!initColor) initColor = fallbackColor;
         }
+
         setSelectedSize(initSize);
         setSelectedColor(initColor);
       })
       .catch(() => setProduct(null))
       .finally(() => setLoadingProduct(false));
-  }, [slug]);
+  }, [slug, location.search]);
 
   if (loadingProduct) return <div className="container-osoul py-20 text-center text-sm text-muted-foreground">Loading product...</div>;
 
@@ -279,6 +293,44 @@ const ProductDetails = () => {
               })()}
             </div>
 
+            {/* Editorial Copy / Emotional Hook & Short Copy */}
+            {(product.emotionalHook || product.shortCopy || product.fitDetailLine || product.careLine) && (
+              <div className="rounded-2xl border border-border/60 bg-secondary/5 p-8 space-y-6">
+                {product.emotionalHook && (
+                  <div className="space-y-2">
+                    <p className="text-[10px] uppercase tracking-widest text-olive font-bold">The Philosophy</p>
+                    <p className="font-serif text-2xl italic text-foreground leading-tight">
+                      "{product.emotionalHook}"
+                    </p>
+                  </div>
+                )}
+                {product.shortCopy && (
+                  <div className="space-y-2 pt-2">
+                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Product Story</p>
+                    <p className="text-sm text-muted-foreground/90 leading-relaxed">
+                      {product.shortCopy}
+                    </p>
+                  </div>
+                )}
+                {(product.fitDetailLine || product.careLine) && (
+                  <div className="grid gap-4 sm:grid-cols-2 pt-4 border-t border-border/40 text-xs">
+                    {product.fitDetailLine && (
+                      <div className="space-y-1">
+                        <span className="font-bold text-foreground/80 uppercase tracking-wider block">Silhouette</span>
+                        <span className="text-muted-foreground block">{product.fitDetailLine}</span>
+                      </div>
+                    )}
+                    {product.careLine && (
+                      <div className="space-y-1">
+                        <span className="font-bold text-foreground/80 uppercase tracking-wider block">Care & Wash</span>
+                        <span className="text-muted-foreground block">{product.careLine}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Feature Tags Grid */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {product.featureTags?.map((tag, idx) => (
@@ -354,7 +406,7 @@ const ProductDetails = () => {
                       </button>
                       <span className="text-border text-xs">|</span>
                       <a
-                        href={`https://wa.me/919999999999?text=${encodeURIComponent(`Hi O'Soul, I am looking at "${product.name}" and need help choosing my size.`)}`}
+                        href={`https://wa.me/917498466710?text=${encodeURIComponent(`Hi O'Soul, I am looking at "${product.name}" and need help choosing my size.`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-xs font-bold uppercase tracking-widest text-olive hover:opacity-85 transition-opacity"
@@ -387,7 +439,7 @@ const ProductDetails = () => {
                         onClick={() => setSelectedColor(color)}
                         className={`group relative flex h-11 items-center gap-3 rounded-full border px-5 text-sm transition-all ${selectedColor === color ? 'border-foreground bg-secondary/50 font-bold' : 'border-border hover:border-foreground/30 text-muted-foreground'}`}
                       >
-                        <span className={`h-3 w-3 rounded-full shadow-inner ${color === 'Black' ? 'bg-zinc-900' : color === 'Olive' ? 'bg-olive' : 'bg-stone-400'}`}></span>
+                        <span className={`h-3 w-3 rounded-full shadow-inner ${color === 'Black' ? 'bg-zinc-900' : color === 'Olive' ? 'bg-[#a5a58d]' : 'bg-stone-400'}`}></span>
                         {color}
                       </button>
                     ))}
@@ -587,7 +639,7 @@ const ProductDetails = () => {
             {/* Modal Footer DM CTA */}
             <div className="mt-6 pt-4 border-t border-border/40 text-center">
               <a
-                href={`https://wa.me/919999999999?text=${encodeURIComponent(`Hi O'Soul, I am looking at "${product.name}" and need help choosing my size.`)}`}
+                href={`https://wa.me/917498466710?text=${encodeURIComponent(`Hi O'Soul, I am looking at "${product.name}" and need help choosing my size.`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex h-11 items-center justify-center rounded-md bg-foreground px-6 text-xs font-bold uppercase tracking-widest text-background hover:bg-foreground/90 transition-all cursor-pointer"

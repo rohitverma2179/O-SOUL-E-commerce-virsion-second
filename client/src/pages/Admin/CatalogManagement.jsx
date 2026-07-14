@@ -12,7 +12,7 @@ const initialProduct = {
   objection3Question: '', objection3Answer: ''
 };
 const initialCombo = {
-  title: '', headline: '', description: '', valueLine: '', productNames: '', originalPrice: '', discountPercent: '', discountedPrice: ''
+  title: '', headline: '', description: '', valueLine: '', productNames: '', originalPrice: '', discountPercent: '', discountedPrice: '', stock: '0'
 };
 
 const generateCombinations = (colorsStr, sizesStr) => {
@@ -54,6 +54,10 @@ const CatalogManagement = () => {
   const [editProductBlackImages, setEditProductBlackImages] = useState([]);
   const [editProductOliveImages, setEditProductOliveImages] = useState([]);
 
+  // Combo Edit states
+  const [editingCombo, setEditingCombo] = useState(null);
+  const [editComboImages, setEditComboImages] = useState([]);
+
   const loadCatalog = useCallback(async () => {
     try { setCatalog(await fetchCatalog(tab)); }
     catch (error) { setMessage(error.message); }
@@ -91,28 +95,37 @@ const CatalogManagement = () => {
   };
 
   const startEdit = (item) => {
-    setEditingProduct({
-      ...item,
-      colors: Array.isArray(item.colors) ? item.colors.join(', ') : item.colors || '',
-      sizes: Array.isArray(item.sizes) ? item.sizes.join(', ') : item.sizes || '',
-      tags: Array.isArray(item.tags) ? item.tags.join(', ') : item.tags || '',
-      rating: item.rating || 5,
-      emotionalHook: item.emotionalHook || '',
-      shortCopy: item.shortCopy || '',
-      fitDetailLine: item.fitDetailLine || '',
-      careLine: item.careLine || '',
-      objection1Question: item.objections?.[0]?.question || '',
-      objection1Answer: item.objections?.[0]?.answer || '',
-      objection2Question: item.objections?.[1]?.question || '',
-      objection2Answer: item.objections?.[1]?.answer || '',
-      objection3Question: item.objections?.[2]?.question || '',
-      objection3Answer: item.objections?.[2]?.answer || '',
-    });
-    setEditVariants(item.variants || []);
-    setEditProductImage(null);
-    setEditProductBackImage(null);
-    setEditProductBlackImages([]);
-    setEditProductOliveImages([]);
+    if (tab === 'products') {
+      setEditingProduct({
+        ...item,
+        colors: Array.isArray(item.colors) ? item.colors.join(', ') : item.colors || '',
+        sizes: Array.isArray(item.sizes) ? item.sizes.join(', ') : item.sizes || '',
+        tags: Array.isArray(item.tags) ? item.tags.join(', ') : item.tags || '',
+        rating: item.rating || 5,
+        emotionalHook: item.emotionalHook || '',
+        shortCopy: item.shortCopy || '',
+        fitDetailLine: item.fitDetailLine || '',
+        careLine: item.careLine || '',
+        objection1Question: item.objections?.[0]?.question || '',
+        objection1Answer: item.objections?.[0]?.answer || '',
+        objection2Question: item.objections?.[1]?.question || '',
+        objection2Answer: item.objections?.[1]?.answer || '',
+        objection3Question: item.objections?.[2]?.question || '',
+        objection3Answer: item.objections?.[2]?.answer || '',
+      });
+      setEditVariants(item.variants || []);
+      setEditProductImage(null);
+      setEditProductBackImage(null);
+      setEditProductBlackImages([]);
+      setEditProductOliveImages([]);
+    } else {
+      setEditingCombo({
+        ...item,
+        productNames: Array.isArray(item.items) ? item.items.map(i => i.name).join(', ') : '',
+        stock: item.stock !== undefined ? item.stock.toString() : '0'
+      });
+      setEditComboImages([]);
+    }
   };
 
   const updateEditingField = (event) => {
@@ -214,6 +227,89 @@ const CatalogManagement = () => {
       setCatalog(current => current.map(item => item._id === editingProduct._id ? payload.data : item));
       setMessage('Product updated successfully.');
       setEditingProduct(null);
+    } catch (error) {
+      setMessage(error.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const updateEditingComboField = (event) => {
+    const { name, value } = event.target;
+    setEditingCombo(curr => {
+      const next = { ...curr, [name]: value };
+      if (name === 'originalPrice' || name === 'discountPercent' || name === 'discountedPrice') {
+        const orig = Number(next.originalPrice) || 0;
+        if (name === 'discountPercent') {
+          const pct = Math.min(100, Math.max(0, Number(value)));
+          next.discountedPrice = orig === 0 ? '' : Math.round(orig * (100 - pct) / 100);
+        } else if (name === 'originalPrice') {
+          const pct = Number(next.discountPercent || 0);
+          next.discountedPrice = orig === 0 ? '' : Math.round(orig * (100 - pct) / 100);
+        } else if (name === 'discountedPrice') {
+          const disc = Number(value) || 0;
+          const pct = orig === 0 ? 0 : Math.round(((orig - disc) / orig) * 100);
+          next.discountPercent = value === '' ? '' : Math.min(100, Math.max(0, pct));
+        }
+      }
+      return next;
+    });
+  };
+
+  const handleEditComboImagesChange = (event) => {
+    const files = Array.from(event.target.files);
+    const oversized = files.some((file) => file.size > 8 * 1024 * 1024);
+    if (oversized) {
+      setMessage('Each combo image must be less than 8MB.');
+      event.target.value = null;
+      setEditComboImages([]);
+    } else {
+      setMessage('');
+      setEditComboImages(files);
+    }
+  };
+
+  const saveComboEdit = async (event) => {
+    event.preventDefault();
+    setBusy(true);
+    setMessage('');
+
+    const manualComboItems = editingCombo.productNames.split(',').map((name) => name.trim()).filter(Boolean);
+    if (!manualComboItems.length) {
+      setMessage('Enter at least one product name for the combo.');
+      setBusy(false);
+      return;
+    }
+
+    const form = new FormData();
+    Object.entries(editingCombo).forEach(([key, value]) => {
+      if (key !== 'images' && key !== 'items' && key !== 'productNames' && key !== 'savings') {
+        form.append(key, value);
+      }
+    });
+
+    form.append('items', JSON.stringify(manualComboItems.map((name) => ({ 
+      name, 
+      slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), 
+      price: 0 
+    }))));
+
+    if (editComboImages && editComboImages.length > 0) {
+      editComboImages.forEach(file => form.append('images', file));
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/combos/${editingCombo._id}`, {
+        method: 'PUT',
+        body: form,
+        credentials: 'include'
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.message || 'Update failed');
+
+      setCatalog(current => current.map(item => item._id === editingCombo._id ? payload.data : item));
+      setMessage('Combo updated successfully.');
+      setEditingCombo(null);
     } catch (error) {
       setMessage(error.message);
     } finally {
@@ -604,6 +700,10 @@ const CatalogManagement = () => {
               <p className="text-xs font-bold uppercase tracking-wider text-emerald-700">Discount strategy</p>
               <p className="mt-1 text-sm text-emerald-800">{combo.productNames.split(',').map((name) => name.trim()).filter(Boolean).length} clothing item(s) · Customer saves ₹{comboSavings} · {comboDiscountPercent}% off · Final price ₹{combo.discountedPrice || 0}</p>
             </div>
+            <label className="space-y-1.5 md:col-span-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Combo Stock Level</span>
+              <input className={fieldClass} name="stock" type="number" min="0" value={combo.stock} onChange={update(setCombo)} placeholder="Combo stock quantity (e.g. 50)" required />
+            </label>
             <textarea className={`${fieldClass} md:col-span-2`} name="description" value={combo.description} onChange={update(setCombo)} placeholder="Combo description" required />
             <input className={`${fieldClass} md:col-span-2`} name="valueLine" value={combo.valueLine} onChange={update(setCombo)} placeholder="Value Line / Slogan (e.g. Buy all three together. Save ₹194.)" />
             <label className="space-y-1.5 md:col-span-2"><span className="text-xs font-bold uppercase tracking-wider text-slate-500">Product names</span><input className={fieldClass} name="productNames" value={combo.productNames} onChange={update(setCombo)} placeholder="T-shirt, Joggers, Hoodie" required /><span className="block text-xs text-slate-400">Separate each product name with a comma.</span></label>
@@ -640,7 +740,7 @@ const CatalogManagement = () => {
 
                   <p className="text-sm text-slate-500 mt-0.5">
                     ₹{item.price || item.discountedPrice}
-                    {tab === 'products' && ` · ${item.stock} total stock`}
+                    {item.stock !== undefined && ` · ${item.stock} total stock`}
                   </p>
                   
                   {hasVariants && (
@@ -660,11 +760,11 @@ const CatalogManagement = () => {
                 </div>
                 
                 <div className="flex gap-1">
-                  {tab === 'products' && (
+                  {(tab === 'products' || tab === 'combos') && (
                     <button 
                       onClick={() => startEdit(item)} 
                       className="rounded-lg p-2 text-slate-600 hover:bg-slate-50 transition" 
-                      aria-label="Edit product and stock"
+                      aria-label={tab === 'products' ? "Edit product and stock" : "Edit combo and stock"}
                     >
                       <Edit2 size={18} />
                     </button>
@@ -977,6 +1077,101 @@ const CatalogManagement = () => {
                 <button 
                   type="button" 
                   onClick={() => setEditingProduct(null)}
+                  className="rounded-xl border border-slate-200 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={busy}
+                  className="rounded-xl bg-olive px-6 py-2.5 text-sm font-semibold text-white hover:bg-olive/90 disabled:opacity-50 transition cursor-pointer"
+                >
+                  {busy ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      )}
+
+      {/* Combo Editor Modal */}
+      {editingCombo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl animate-in zoom-in duration-300 flex flex-col max-h-[90vh]">
+            
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+              <div>
+                <h2 className="text-xl font-bold">Edit Combo & Stock</h2>
+                <p className="text-xs text-slate-500 mt-1">Manage description, pricing, items, and stock level.</p>
+              </div>
+              <button 
+                onClick={() => setEditingCombo(null)} 
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Modal Content - Scrollable */}
+            <form onSubmit={saveComboEdit} className="flex-1 overflow-y-auto pr-2 space-y-6">
+              <div className="grid gap-4 md:grid-cols-2">
+                <label className="block space-y-1">
+                  <span className="text-xs font-semibold text-slate-500">Title</span>
+                  <input className={fieldClass} name="title" value={editingCombo.title} onChange={updateEditingComboField} required />
+                </label>
+                <label className="block space-y-1">
+                  <span className="text-xs font-semibold text-slate-500">Headline</span>
+                  <input className={fieldClass} name="headline" value={editingCombo.headline} onChange={updateEditingComboField} required />
+                </label>
+                <label className="block space-y-1">
+                  <span className="text-xs font-semibold text-slate-500">Original Price (₹)</span>
+                  <input className={fieldClass} name="originalPrice" type="number" min="0" value={editingCombo.originalPrice} onChange={updateEditingComboField} required />
+                </label>
+                <label className="block space-y-1">
+                  <span className="text-xs font-semibold text-slate-500">Discount Percent (%)</span>
+                  <input className={fieldClass} name="discountPercent" type="number" min="0" max="100" value={editingCombo.discountPercent} onChange={updateEditingComboField} required />
+                </label>
+                <label className="block space-y-1 md:col-span-2">
+                  <span className="text-xs font-semibold text-slate-500">Price after discount (₹)</span>
+                  <input className={fieldClass} name="discountedPrice" type="number" min="0" value={editingCombo.discountedPrice} onChange={updateEditingComboField} required />
+                </label>
+                
+                {/* Combo Stock Input field */}
+                <label className="block space-y-1 md:col-span-2">
+                  <span className="text-xs font-semibold text-slate-500">Combo Stock Level</span>
+                  <input className={fieldClass} name="stock" type="number" min="0" value={editingCombo.stock || 0} onChange={updateEditingComboField} required />
+                </label>
+
+                <label className="block space-y-1 md:col-span-2">
+                  <span className="text-xs font-semibold text-slate-500">Description</span>
+                  <textarea className={`${fieldClass} h-20 resize-none`} name="description" value={editingCombo.description} onChange={updateEditingComboField} required />
+                </label>
+                <label className="block space-y-1 md:col-span-2">
+                  <span className="text-xs font-semibold text-slate-500">Value Line / Slogan</span>
+                  <input className={fieldClass} name="valueLine" value={editingCombo.valueLine || ''} onChange={updateEditingComboField} />
+                </label>
+                <label className="block space-y-1 md:col-span-2">
+                  <span className="text-xs font-semibold text-slate-500">Product Names</span>
+                  <input className={fieldClass} name="productNames" value={editingCombo.productNames} onChange={updateEditingComboField} required />
+                  <span className="block text-[10px] text-slate-400">Separate each product name with a comma.</span>
+                </label>
+                <label className="block space-y-1 md:col-span-2">
+                  <span className="text-xs font-semibold text-slate-500">Combo Images (Leave blank to keep existing, max 5)</span>
+                  <label className={`${fieldClass} flex cursor-pointer items-center gap-3 bg-slate-50`}>
+                    <Upload size={18} />
+                    <span className="truncate">{editComboImages.length ? `${editComboImages.length} image(s) selected` : 'Choose new combo images'}</span>
+                    <input className="hidden" type="file" accept="image/*" multiple onChange={handleEditComboImagesChange} />
+                  </label>
+                </label>
+              </div>
+
+              {/* Modal Footer / Actions */}
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <button 
+                  type="button" 
+                  onClick={() => setEditingCombo(null)}
                   className="rounded-xl border border-slate-200 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
                 >
                   Cancel

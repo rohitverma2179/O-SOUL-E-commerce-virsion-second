@@ -5,6 +5,7 @@ const requireAdmin = require("../middlewares/admin-auth.middleware");
 
 router.get("/", comboController.getCombos);
 router.post("/", requireAdmin, upload.array("images", 5), comboController.createCombo);
+router.put("/:id", requireAdmin, upload.array("images", 5), comboController.updateCombo);
 router.delete("/:id", requireAdmin, comboController.deleteCombo);
 
 module.exports = router;

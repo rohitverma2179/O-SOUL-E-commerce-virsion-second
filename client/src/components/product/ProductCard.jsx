@@ -76,14 +76,14 @@ const ProductCard = ({ product }) => {
               )}
             </div>
           </div>
-          <div className="flex flex-col items-end gap-1 shrink-0">
+          {/* <div className="flex flex-col items-end gap-1 shrink-0">
             <span className={`rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider ${product.stock > 0 ? 'bg-olive/10 text-olive' : 'bg-clay/10 text-clay'}`}>
               {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
             </span>
-          </div>
+          </div> */}
         </div>
 
-        <p className="mt-2 text-sm italic text-muted-foreground line-clamp-2">{shortDescription}</p>
+        <p className="mt-2 text-sm  text-muted-foreground line-clamp-2">{shortDescription}</p>
         <p className="mt-2 text-xs text-muted-foreground">Best for: {bestFor}</p>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {tags?.map((tag) => (

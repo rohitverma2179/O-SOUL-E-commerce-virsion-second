@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import { allProducts } from '../data/productData';
+import { Link, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../lib/api';
 import { ArrowRight, RefreshCw, MessageSquare } from 'lucide-react';
 
 const FindMyFit = () => {
-  const { addToCart } = useCart();
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [answers, setAnswers] = useState({
     discomfort: '',
@@ -92,23 +90,21 @@ const FindMyFit = () => {
     const { discomfort, activity, gender } = answers;
 
     const findProductBySlug = (slug) => {
-      // Look up inside liveProducts first, fallback to static if empty or loading
-      const foundLive = liveProducts.find(p => p.slug === slug);
-      if (foundLive) return foundLive;
-      return allProducts.find(p => p.slug === slug);
+      // Look up inside liveProducts fetched from backend
+      return liveProducts.find(p => p.slug === slug);
     };
 
     // Female matches
     if (gender === 'Women') {
       if (discomfort === 'waist_digs' || discomfort === 'crotch_pulls' || discomfort === 'thighs_tight' || discomfort === 'fabric_clings' || activity === 'sitting') {
-        const item = findProductBySlug('womens-harem-pants');
+        const item = findProductBySlug('women-s-harem-pants');
         return {
           product: item,
           customTitle: "Women's Harem Pants",
           customDescription: "You need a generous rise for complete freedom of movement and a fluid, non-cling drape."
         };
       }
-      const hoodie = findProductBySlug('womens-cropped-hoodie');
+      const hoodie = findProductBySlug('women-s-cropped-hoodie');
       return {
         product: hoodie,
         customTitle: "Women's Cropped Hoodie",
@@ -118,7 +114,7 @@ const FindMyFit = () => {
 
     // Unisex matches
     if (gender === 'Unisex') {
-      const unisexTee = findProductBySlug('unisex-boxy-tee');
+      const unisexTee = findProductBySlug('unisex-boxy-tshirt');
       return {
         product: unisexTee,
         customTitle: "Unisex Boxy Tee",
@@ -128,7 +124,7 @@ const FindMyFit = () => {
 
     // Male matches / Default
     if (discomfort === 'shorts_ride_up' || activity === 'walking') {
-      const shorts = findProductBySlug('mens-shorts');
+      const shorts = findProductBySlug('men-s-shorts');
       return {
         product: shorts,
         customTitle: "Everyday Shorts",
@@ -137,7 +133,7 @@ const FindMyFit = () => {
     }
 
     if (discomfort === 'waist_digs' || discomfort === 'crotch_pulls' || discomfort === 'thighs_tight' || activity === 'sitting') {
-      const joggers = findProductBySlug('mens-joggers');
+      const joggers = findProductBySlug('men-s-joggers');
       return {
         product: joggers,
         customTitle: "Men's Joggers",
@@ -145,7 +141,7 @@ const FindMyFit = () => {
       };
     }
 
-    const pocketTee = findProductBySlug('mens-boxy-tee-with-pocket');
+    const pocketTee = findProductBySlug('men-s-boxy-tee-with-pocket');
     return {
       product: pocketTee,
       customTitle: "Men's Boxy Tee With Pocket",
@@ -168,20 +164,11 @@ const FindMyFit = () => {
     }
   }, [product]);
 
-  const handleAddToCart = () => {
-    if (product && selectedSize && selectedColor) {
-      const cartProduct = {
-        ...product,
-        id: product._id || product.id
-      };
-      addToCart(cartProduct, selectedSize, selectedColor);
-    }
-  };
 
   const getWhatsAppLink = () => {
     if (!product) return '#';
     const message = `Hi O'Soul, I completed the Fit Finder! My recommended fit is "${recommendation.customTitle}" (Size: ${selectedSize}, Color: ${selectedColor}).`;
-    return `https://wa.me/919999999999?text=${encodeURIComponent(message)}`;
+    return `https://wa.me/917498466710?text=${encodeURIComponent(message)}`;
   };
 
   return (
@@ -241,7 +228,7 @@ const FindMyFit = () => {
                   <div className="md:col-span-5 aspect-[3/4] rounded-lg overflow-hidden bg-secondary relative">
                     <img 
                       src={product.image} 
-                      alt={product.alt} 
+                      alt={product.alt || product.name} 
                       className="h-full w-full object-cover" 
                     />
                     <div className="absolute top-3 left-3 bg-olive/90 text-ivory text-[9px] uppercase tracking-wider font-semibold px-2.5 py-1 rounded-sm shadow">
@@ -304,10 +291,10 @@ const FindMyFit = () => {
                     {/* Action buttons */}
                     <div className="flex flex-col sm:flex-row gap-3 pt-4">
                       <button
-                        onClick={handleAddToCart}
+                        onClick={() => navigate(`/products/${product.slug}?size=${selectedSize}&color=${selectedColor}`)}
                         className="h-12 bg-foreground text-background px-6 rounded-md text-xs font-bold uppercase tracking-widest hover:bg-foreground/90 transition shadow-lg flex items-center justify-center gap-2 group"
                       >
-                        Add Recommended <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                        View Product Details <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                       </button>
 
                       <a
@@ -323,6 +310,13 @@ const FindMyFit = () => {
                 </div>
               </div>
             )}
+
+            {step === 4 && !product && (
+              <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in duration-300">
+                <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground mb-4" />
+                <p className="text-sm text-muted-foreground font-medium">Finding your perfect fit...</p>
+              </div>
+            )}
           </div>
 
           {/* Bottom Actions (e.g. Restart or Go Back) */}
@@ -335,12 +329,12 @@ const FindMyFit = () => {
                 <RefreshCw className="h-3 w-3" /> Restart Finder
               </button>
             ) : (
-              <span className="text-xs text-muted-foreground italic">"If it makes you adjust, it failed."</span>
+              <span className="text-xs text-muted-foreground ">"If it makes you adjust, it failed."</span>
             )}
             
-            {step === 4 && (
+            {step === 4 && product && (
               <Link 
-                to={`/products/${product?.slug}`}
+                to={`/products/${product.slug}?size=${selectedSize}&color=${selectedColor}`}
                 className="text-xs uppercase tracking-widest text-olive hover:text-foreground transition-all font-bold underline underline-offset-4"
               >
                 View Product Details

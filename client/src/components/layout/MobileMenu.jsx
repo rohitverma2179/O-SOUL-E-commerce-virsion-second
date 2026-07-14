@@ -105,7 +105,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
 
 
         <div className="absolute bottom-10 left-6 right-6">
-          <p className="text-[11px] text-muted-foreground italic">"If it makes you adjust, it failed."</p>
+          <p className="text-[11px] text-muted-foreground ">"If it makes you adjust, it failed."</p>
         </div>
       </div>
     </div>

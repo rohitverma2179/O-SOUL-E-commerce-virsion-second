@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import bgImage from '../assets/product/(61).png';
 
 const FounderNote = () => {
   useEffect(() => {
@@ -7,19 +8,34 @@ const FounderNote = () => {
   }, []);
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="container-osoul max-w-2xl py-14 md:py-24">
-        <header className="mb-12">
-          <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Founder's Note</p>
-          <h1 className="mt-4 font-serif text-4xl md:text-6xl tracking-tight italic">Why O'Soul exists.</h1>
-        </header>
+    <div 
+      className="relative min-h-screen w-full flex items-center justify-center py-20 px-4"
+      style={{
+        backgroundImage: `url("${bgImage}")`,
+        backgroundAttachment: 'fixed',
+        backgroundPosition: 'center 35%',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover'
+      }}
+    >
+      {/* Light overlay for context depth and readibility */}
+      <div className="absolute inset-0 bg-black/10 pointer-events-none" />
+
+      {/* The White Founder Note Card */}
+      <div className="relative z-10 bg-white max-w-lg sm:max-w-xl w-full p-8 sm:p-14 md:p-16 rounded-sm shadow-2xl text-center space-y-6 animate-in fade-in zoom-in-95 duration-500">
         
-        <div className="mt-10 space-y-8 text-lg text-foreground/80 leading-relaxed italic font-light">
-          <p>
-            some days, the reason you don’t feel like yourself has nothing to do with your mood.
+        {/* Card Title */}
+        <h2 className="font-serif text-2xl sm:text-3xl text-[#9B6650] mb-8 tracking-tight font-medium">
+          a note from the founder
+        </h2>
+
+        {/* Card Body Content */}
+        <div className="space-y-6 text-[13px] sm:text-[14px] text-stone-700 leading-relaxed tracking-wide">
+          <p className="italic">
+            "some days, the reason you don’t feel like yourself has nothing to do with your mood.
           </p>
 
-          <p className="text-xl text-foreground not-italic font-normal">
+          <p className="font-serif text-base text-[#9B6650] font-medium leading-tight">
             it’s what you’re wearing.
           </p>
 
@@ -37,32 +53,41 @@ const FounderNote = () => {
             and i kept wondering why something we wear for hours is treated like it doesn’t matter enough to get right.
           </p>
 
-          <p className="text-xl text-foreground not-italic font-normal">
+          <p className="font-serif text-base text-[#9B6650] font-medium leading-tight">
             that’s where o’soul began.
           </p>
 
           <p>
-            with one simple thought <br />
+            with one simple thought:<br />
             the clothes closest to you should never make you feel like you have to adjust yourself to fit into them.
           </p>
 
           <p>
-            not to make more clothes.<br />
+            not to make more clothes,<br />
             but to make bottoms that respect your body, your movement, and the way real days actually feel.
           </p>
 
-          <p className="font-serif text-2xl text-foreground italic leading-tight mt-12 mb-12">
-            they should respect you as you are.
+          <p className="font-serif text-base sm:text-lg text-stone-900 font-medium italic mt-8">
+            they should respect you as you are."
           </p>
 
-          <div className="pt-12 border-t border-border mt-16">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-foreground">— manan / Tanishka</p>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">Founder, O'Soul</p>
+          {/* Signature */}
+          <div className="pt-6">
+            <p className="text-[#9B6650] font-serif text-base">
+              - love, manan / tanishka
+            </p>
+            <p className="text-[10px] uppercase tracking-widest text-stone-400 mt-1 font-semibold">
+              Founders, O'Soul
+            </p>
           </div>
         </div>
 
-        <div className="mt-20">
-          <Link to="/shop" className="inline-flex h-12 items-center rounded-md bg-foreground px-10 text-[11px] font-bold uppercase tracking-widest text-background hover:bg-foreground/90 transition-all shadow-lg shadow-charcoal/10">
+        {/* CTA Shop Link */}
+        <div className="pt-8 border-t border-stone-100">
+          <Link 
+            to="/shop" 
+            className="inline-flex h-11 items-center rounded-md bg-stone-900 px-8 text-[10px] font-bold uppercase tracking-widest text-white hover:bg-stone-800 transition-all shadow-md"
+          >
             Shop The First Drop
           </Link>
         </div>
