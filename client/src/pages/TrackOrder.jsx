@@ -268,9 +268,14 @@ const TrackOrder = () => {
                 If you have questions about your delivery address, package contents, or general delay, please contact our support team.
               </p>
               <div className="pt-2">
-                <Link to="/support" className="text-xs uppercase tracking-widest font-bold text-olive hover:text-clay transition-colors underline">
+                <a 
+                  href="https://wa.me/917498466710?text=Hi%20O'Soul,%20I%20need%20help%20with%20my%20order%20delivery." 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-xs uppercase tracking-widest font-bold text-olive hover:text-clay transition-colors underline"
+                >
                   Contact O'Soul Support
-                </Link>
+                </a>
               </div>
             </div>
 

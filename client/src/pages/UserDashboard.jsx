@@ -312,16 +312,18 @@ const UserDashboard = () => {
                             </div>
                             <div className="flex items-center gap-3">
                               <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] uppercase font-bold tracking-wider ${
+                                order.trackingNumber ? 'bg-blue-100 text-blue-800' :
                                 order.status === 'paid' ? 'bg-emerald-100 text-emerald-800' :
                                 order.status === 'failed' ? 'bg-rose-100 text-rose-800' :
                                 'bg-zinc-100 text-zinc-800'
                               }`}>
                                 <span className={`h-1.5 w-1.5 rounded-full ${
+                                  order.trackingNumber ? 'bg-blue-600' :
                                   order.status === 'paid' ? 'bg-emerald-600' :
                                   order.status === 'failed' ? 'bg-rose-600' :
                                   'bg-zinc-500'
                                 }`}></span>
-                                {order.status}
+                                {order.trackingNumber ? 'shipped' : order.status}
                               </span>
                               <button 
                                 onClick={() => handleInvoiceClick(order)}

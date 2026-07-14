@@ -218,41 +218,45 @@ async function placeOrderInShipmozo(order) {
  * @returns {Promise<Object>} - Contains status history and current status.
  */
 async function trackShipmozoOrder(trackingNumber) {
-  // If it's a mock tracking number or we are in test environment, return simulated updates
-  if (!trackingNumber || trackingNumber.startsWith("SMZ-")) {
+  // If it's a mock tracking number, return simulated updates
+  if (!trackingNumber || (trackingNumber.startsWith("SMZ-") && !trackingNumber.includes("GGN"))) {
     return getMockTrackingStatus(trackingNumber);
   }
 
   const url = `https://shipping-api.com/app/api/v1/track-order?awb_number=${trackingNumber}`;
 
   try {
-    if (!PUBLIC_KEY || !PRIVATE_KEY || PUBLIC_KEY.includes("dfsg") || PRIVATE_KEY.includes("dfsg")) {
-      throw new Error("Using test/placeholder credentials. Skipping external API call.");
+    const headers = { 'Accept': 'application/json' };
+    
+    // Add keys only if they are real / configured
+    const hasRealKeys = PUBLIC_KEY && PRIVATE_KEY && 
+                        !PUBLIC_KEY.includes("dfsg") && 
+                        !PRIVATE_KEY.includes("dfsg");
+
+    if (hasRealKeys) {
+      headers['public-key'] = PUBLIC_KEY;
+      headers['private-key'] = PRIVATE_KEY;
     }
 
     const responseData = await fetchWithRetry(url, {
       method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'public-key': PUBLIC_KEY,
-        'private-key': PRIVATE_KEY
-      }
+      headers: headers
     });
 
     if (responseData && (responseData.result === "1" || responseData.success)) {
       const data = responseData.data || {};
-      const events = data.events || data.tracking_events || data.checkpoints || responseData.events || [];
-      const currentStatus = data.currentStatus || data.status || data.current_status || (events[0] ? (events[0].status || events[0].activity) : "In Transit");
+      const events = data.scan_detail || data.events || data.tracking_events || data.checkpoints || responseData.events || [];
+      const currentStatus = data.current_status || data.currentStatus || data.status || (events[0] ? (events[0].status || events[0].activity) : "In Transit");
 
       return {
         trackingNumber: trackingNumber,
-        carrier: data.carrier || data.courier_name || responseData.carrier || "Shipmozo Express",
+        carrier: data.courier || data.carrier || data.courier_name || responseData.carrier || "Shipmozo Express",
         currentStatus: currentStatus,
         events: events.map(e => ({
           status: e.status || e.activity || e.status_name || "Status Updated",
-          description: e.description || e.instructions || e.comment || e.activity || "Package update in transit.",
-          location: e.location || e.city || e.place || "",
-          timestamp: e.timestamp || e.date || e.time || new Date().toISOString()
+          description: e.instructions || e.description || e.comment || e.activity || "Package update in transit.",
+          location: e.location || e.city || e.place || e.scanned_location || "",
+          timestamp: e.status_time || e.timestamp || e.date || e.time || new Date().toISOString()
         }))
       };
     } else {

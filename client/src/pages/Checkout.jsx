@@ -464,7 +464,8 @@ const Checkout = () => {
                 className="flex h-14 w-full items-center justify-center gap-3 rounded-md bg-foreground text-sm font-semibold text-background hover:bg-foreground/90 transition-all disabled:opacity-50"
               >
                 <CreditCard className="h-4 w-4" />
-                {isProcessing ? "Processing..." : `Proceed to Payment (₹${cartTotal + 50})`}
+                {/* {isProcessing ? "Processing..." : `Proceed to Payment (₹${cartTotal + 50})`} */}
+                {isProcessing ? "Processing..." : `Proceed to Payment (₹${cartTotal})`}
               </button>
               <div className="mt-4 flex items-center justify-center gap-6 text-[10px] text-muted-foreground uppercase tracking-wider">
                 <span className="flex items-center gap-1.5"><ShieldCheck className="h-3 w-3" /> Secure Payment</span>
@@ -507,7 +508,8 @@ const Checkout = () => {
             </div>
             <div className="flex justify-between border-t border-border/50 pt-3 text-lg font-semibold">
               <span className="font-serif">Total</span>
-              <span>₹{cartTotal + 50}</span>
+              {/* <span>₹{cartTotal + 50}</span> */}
+              <span>₹{cartTotal }</span>
             </div>
           </div>
         </aside>
