@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const Order = require("../models/order.model");
 const Cart = require("../models/cart.model");
 const Product = require("../models/product.model");
+const { sendOrderConfirmationEmails } = require("../utils/send-email");
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -129,7 +130,9 @@ exports.verifyPayment = async (req, res, next) => {
       }
 
       // Check and update order status to paid, and deduct stock
+      let paymentJustVerified = false;
       if (order.status !== "paid") {
+        paymentJustVerified = true;
         order.status = "paid";
         order.razorpayPaymentId = razorpay_payment_id;
         order.razorpaySignature = razorpay_signature;
@@ -184,6 +187,17 @@ exports.verifyPayment = async (req, res, next) => {
         }
       } catch (shipErr) {
         console.error("[Payment Verify] Error registering shipment with Shipmozo:", shipErr.message);
+      }
+
+      // Notify the customer and store owner only on the first successful verification.
+      // Email delivery must not turn a successfully paid order into a failed checkout.
+      if (paymentJustVerified) {
+        try {
+          await sendOrderConfirmationEmails({ order });
+          console.log(`[Payment Verify] Order confirmation emails sent for ${order.razorpayOrderId}`);
+        } catch (emailError) {
+          console.error(`[Payment Verify] Order paid, but notification email failed for ${order.razorpayOrderId}:`, emailError.message);
+        }
       }
 
       res.json({
