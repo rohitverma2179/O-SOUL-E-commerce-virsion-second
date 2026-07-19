@@ -1,9 +1,16 @@
 const mongoose = require("mongoose");
 
+const comboVariantSchema = new mongoose.Schema({
+  size: { type: String, trim: true },
+  color: { type: String, trim: true },
+  stock: { type: Number, default: 0, min: 0 }
+}, { _id: false });
+
 const comboItemSchema = new mongoose.Schema({
   name: { type: String, required: true },
   slug: { type: String, required: true },
-  price: { type: Number, required: true, min: 0 }
+  price: { type: Number, required: true, min: 0 },
+  variants: { type: [comboVariantSchema], default: [] }
 }, { _id: false });
 
 const comboSchema = new mongoose.Schema({

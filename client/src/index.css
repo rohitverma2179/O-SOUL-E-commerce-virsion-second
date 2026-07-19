@@ -83,3 +83,11 @@
     background: radial-gradient(at 30% 20%, #f0e7d8, #0000 60%), linear-gradient(135deg, #e3d9cb, #cdc2b3);
   }
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

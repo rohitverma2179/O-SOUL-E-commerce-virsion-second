@@ -11,14 +11,14 @@ import React, { useState, useEffect, useRef } from 'react';
  * - Support for 'priority' (eager loading for above-the-fold content)
  * - Robust handling of src changes and cached images
  */
-const OptimizedImage = ({ 
-  src, 
-  alt, 
-  className = '', 
+const OptimizedImage = ({
+  src,
+  alt,
+  className = '',
   imgClassName = '',
   priority = false,
   aspectRatio = 'aspect-square',
-  ...props 
+  ...props
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(false);
@@ -40,8 +40,11 @@ const OptimizedImage = ({
     }
   }, [src]);
 
+  const isAbsolute = className.includes('absolute');
+  const positionClass = isAbsolute ? '' : 'relative';
+
   return (
-    <div className={`relative overflow-hidden ${aspectRatio} ${className}`}>
+    <div className={`${positionClass} overflow-hidden ${aspectRatio} ${className}`}>
       {/* Placeholder / Shimmer */}
       {!isLoaded && !error && (
         <div className="absolute inset-0 animate-pulse bg-secondary/50" />
@@ -63,9 +66,8 @@ const OptimizedImage = ({
         decoding={priority ? 'sync' : 'async'}
         onLoad={() => setIsLoaded(true)}
         onError={() => setError(true)}
-        className={`h-full w-full object-cover transition-opacity duration-700 ease-in-out ${
-          isLoaded ? 'opacity-100' : 'opacity-0'
-        } ${imgClassName}`}
+        className={`h-full w-full object-cover transition-opacity duration-700 ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'
+          } ${imgClassName}`}
         {...props}
       />
     </div>

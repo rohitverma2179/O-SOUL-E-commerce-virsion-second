@@ -8,17 +8,21 @@ import { ChevronRight } from 'lucide-react';
 import OptimizedImage from '../components/common/OptimizedImage';
 
 // Image imports
-import heroImg1 from '../assets/product/(61).png';
+import heroImg1 from '../assets/product/BO7A9339.jpeg';
 import heroImg2 from '../assets/product/(62).png';
 import heroImg3 from '../assets/product/(67).png';
+import heroImg4 from '../assets/product/crausal4.png';
+import heroImg5 from '../assets/product/crausal5.jpeg';
+import heroImg6 from '../assets/product/crausal6.png';
+import heroImg7 from '../assets/product/crausal7.jpeg';
+import heroVideo from '../assets/Man_sitting_on_chair_202607170128.mp4';
 
 import catImgMen from '../assets/product/(4).png';
 import catImgWomen from '../assets/product/(64).png';
-import catImgUnisex from '../assets/product/68.png';
+import catImgUnisex from '../assets/home/unisex3.png';
 import catImgCombos from '../assets/product/(10).png';
 
 const products = allProducts;
-
 
 const Home = () => {
   const [popup, setPopup] = useState(null);
@@ -26,10 +30,10 @@ const Home = () => {
   const [liveProducts, setLiveProducts] = useState([]);
   const [liveCombos, setLiveCombos] = useState([]);
   const [heroContent, setHeroContent] = useState({
-    tagline: 'Bottomwear that you don’t need to adjust.',
+    tagline: '',
     titleLine1: 'Welcome to an  adjust-free world',
 
-    titleLine2: "  of bottoms  by O’Soul",
+    titleLine2: "By O’Soul",
     description: 'Everyday joggers, shorts, and harem pants. Built for sitting, walking, and doing your actual day — without pulling, tugging, or thinking about what you\'re wearing.',
     primaryBtnText: 'Shop The First Drop →',
     primaryBtnLink: '/shop',
@@ -135,97 +139,353 @@ const Home = () => {
     }
   ];
 
+  // Carousel slides definition
+  const carouselSlides = [
+    { id: 1, image: heroImg1, showButtons: true },
+    { id: 2, image: heroImg2, caption: "" },
+    { id: 6, image: heroImg6 },
+    { id: 3, image: heroImg3, caption: "" },
+    { id: 5, image: heroImg5 },
+    { id: 7, image: heroImg7 },
+    { id: 4, image: heroImg4 },
+  ];
+  const N = carouselSlides.length;
+
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [scrollIndex, setScrollIndex] = useState(N);
+  const scrollRef = React.useRef(null);
+
+  const scrollToSlide = (index) => {
+    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    const children = container.querySelectorAll('.snap-center');
+    const targetIndex = N + index;
+    const child = children[targetIndex];
+    if (child) {
+      container.scrollTo({
+        left: child.offsetLeft - (container.offsetWidth - child.offsetWidth) / 2,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    const scrollPosition = container.scrollLeft;
+    const containerWidth = container.offsetWidth;
+    const children = container.querySelectorAll('.snap-center');
+
+    let closestIndex = N;
+    let minDiff = Infinity;
+    const containerCenter = scrollPosition + containerWidth / 2;
+
+    children.forEach((child, i) => {
+      const childCenter = child.offsetLeft + child.offsetWidth / 2;
+      const diff = Math.abs(containerCenter - childCenter);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIndex = i;
+      }
+    });
+
+    if (closestIndex < N) {
+      const targetChild = children[closestIndex + N];
+      if (targetChild) {
+        container.scrollTo({
+          left: targetChild.offsetLeft - (containerWidth - targetChild.offsetWidth) / 2,
+          behavior: 'auto'
+        });
+        setScrollIndex(closestIndex + N);
+        setActiveSlide((closestIndex + N) % N);
+        return;
+      }
+    } else if (closestIndex >= 2 * N) {
+      const targetChild = children[closestIndex - N];
+      if (targetChild) {
+        container.scrollTo({
+          left: targetChild.offsetLeft - (containerWidth - targetChild.offsetWidth) / 2,
+          behavior: 'auto'
+        });
+        setScrollIndex(closestIndex - N);
+        setActiveSlide((closestIndex - N) % N);
+        return;
+      }
+    }
+
+    setScrollIndex(closestIndex);
+    setActiveSlide(closestIndex % N);
+  };
+
+  const handleMouseDown = (e) => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const startX = e.pageX - container.offsetLeft;
+    const scrollLeft = container.scrollLeft;
+
+    const handleMouseMove = (moveEvent) => {
+      const x = moveEvent.pageX - container.offsetLeft;
+      const walk = (x - startX) * 1.5; // scroll speed multiplier
+      container.scrollLeft = scrollLeft - walk;
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleNext = () => {
+    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    const children = container.querySelectorAll('.snap-center');
+    const targetIndex = scrollIndex + 1;
+    const child = children[targetIndex];
+    if (child) {
+      container.scrollTo({
+        left: child.offsetLeft - (container.offsetWidth - child.offsetWidth) / 2,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handlePrev = () => {
+    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    const children = container.querySelectorAll('.snap-center');
+    const targetIndex = scrollIndex - 1;
+    const child = children[targetIndex];
+    if (child) {
+      container.scrollTo({
+        left: child.offsetLeft - (container.offsetWidth - child.offsetWidth) / 2,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  useEffect(() => {
+    // Initial scroll to middle slide group
+    const timer = setTimeout(() => {
+      if (scrollRef.current) {
+        const container = scrollRef.current;
+        const children = container.querySelectorAll('.snap-center');
+        const targetChild = children[N];
+        if (targetChild) {
+          container.scrollTo({
+            left: targetChild.offsetLeft - (container.offsetWidth - targetChild.offsetWidth) / 2,
+            behavior: 'auto'
+          });
+        }
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [N]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      handleNext();
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [scrollIndex]);
+
   return (
     <div>
-      {/* Hero Section */}
-      <section className="border-b border-border bg-background">
-        <div className="container-osoul grid gap-10 py-14 md:grid-cols-12 md:py-24">
-          <div className="md:col-span-6 md:pt-4">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-[#9B6650] font-semibold">{heroContent.tagline}</p>
-            <h1 className="mt-5 font-serif text-3xl  leading-[1.05] md:text-7xl">
-              {heroContent.titleLine1}<br />
-              {/* {heroContent.titleLine2} */}
-              <span className="  text-[#9B6650]">{heroContent.titleLine2}</span>
-            </h1>
-            <p className="mt-6 max-w-lg text-base text-foreground/80 leading-relaxed">
-              {heroContent.description}
-            </p>
+      {/* Full Screen Video Hero Section */}
+      <section className='relative w-full h-[80vh] md:h-[calc(100vh-64px)] min-h-[550px] overflow-hidden bg-charcoal flex items-center justify-center'>
+        {/* Background Video */}
+        <video
+          src={heroVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
+        />
 
-            <div className="mt-8">
-              <div className="flex flex-wrap gap-4">
-                <Link to={heroContent.primaryBtnLink} className="h-12 rounded-md bg-foreground px-8 py-3 text-sm font-medium text-background hover:bg-foreground/90 transition-all flex items-center shadow-lg shadow-charcoal/10">
-                  {heroContent.primaryBtnText}
-                </Link>
-                <Link to={heroContent.secondaryBtnLink} className="h-12 rounded-md border border-foreground px-8 py-3 text-sm font-medium text-foreground hover:bg-foreground hover:text-background transition-all flex items-center">
-                  {heroContent.secondaryBtnText}
-                </Link>
-              </div>
+        {/* Premium Overlay Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/30 to-charcoal/40" />
 
-              {/* Trust Strip */}
-              <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
-                {[
-                  "In stock now",
-                  "Secure Razorpay checkout",
-                  "Easy exchange support"
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground/80 font-medium">
-                    <span className="h-1 w-1 rounded-full bg-olive/60" />
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </div>
+        {/* Content Container */}
+        <div className="container-osoul relative z-10 flex flex-col items-center justify-center text-center text-ivory max-w-4xl px-4 select-none">
+          {/* <p className="text-[10px] md:text-[11px] uppercase tracking-[0.3em] text-ivory/80 font-bold animate-pulse">
+            O'Soul / Movementosoul  Films
+          </p> */}
+          <h1 className="mt-6 font-serif text-4xl md:text-7xl leading-[1.1] text-ivory drop-shadow-md">
+            Bottomwear that you don’t need to adjust.
+            {/* Bottomwear that lets you move.<br />
+            <span className="text-clay">Without the adjustments.</span> */}
+          </h1>
+          <p className="mt-6 max-w-xl text-sm md:text-base text-ivory/90 leading-relaxed font-light drop-shadow-sm">
+            Joggers, shorts, and harem pants built for sitting, walking, and doing your actual day — designed to fit seamlessly into your life.
+          </p>
+
+          {/* Action Buttons */}
+          <div className="mt-10 flex flex-wrap justify-center gap-4">
+            <Link
+              to="/shop"
+              className="h-12 md:h-14 inline-flex items-center justify-center rounded-md bg-olive px-8 md:px-10 text-[11px] font-bold uppercase tracking-widest text-ivory hover:bg-olive/90 transition-all duration-300 shadow-lg shadow-charcoal/20 hover:scale-[1.02]"
+            >
+              Shop The First Drop →
+            </Link>
+            <Link
+              to="/fit-tests"
+              className="h-12 md:h-14 inline-flex items-center justify-center rounded-md border border-ivory/40 bg-white/10 backdrop-blur-md px-8 md:px-10 text-[11px] font-bold uppercase tracking-widest text-ivory hover:bg-white hover:text-charcoal transition-all duration-300 hover:scale-[1.02]"
+            >
+              See Fit Tests
+            </Link>
+          </div>
+        </div>
+
+        {/* Bouncing Scroll Down Indicator */}
+        {/* <div 
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1.5 opacity-80 cursor-pointer pointer-events-auto" 
+          onClick={() => {
+            const nextSection = document.querySelector('.border-b.border-border.bg-background');
+            if (nextSection) {
+              nextSection.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+        >
+          <span className="text-[9px] uppercase tracking-widest text-ivory/70 font-semibold">Scroll Down</span>
+          <div className="h-6 w-[14px] rounded-full border border-ivory/40 flex justify-center p-[2px]">
+            <div className="h-1.5 w-1.5 rounded-full bg-ivory animate-bounce" />
+          </div>
+        </div> */}
+      </section>
+
+      <section className="border-b border-border bg-background py-12 md:py-24 overflow-hidden">
+        <div className="container-osoul text-center max-w-7xl mx-auto mb-16 px-4">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-[#9B6650] font-semibold">{heroContent.tagline}</p>
+          <h2 className="mt-5 font-serif text-3xl sm:text-5xl md:text-6xl leading-[1.1] tracking-tight">
+            {heroContent.titleLine1} <span className="italic text-[#9B6650]">{heroContent.titleLine2}</span>
+          </h2>
+          <p className="mt-6 text-base text-foreground/80 leading-relaxed max-w-2xl mx-auto italic">
+            {heroContent.description}
+          </p>
+
+          <div className="mt-10 flex flex-wrap justify-center gap-4">
+            <Link to={heroContent.primaryBtnLink} className="h-12 rounded-md bg-foreground px-8 py-3 text-xs font-bold uppercase tracking-widest text-background hover:bg-foreground/90 transition-all flex items-center shadow-lg shadow-charcoal/10">
+              {heroContent.primaryBtnText}
+            </Link>
+            <Link to={heroContent.secondaryBtnLink} className="h-12 rounded-md border border-foreground px-8 py-3 text-xs font-bold uppercase tracking-widest text-foreground hover:bg-foreground hover:text-background transition-all flex items-center">
+              {heroContent.secondaryBtnText}
+            </Link>
           </div>
 
-          <div className="md:col-span-6">
-            <div className="grid grid-cols-2 gap-4">
-              {/* Primary Hero Image */}
-              <div className="relative col-span-2 overflow-hidden rounded-xl bg-secondary aspect-[16/9] md:aspect-[3/2] group block">
-                <OptimizedImage
-                  src={heroImg1}
-                  alt="O'Soul Relaxed Fit - Movement Proof"
-                  priority={true}
-                  aspectRatio="aspect-[16/9] md:aspect-[3/2.2]"
-                  className="transition-transform duration-700 group-hover:scale-[1.03]"
-                />
-                {/* <div className="absolute inset-0 bg-gradient-to-t from-charcoal/40 to-transparent opacity-60 pointer-events-none"></div> */}
-                <div className="absolute inset-0 z-0"></div>
-                <div className="absolute bottom-5 left-5 flex gap-3 z-10">
-                  <Link to="/men" className="inline-flex h-10 items-center justify-center rounded-md bg-background px-8 text-[11px] font-bold uppercase tracking-widest text-foreground hover:bg-background/90 transition-all shadow-md">
-                    Men
-                  </Link>
-                  <Link to="/women" className="inline-flex h-10 items-center justify-center rounded-md bg-background px-8 text-[11px] font-bold uppercase tracking-widest text-foreground hover:bg-background/90 transition-all shadow-md">
-                    Women
-                  </Link>
-                </div>
-              </div>
+          {/* Trust Strip */}
+          <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-[10px] uppercase tracking-widest text-muted-foreground/80 font-bold">
+            {["In stock now", "Secure Razorpay checkout", "Easy exchange support"].map((item, idx) => (
+              <span key={idx} className="flex items-center gap-1.5">
+                <span className="h-1 w-1 rounded-full bg-olive/60" />
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
 
-              {/* Secondary Hero Images */}
-              <div  className="relative overflow-hidden rounded-xl bg-secondary aspect-square group block ">
-                <OptimizedImage
-                  src={heroImg2}
-                  alt="O'Soul Daily Wear - Walk Clean"
-                  priority={true}
-                  className="transition-transform duration-700  group-hover:scale-[1.03]"
-                  imgClassName="object-[center_32%]"
+        {/* Slider Section */}
+        <div className="relative w-full max-w-7xl mx-auto">
+          {/* Scrollable Track */}
+          <div
+            ref={scrollRef}
+            onScroll={handleScroll}
+            onMouseDown={handleMouseDown}
+            className="flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing pb-8 select-none px-[17.5vw] md:px-[calc(50vw-175px)] xl:px-[465px]"
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
+          >
+            {[...Array(3)].map((_, groupIdx) => (
+              <React.Fragment key={groupIdx}>
+                {carouselSlides.map((slide, slideIdx) => (
+                  <div
+                    key={`${groupIdx}-${slide.id}`}
+                    className="snap-center w-[65vw] md:w-[350px] shrink-0 relative overflow-hidden rounded-2xl bg-secondary aspect-[2/3] shadow-md group"
+                  >
+                    <OptimizedImage
+                      src={slide.image}
+                      alt={`O'Soul Collection Slide ${slide.id}`}
+                      priority={groupIdx === 1 && slideIdx === 0}
+                      className="w-full h-full object-cover select-none pointer-events-none transition-transform duration-700 group-hover:scale-[1.02]"
+                    />
+
+                    {slide.showButtons && (
+                      <div className="absolute bottom-6 left-6 flex gap-3 z-10">
+                        {/* <Link
+                          to="/men"
+                          className="inline-flex h-10 items-center justify-center rounded-md bg-white px-8 text-xs font-bold uppercase tracking-widest text-foreground hover:bg-white/90 transition-all shadow-md"
+                        >
+                          Men
+                        </Link>
+                        <Link
+                          to="/women"
+                          className="inline-flex h-10 items-center justify-center rounded-md bg-white px-8 text-xs font-bold uppercase tracking-widest text-foreground hover:bg-white/90 transition-all shadow-md"
+                        >
+                          Women
+                        </Link> */}
+                      </div>
+                    )}
+
+                    {slide.caption && (
+                      <div className="absolute bottom-6 left-6 z-10">
+                        <div className="font-serif text-xl sm:text-2xl text-white italic drop-shadow-md">
+                          {slide.caption}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* Navigation Controls Bar */}
+          <div className="mt-8 flex items-center justify-between px-6 max-w-md mx-auto">
+            {/* Left Arrow Button */}
+            <button
+              onClick={() => handlePrev()}
+              className="h-10 w-10 flex items-center justify-center rounded-md border border-border bg-background hover:bg-secondary/40 transition-colors shadow-sm cursor-pointer"
+              aria-label="Previous slide"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            {/* Dots Pagination */}
+            <div className="flex gap-2">
+              {[...Array(N)].map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => scrollToSlide(idx)}
+                  className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${activeSlide === idx ? 'w-6 bg-foreground' : 'w-2 bg-foreground/20'
+                    }`}
+                  aria-label={`Go to slide ${idx + 1}`}
                 />
-                <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-charcoal/30 to-transparent">
-                  <div className="font-serif text-sm text-ivory  ">Walks clean.</div>
-                </div>
-              </div>
-              <div  className="relative overflow-hidden rounded-xl bg-secondary aspect-[4/4] group block ">
-                <OptimizedImage
-                  src={heroImg3}
-                  alt="O'Soul Detail - Pockets Work"
-                  priority={true}
-                  className="transition-transform duration-700 group-hover:scale-[1.03]"
-                  imgClassName="object-[center_35%]"
-                />
-                <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-charcoal/30 to-transparent">
-                  <div className="font-serif text-sm text-ivory  ">Pockets work.</div>
-                </div>
-              </div>
+              ))}
             </div>
+
+            {/* Right Arrow Button */}
+            <button
+              onClick={() => handleNext()}
+              className="h-10 w-10 flex items-center justify-center rounded-md border border-border bg-background hover:bg-secondary/40 transition-colors shadow-sm cursor-pointer"
+              aria-label="Next slide"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Subtitle */}
+          <div className="mt-6 text-center">
+            <h3 className="font-serif text-xl sm:text-2xl italic tracking-tight text-foreground/95">
+              The Adjust-Free Collection
+            </h3>
           </div>
         </div>
       </section>

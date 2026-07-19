@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const Order = require("../models/order.model");
 const Cart = require("../models/cart.model");
 const Product = require("../models/product.model");
+const Combo = require("../models/combo.model");
 const { sendOrderConfirmationEmails } = require("../utils/send-email");
 
 const razorpay = new Razorpay({
@@ -27,39 +28,76 @@ exports.createOrder = async (req, res, next) => {
     // Validate stock for all items
     for (const item of items) {
       const prodId = item.id || item.productId || item._id;
-      const product = await Product.findById(prodId);
-      if (!product) {
-        return res.status(404).json({ success: false, message: `Product ${item.name || "unknown"} not found` });
-      }
 
-      // Check variant stock if size/color specified
-      if ((item.size || item.color) && product.variants && product.variants.length > 0) {
-        const variant = product.variants.find(
-          (v) =>
-            (!item.size || v.size?.toLowerCase() === item.size.toLowerCase()) &&
-            (!item.color || v.color?.toLowerCase() === item.color.toLowerCase())
-        );
-
-        if (!variant) {
-          return res.status(400).json({
-            success: false,
-            message: `Variant not found for ${product.name} (Size: ${item.size || "N/A"}, Color: ${item.color || "N/A"})`
-          });
+      if (item.isCombo) {
+        const combo = await Combo.findById(prodId);
+        if (!combo) {
+          return res.status(404).json({ success: false, message: `Combo ${item.name || "unknown"} not found` });
         }
 
-        if (variant.stock < item.quantity) {
-          return res.status(400).json({
-            success: false,
-            message: `Insufficient stock for ${product.name} (${item.color} - ${item.size}). Available: ${variant.stock}`
-          });
+        const sizes = item.size ? item.size.split(',').map(s => s.trim()) : [];
+        const colors = item.color ? item.color.split(',').map(c => c.trim()) : [];
+
+        for (let idx = 0; idx < combo.items.length; idx++) {
+          const comboItem = combo.items[idx];
+          const selSize = sizes[idx];
+          const selColor = colors[idx];
+
+          if (comboItem.variants && comboItem.variants.length > 0) {
+            const variant = comboItem.variants.find(
+              (v) =>
+                (!selSize || v.size?.toLowerCase() === selSize.toLowerCase()) &&
+                (!selColor || v.color?.toLowerCase() === selColor.toLowerCase())
+            );
+            if (!variant) {
+              return res.status(400).json({
+                success: false,
+                message: `Variant not found for ${comboItem.name} (Size: ${selSize || "N/A"}, Color: ${selColor || "N/A"}) in combo`
+              });
+            }
+            if (variant.stock < item.quantity) {
+              return res.status(400).json({
+                success: false,
+                message: `Insufficient stock for ${comboItem.name} (${selColor} - ${selSize}) in combo. Available: ${variant.stock}`
+              });
+            }
+          }
         }
       } else {
-        // Fallback to general stock
-        if (product.stock < item.quantity) {
-          return res.status(400).json({
-            success: false,
-            message: `Insufficient stock for ${product.name}. Available: ${product.stock}`
-          });
+        const product = await Product.findById(prodId);
+        if (!product) {
+          return res.status(404).json({ success: false, message: `Product ${item.name || "unknown"} not found` });
+        }
+
+        // Check variant stock if size/color specified
+        if ((item.size || item.color) && product.variants && product.variants.length > 0) {
+          const variant = product.variants.find(
+            (v) =>
+              (!item.size || v.size?.toLowerCase() === item.size.toLowerCase()) &&
+              (!item.color || v.color?.toLowerCase() === item.color.toLowerCase())
+          );
+
+          if (!variant) {
+            return res.status(400).json({
+              success: false,
+              message: `Variant not found for ${product.name} (Size: ${item.size || "N/A"}, Color: ${item.color || "N/A"})`
+            });
+          }
+
+          if (variant.stock < item.quantity) {
+            return res.status(400).json({
+              success: false,
+              message: `Insufficient stock for ${product.name} (${item.color} - ${item.size}). Available: ${variant.stock}`
+            });
+          }
+        } else {
+          // Fallback to general stock
+          if (product.stock < item.quantity) {
+            return res.status(400).json({
+              success: false,
+              message: `Insufficient stock for ${product.name}. Available: ${product.stock}`
+            });
+          }
         }
       }
     }
@@ -84,7 +122,9 @@ exports.createOrder = async (req, res, next) => {
         quantity: item.quantity,
         size: item.size,
         color: item.color,
-        image: item.image
+        image: item.image,
+        isCombo: item.isCombo || false,
+        selectedItems: item.selectedItems || []
       })),
       shippingDetails,
       totalAmount: amount,
@@ -144,31 +184,58 @@ exports.verifyPayment = async (req, res, next) => {
 
         // Deduct stock for all items
         for (const item of order.items) {
-          const product = await Product.findById(item.productId);
-          if (product) {
-            let updated = false;
+          if (item.isCombo || (item.size && item.size.includes(','))) {
+            const combo = await Combo.findById(item.productId);
+            if (combo) {
+              const sizes = item.size ? item.size.split(',').map(s => s.trim()) : [];
+              const colors = item.color ? item.color.split(',').map(c => c.trim()) : [];
 
-            if ((item.size || item.color) && product.variants && product.variants.length > 0) {
-              const variantIndex = product.variants.findIndex(
-                (v) =>
-                  (!item.size || v.size?.toLowerCase() === item.size.toLowerCase()) &&
-                  (!item.color || v.color?.toLowerCase() === item.color.toLowerCase())
-              );
+              for (let idx = 0; idx < combo.items.length; idx++) {
+                const comboItem = combo.items[idx];
+                const selSize = sizes[idx];
+                const selColor = colors[idx];
 
-              if (variantIndex !== -1) {
-                product.variants[variantIndex].stock = Math.max(0, product.variants[variantIndex].stock - item.quantity);
-                updated = true;
+                if (comboItem.variants && comboItem.variants.length > 0) {
+                  const variantIndex = comboItem.variants.findIndex(
+                    (v) =>
+                      (!selSize || v.size?.toLowerCase() === selSize.toLowerCase()) &&
+                      (!selColor || v.color?.toLowerCase() === selColor.toLowerCase())
+                  );
+
+                  if (variantIndex !== -1) {
+                    comboItem.variants[variantIndex].stock = Math.max(0, comboItem.variants[variantIndex].stock - item.quantity);
+                  }
+                }
               }
+              await combo.save();
             }
+          } else {
+            const product = await Product.findById(item.productId);
+            if (product) {
+              let updated = false;
 
-            if (updated) {
-              product.stock = product.variants.reduce((sum, v) => sum + v.stock, 0);
-            } else {
-              product.stock = Math.max(0, product.stock - item.quantity);
+              if ((item.size || item.color) && product.variants && product.variants.length > 0) {
+                const variantIndex = product.variants.findIndex(
+                  (v) =>
+                    (!item.size || v.size?.toLowerCase() === item.size.toLowerCase()) &&
+                    (!item.color || v.color?.toLowerCase() === item.color.toLowerCase())
+                );
+
+                if (variantIndex !== -1) {
+                  product.variants[variantIndex].stock = Math.max(0, product.variants[variantIndex].stock - item.quantity);
+                  updated = true;
+                }
+              }
+
+              if (updated) {
+                product.stock = product.variants.reduce((sum, v) => sum + v.stock, 0);
+              } else {
+                product.stock = Math.max(0, product.stock - item.quantity);
+              }
+
+              product.inStock = product.stock > 0;
+              await product.save();
             }
-
-            product.inStock = product.stock > 0;
-            await product.save();
           }
         }
       }

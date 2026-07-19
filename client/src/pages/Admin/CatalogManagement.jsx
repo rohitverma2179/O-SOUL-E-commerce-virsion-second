@@ -22,7 +22,7 @@ const generateCombinations = (colorsStr, sizesStr) => {
   if (colors.length === 0 && sizes.length === 0) return [];
   const activeColors = colors.length > 0 ? colors : ['Default'];
   const activeSizes = sizes.length > 0 ? sizes : ['Default'];
-  
+
   const combos = [];
   activeColors.forEach(c => {
     activeSizes.forEach(s => {
@@ -57,13 +57,77 @@ const CatalogManagement = () => {
   // Combo Edit states
   const [editingCombo, setEditingCombo] = useState(null);
   const [editComboImages, setEditComboImages] = useState([]);
+  const [comboItemPrices, setComboItemPrices] = useState({});
+  const [editComboItemPrices, setEditComboItemPrices] = useState({});
+  const [comboItemVariants, setComboItemVariants] = useState({});
+  const [editComboItemVariants, setEditComboItemVariants] = useState({});
+
+  const [allProducts, setAllProducts] = useState([]);
+
+  const loadAllProductsList = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/products`, { credentials: 'include' });
+      const payload = await response.json();
+      if (payload.success) setAllProducts(payload.data || []);
+    } catch (error) {
+      console.error('Error loading products list:', error);
+    }
+  }, []);
 
   const loadCatalog = useCallback(async () => {
     try { setCatalog(await fetchCatalog(tab)); }
     catch (error) { setMessage(error.message); }
   }, [tab]);
 
-  useEffect(() => { loadCatalog(); }, [loadCatalog]);
+  useEffect(() => {
+    loadCatalog();
+    loadAllProductsList();
+  }, [loadCatalog, loadAllProductsList]);
+
+  const getConstituentProductsForCombo = (productNamesStr) => {
+    if (!productNamesStr) return [];
+    const names = productNamesStr.split(',').map(n => n.trim().toLowerCase()).filter(Boolean);
+    return allProducts.filter(p => names.includes(p.name?.toLowerCase()));
+  };
+
+  const getProductOptions = (name) => {
+    const prod = allProducts.find(p => p.name?.toLowerCase() === name.trim().toLowerCase());
+    return {
+      colors: prod && prod.colors && prod.colors.length > 0 ? prod.colors : ['Black', 'Olive'],
+      sizes: prod && prod.sizes && prod.sizes.length > 0 ? prod.sizes : ['S', 'M', 'L', 'XL', 'XXL']
+    };
+  };
+
+  const initializeProductVariants = (name, existingVariants = []) => {
+    const { colors, sizes } = getProductOptions(name);
+    const combos = [];
+    colors.forEach(c => {
+      sizes.forEach(s => {
+        const match = existingVariants.find(
+          ev => ev.color?.toLowerCase() === c.toLowerCase() && ev.size?.toLowerCase() === s.toLowerCase()
+        );
+        combos.push({
+          color: c,
+          size: s,
+          stock: match ? match.stock : 0
+        });
+      });
+    });
+    return combos;
+  };
+
+  useEffect(() => {
+    if (tab === 'combos' && combo.productNames) {
+      const names = combo.productNames.split(',').map(n => n.trim()).filter(Boolean);
+      setComboItemVariants(prev => {
+        const next = {};
+        names.forEach(name => {
+          next[name] = prev[name] || initializeProductVariants(name);
+        });
+        return next;
+      });
+    }
+  }, [combo.productNames, allProducts, tab]);
 
   // Sync variant planner when tab changes
   useEffect(() => {
@@ -124,9 +188,32 @@ const CatalogManagement = () => {
         productNames: Array.isArray(item.items) ? item.items.map(i => i.name).join(', ') : '',
         stock: item.stock !== undefined ? item.stock.toString() : '0'
       });
+      const prices = {};
+      const vars = {};
+      if (Array.isArray(item.items)) {
+        item.items.forEach(i => {
+          prices[i.name] = i.price || '0';
+          vars[i.name] = initializeProductVariants(i.name, i.variants || []);
+        });
+      }
+      setEditComboItemPrices(prices);
+      setEditComboItemVariants(vars);
       setEditComboImages([]);
     }
   };
+
+  useEffect(() => {
+    if (editingCombo && editingCombo.productNames) {
+      const names = editingCombo.productNames.split(',').map(n => n.trim()).filter(Boolean);
+      setEditComboItemVariants(prev => {
+        const next = {};
+        names.forEach(name => {
+          next[name] = prev[name] || initializeProductVariants(name);
+        });
+        return next;
+      });
+    }
+  }, [editingCombo?.productNames, allProducts]);
 
   const updateEditingField = (event) => {
     const { name, value } = event.target;
@@ -178,7 +265,7 @@ const CatalogManagement = () => {
     event.preventDefault();
     setBusy(true);
     setMessage('');
-    
+
     const totalStock = editVariants.length > 0 ? editVariants.reduce((sum, v) => sum + (v.stock || 0), 0) : editingProduct.stock;
 
     const objections = [
@@ -223,8 +310,9 @@ const CatalogManagement = () => {
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.message || 'Update failed');
-      
+
       setCatalog(current => current.map(item => item._id === editingProduct._id ? payload.data : item));
+      loadAllProductsList();
       setMessage('Product updated successfully.');
       setEditingProduct(null);
     } catch (error) {
@@ -288,10 +376,11 @@ const CatalogManagement = () => {
       }
     });
 
-    form.append('items', JSON.stringify(manualComboItems.map((name) => ({ 
-      name, 
-      slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), 
-      price: 0 
+    form.append('items', JSON.stringify(manualComboItems.map((name) => ({
+      name,
+      slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      price: Number(editComboItemPrices[name]) || 0,
+      variants: editComboItemVariants[name] || []
     }))));
 
     if (editComboImages && editComboImages.length > 0) {
@@ -365,7 +454,16 @@ const CatalogManagement = () => {
     } else {
       Object.entries(values).forEach(([key, value]) => form.append(key, value));
     }
-    if (tab === 'combos') form.append('items', JSON.stringify(manualComboItems.map((name) => ({ name, slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), price: 0 }))));
+    if (tab === 'combos') {
+      const manualComboItems = combo.productNames.split(',').map((name) => name.trim()).filter(Boolean);
+      const comboItemsMapped = manualComboItems.map((name) => ({
+        name,
+        slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+        price: Number(comboItemPrices[name]) || 0,
+        variants: comboItemVariants[name] || []
+      }));
+      form.append('items', JSON.stringify(comboItemsMapped));
+    }
     if (tab === 'products' && productImage) form.append('image', productImage);
     if (tab === 'products' && productBackImage) form.append('backImage', productBackImage);
     if (tab === 'products' && productBlackImages.length > 0) {
@@ -387,6 +485,8 @@ const CatalogManagement = () => {
       setMessage(`${tab === 'products' ? 'Product' : 'Combo'} uploaded successfully.`);
       setProduct(initialProduct);
       setCombo(initialCombo);
+      setComboItemPrices({});
+      setComboItemVariants({});
       setProductImage(null);
       setProductBackImage(null);
       setProductBlackImages([]);
@@ -395,6 +495,7 @@ const CatalogManagement = () => {
       setVariantPlanner(generateCombinations(initialProduct.colors, initialProduct.sizes));
       formElement.reset();
       setCatalog((current) => [...current, payload.data]);
+      loadAllProductsList();
     } catch (error) { setMessage(error.message); }
     finally { setBusy(false); }
   };
@@ -402,7 +503,10 @@ const CatalogManagement = () => {
   const remove = async (id) => {
     if (!window.confirm('Delete this catalog item?')) return;
     const response = await fetch(`${API_BASE_URL}/${tab}/${id}`, { method: 'DELETE', credentials: 'include' });
-    if (response.ok) setCatalog((current) => current.filter((item) => item._id !== id));
+    if (response.ok) {
+      setCatalog((current) => current.filter((item) => item._id !== id));
+      loadAllProductsList();
+    }
   };
 
   const fieldClass = 'w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-olive';
@@ -632,7 +736,7 @@ const CatalogManagement = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* Variant Stock Planner */}
             {variantPlanner.length > 0 && (
               <div className="md:col-span-2 rounded-xl border border-slate-200 bg-slate-50/50 p-4">
@@ -641,7 +745,7 @@ const CatalogManagement = () => {
                   {variantPlanner.map((vp, index) => (
                     <div key={index} className="flex flex-col gap-1.5 rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
                       <span className="text-xs font-semibold text-slate-600 truncate">{vp.color} - {vp.size}</span>
-                      <input 
+                      <input
                         className="w-full rounded-md border border-slate-200 px-2.5 py-1.5 text-xs outline-none focus:border-olive"
                         type="number"
                         min="0"
@@ -671,7 +775,7 @@ const CatalogManagement = () => {
                 ))}
               </div>
             </label>
-            
+
             <label className="space-y-1.5 md:col-span-2">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Shipping Details (Shipmozo)</span>
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -702,11 +806,68 @@ const CatalogManagement = () => {
             </div>
             <label className="space-y-1.5 md:col-span-2">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Combo Stock Level</span>
-              <input className={fieldClass} name="stock" type="number" min="0" value={combo.stock} onChange={update(setCombo)} placeholder="Combo stock quantity (e.g. 50)" required />
+              <input className={`${fieldClass} bg-slate-50 cursor-not-allowed`} name="stock" type="number" value={999} readOnly />
+              <span className="block text-[10px] text-slate-400">Managed dynamically based on constituent product variant stocks.</span>
             </label>
             <textarea className={`${fieldClass} md:col-span-2`} name="description" value={combo.description} onChange={update(setCombo)} placeholder="Combo description" required />
             <input className={`${fieldClass} md:col-span-2`} name="valueLine" value={combo.valueLine} onChange={update(setCombo)} placeholder="Value Line / Slogan (e.g. Buy all three together. Save ₹194.)" />
             <label className="space-y-1.5 md:col-span-2"><span className="text-xs font-bold uppercase tracking-wider text-slate-500">Product names</span><input className={fieldClass} name="productNames" value={combo.productNames} onChange={update(setCombo)} placeholder="T-shirt, Joggers, Hoodie" required /><span className="block text-xs text-slate-400">Separate each product name with a comma.</span></label>
+
+            {/* Dynamic Product Prices */}
+            {combo.productNames.split(',').map(n => n.trim()).filter(Boolean).length > 0 && (
+              <div className="md:col-span-2 border border-slate-100 rounded-xl p-4 bg-slate-50/50 space-y-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block">Individual Product Combo Prices (₹)</span>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {combo.productNames.split(',').map(n => n.trim()).filter(Boolean).map((name, idx) => (
+                    <label key={idx} className="block space-y-1">
+                      <span className="text-xs font-semibold text-slate-600">{name}</span>
+                      <input
+                        type="number"
+                        min="0"
+                        className={fieldClass}
+                        value={comboItemPrices[name] || ''}
+                        onChange={(e) => setComboItemPrices(prev => ({ ...prev, [name]: e.target.value }))}
+                        placeholder="Combo price for this item"
+                        required
+                      />
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+            {combo.productNames.split(',').map(n => n.trim()).filter(Boolean).length > 0 && (
+              <div className="md:col-span-2 space-y-4">
+                {combo.productNames.split(',').map(n => n.trim()).filter(Boolean).map((name) => (
+                  <div key={name} className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 space-y-3">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block">Stock Planner: {name}</span>
+                    <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
+                      {(comboItemVariants[name] || []).map((vp, index) => (
+                        <div key={index} className="flex flex-col gap-1.5 rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+                          <span className="text-xs font-semibold text-slate-600 truncate">{vp.color} - {vp.size}</span>
+                          <input 
+                            className="w-full rounded-md border border-slate-200 px-2.5 py-1.5 text-xs outline-none focus:border-olive"
+                            type="number"
+                            min="0"
+                            value={vp.stock}
+                            onChange={(e) => {
+                              const val = Math.max(0, parseInt(e.target.value) || 0);
+                              setComboItemVariants(prev => {
+                                const updated = { ...prev };
+                                const list = [...(updated[name] || [])];
+                                list[index] = { ...list[index], stock: val };
+                                updated[name] = list;
+                                return updated;
+                              });
+                            }}
+                            placeholder="Stock"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
             <label className={`${fieldClass} flex cursor-pointer items-center gap-3 md:col-span-2`}><Upload size={18} /><span>{comboImages.length ? `${comboImages.length} image(s) selected` : 'Choose up to 5 combo images'}</span><input className="hidden" type="file" accept="image/*" multiple onChange={handleComboImagesChange} required /></label>
           </div>
         )}
@@ -721,13 +882,13 @@ const CatalogManagement = () => {
             const hasVariants = tab === 'products' && item.variants && item.variants.length > 0;
             const lowStockCount = hasVariants ? item.variants.filter(v => v.stock > 0 && v.stock < 5).length : 0;
             const outOfStockCount = hasVariants ? item.variants.filter(v => v.stock === 0).length : 0;
-            
+
             return (
               <div key={item._id} className="flex items-center gap-4 py-4">
                 <img className="h-14 w-14 rounded-lg object-cover bg-slate-50" src={item.image || item.images?.[0]} alt="" />
                 <div className="flex-1">
                   <p className="font-semibold text-slate-800">{item.name || item.title}</p>
-                  
+
                   {tab === 'products' && item.rating && (
                     <div className="flex items-center gap-0.5 text-amber-500 mt-0.5">
                       {[...Array(5)].map((_, i) => (
@@ -740,9 +901,27 @@ const CatalogManagement = () => {
 
                   <p className="text-sm text-slate-500 mt-0.5">
                     ₹{item.price || item.discountedPrice}
-                    {item.stock !== undefined && ` · ${item.stock} total stock`}
+                    {tab === 'products' && item.stock !== undefined && ` · ${item.stock} total stock`}
                   </p>
-                  
+
+                  {tab === 'combos' && getConstituentProductsForCombo(item.items?.map(i => i.name).join(', ')).length > 0 && (
+                    <div className="mt-2 space-y-1.5 pl-2 border-l-2 border-slate-200">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Constituent Products Inventory</span>
+                      {getConstituentProductsForCombo(item.items?.map(i => i.name).join(', ')).map(p => (
+                        <div key={p._id} className="text-[11px] text-slate-600 flex flex-wrap items-center gap-x-1.5">
+                          <span className="font-semibold text-slate-700">{p.name}:</span>
+                          {p.variants && p.variants.length > 0 ? (
+                            <span className="text-slate-500 font-mono">
+                              {p.variants.map(v => `${v.color}-${v.size}:${v.stock}`).join(' · ')}
+                            </span>
+                          ) : (
+                            <span className="text-slate-500 font-mono">{p.stock} total</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                   {hasVariants && (
                     <div className="flex flex-wrap gap-2 mt-1.5">
                       {lowStockCount > 0 && (
@@ -758,20 +937,20 @@ const CatalogManagement = () => {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="flex gap-1">
                   {(tab === 'products' || tab === 'combos') && (
-                    <button 
-                      onClick={() => startEdit(item)} 
-                      className="rounded-lg p-2 text-slate-600 hover:bg-slate-50 transition" 
+                    <button
+                      onClick={() => startEdit(item)}
+                      className="rounded-lg p-2 text-slate-600 hover:bg-slate-50 transition"
                       aria-label={tab === 'products' ? "Edit product and stock" : "Edit combo and stock"}
                     >
                       <Edit2 size={18} />
                     </button>
                   )}
-                  <button 
-                    onClick={() => remove(item._id)} 
-                    className="rounded-lg p-2 text-red-500 hover:bg-red-50 transition" 
+                  <button
+                    onClick={() => remove(item._id)}
+                    className="rounded-lg p-2 text-red-500 hover:bg-red-50 transition"
                     aria-label="Delete"
                   >
                     <Trash2 size={18} />
@@ -788,15 +967,15 @@ const CatalogManagement = () => {
       {editingProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto backdrop-blur-sm animate-in fade-in duration-200">
           <div className="relative w-full max-w-4xl rounded-2xl bg-white p-6 shadow-2xl animate-in zoom-in duration-300 flex flex-col max-h-[90vh]">
-            
+
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
               <div>
                 <h2 className="text-xl font-bold">Edit Product & Inventory</h2>
                 <p className="text-xs text-slate-500 mt-1">Manage ratings, product details, and size-color stock levels.</p>
               </div>
-              <button 
-                onClick={() => setEditingProduct(null)} 
+              <button
+                onClick={() => setEditingProduct(null)}
                 className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
               >
                 <X size={20} />
@@ -806,11 +985,11 @@ const CatalogManagement = () => {
             {/* Modal Content - Scrollable */}
             <form onSubmit={saveEdit} className="flex-1 overflow-y-auto pr-2 space-y-6">
               <div className="grid gap-6 md:grid-cols-2">
-                
+
                 {/* Left Side: Product Fields */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 border-b border-slate-50 pb-2">Product Info</h3>
-                  
+
                   <label className="block space-y-1">
                     <span className="text-xs font-semibold text-slate-500">Name</span>
                     <input className={fieldClass} name="name" value={editingProduct.name} onChange={updateEditingField} required />
@@ -977,7 +1156,7 @@ const CatalogManagement = () => {
                   <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 border-b border-slate-50 pb-2 flex items-center gap-2">
                     <Sliders size={16} /> Inventory Dashboard
                   </h3>
-                  
+
                   {/* Stock Metrics Row */}
                   <div className="grid grid-cols-3 gap-2 text-center">
                     <div className="rounded-xl border border-slate-100 bg-slate-50 p-2">
@@ -1037,22 +1216,22 @@ const CatalogManagement = () => {
                         <div key={idx} className="px-4 py-2.5 grid grid-cols-3 items-center text-sm">
                           <span className="font-medium text-slate-600 truncate">{v.color} - {v.size}</span>
                           <div className="col-span-2 flex items-center justify-end gap-1.5">
-                            <button 
-                              type="button" 
+                            <button
+                              type="button"
                               onClick={() => adjustEditVariantStock(idx, -1)}
                               className="w-7 h-7 rounded border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer"
                             >
                               -
                             </button>
-                            <input 
+                            <input
                               type="number"
                               min="0"
                               value={v.stock}
                               onChange={(e) => setEditVariantStockDirectly(idx, e.target.value)}
                               className="w-14 rounded border border-slate-200 px-1.5 py-1 text-center text-xs outline-none focus:border-olive [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             />
-                            <button 
-                              type="button" 
+                            <button
+                              type="button"
                               onClick={() => adjustEditVariantStock(idx, 1)}
                               className="w-7 h-7 rounded border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50 active:bg-slate-100 transition cursor-pointer"
                             >
@@ -1074,15 +1253,15 @@ const CatalogManagement = () => {
 
               {/* Modal Footer / Actions */}
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => setEditingProduct(null)}
                   className="rounded-xl border border-slate-200 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
                 >
                   Cancel
                 </button>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={busy}
                   className="rounded-xl bg-olive px-6 py-2.5 text-sm font-semibold text-white hover:bg-olive/90 disabled:opacity-50 transition cursor-pointer"
                 >
@@ -1099,15 +1278,15 @@ const CatalogManagement = () => {
       {editingCombo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto backdrop-blur-sm animate-in fade-in duration-200">
           <div className="relative w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl animate-in zoom-in duration-300 flex flex-col max-h-[90vh]">
-            
+
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
               <div>
                 <h2 className="text-xl font-bold">Edit Combo & Stock</h2>
                 <p className="text-xs text-slate-500 mt-1">Manage description, pricing, items, and stock level.</p>
               </div>
-              <button 
-                onClick={() => setEditingCombo(null)} 
+              <button
+                onClick={() => setEditingCombo(null)}
                 className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
               >
                 <X size={20} />
@@ -1137,11 +1316,11 @@ const CatalogManagement = () => {
                   <span className="text-xs font-semibold text-slate-500">Price after discount (₹)</span>
                   <input className={fieldClass} name="discountedPrice" type="number" min="0" value={editingCombo.discountedPrice} onChange={updateEditingComboField} required />
                 </label>
-                
-                {/* Combo Stock Input field */}
+
                 <label className="block space-y-1 md:col-span-2">
                   <span className="text-xs font-semibold text-slate-500">Combo Stock Level</span>
-                  <input className={fieldClass} name="stock" type="number" min="0" value={editingCombo.stock || 0} onChange={updateEditingComboField} required />
+                  <input className={`${fieldClass} bg-slate-50 cursor-not-allowed`} name="stock" type="number" value={999} readOnly />
+                  <span className="block text-[10px] text-slate-400">Managed dynamically based on constituent product variant stocks.</span>
                 </label>
 
                 <label className="block space-y-1 md:col-span-2">
@@ -1157,6 +1336,29 @@ const CatalogManagement = () => {
                   <input className={fieldClass} name="productNames" value={editingCombo.productNames} onChange={updateEditingComboField} required />
                   <span className="block text-[10px] text-slate-400">Separate each product name with a comma.</span>
                 </label>
+
+                {/* Dynamic Product Prices for Editing */}
+                {editingCombo.productNames.split(',').map(n => n.trim()).filter(Boolean).length > 0 && (
+                  <div className="md:col-span-2 border border-slate-100 rounded-xl p-4 bg-slate-50/50 space-y-3">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block">Individual Product Combo Prices (₹)</span>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {editingCombo.productNames.split(',').map(n => n.trim()).filter(Boolean).map((name, idx) => (
+                        <label key={idx} className="block space-y-1">
+                          <span className="text-xs font-semibold text-slate-600">{name}</span>
+                          <input
+                            type="number"
+                            min="0"
+                            className={fieldClass}
+                            value={editComboItemPrices[name] || ''}
+                            onChange={(e) => setEditComboItemPrices(prev => ({ ...prev, [name]: e.target.value }))}
+                            placeholder="Combo price for this item"
+                            required
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <label className="block space-y-1 md:col-span-2">
                   <span className="text-xs font-semibold text-slate-500">Combo Images (Leave blank to keep existing, max 5)</span>
                   <label className={`${fieldClass} flex cursor-pointer items-center gap-3 bg-slate-50`}>
@@ -1165,19 +1367,53 @@ const CatalogManagement = () => {
                     <input className="hidden" type="file" accept="image/*" multiple onChange={handleEditComboImagesChange} />
                   </label>
                 </label>
+
+                {editingCombo.productNames.split(',').map(n => n.trim()).filter(Boolean).length > 0 && (
+                  <div className="md:col-span-2 space-y-4">
+                    {editingCombo.productNames.split(',').map(n => n.trim()).filter(Boolean).map((name) => (
+                      <div key={name} className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block">Stock Planner: {name}</span>
+                        <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
+                          {(editComboItemVariants[name] || []).map((vp, index) => (
+                            <div key={index} className="flex flex-col gap-1.5 rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+                              <span className="text-xs font-semibold text-slate-600 truncate">{vp.color} - {vp.size}</span>
+                              <input 
+                                className="w-full rounded-md border border-slate-200 px-2.5 py-1.5 text-xs outline-none focus:border-olive"
+                                type="number"
+                                min="0"
+                                value={vp.stock}
+                                onChange={(e) => {
+                                  const val = Math.max(0, parseInt(e.target.value) || 0);
+                                  setEditComboItemVariants(prev => {
+                                    const updated = { ...prev };
+                                    const list = [...(updated[name] || [])];
+                                    list[index] = { ...list[index], stock: val };
+                                    updated[name] = list;
+                                    return updated;
+                                  });
+                                }}
+                                placeholder="Stock"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Modal Footer / Actions */}
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => setEditingCombo(null)}
                   className="rounded-xl border border-slate-200 px-6 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition cursor-pointer"
                 >
                   Cancel
                 </button>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={busy}
                   className="rounded-xl bg-olive px-6 py-2.5 text-sm font-semibold text-white hover:bg-olive/90 disabled:opacity-50 transition cursor-pointer"
                 >

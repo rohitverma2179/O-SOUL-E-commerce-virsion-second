@@ -24,7 +24,7 @@ exports.createProduct = async (req, res, next) => {
     const backImageFile = req.files?.backImage?.[0];
 
     if (!imageFile) return res.status(400).json({ success: false, message: "Product image is required" });
-    
+
     // Server-side double validation for 8MB limit
     if (imageFile.size > 8 * 1024 * 1024) {
       return res.status(400).json({ success: false, message: "Image size must be less than 8MB" });
@@ -94,7 +94,7 @@ exports.createProduct = async (req, res, next) => {
     }
 
     const originalPrice = req.body.originalPrice ? Number(req.body.originalPrice) : undefined;
-    
+
     // Parse weight and dimensions (ensure positive numbers, fallback to defaults if invalid)
     const weight = req.body.weight && Number(req.body.weight) > 0 ? Number(req.body.weight) : 500;
     const length = req.body.length && Number(req.body.length) > 0 ? Number(req.body.length) : 10;
@@ -291,7 +291,7 @@ exports.deleteProduct = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ success: false, message: "Product not found" });
-    
+
     // Delete from Cloudinary if URLs exist
     if (product.image) {
       try { await deleteFromCloudinary(product.image); } catch (e) { console.error(e); }
@@ -309,7 +309,7 @@ exports.deleteProduct = async (req, res, next) => {
         try { await deleteFromCloudinary(img); } catch (e) { console.error(e); }
       }
     }
-    
+
     await Product.findByIdAndDelete(req.params.id);
     res.json({ success: true, message: "Product deleted" });
   } catch (error) { next(error); }

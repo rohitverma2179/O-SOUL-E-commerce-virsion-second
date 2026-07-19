@@ -44,34 +44,41 @@ const MobileMenu = ({ isOpen, onClose }) => {
 
         <nav className="mt-10 space-y-6">
           <div className="space-y-4">
-            <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Shop by Category</div>
+            {/* <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Shop by Category</div> */}
             <div className="grid gap-2">
               <Link
                 to="/shop"
                 onClick={onClose}
-                className="flex items-center justify-between rounded-lg bg-secondary/40 px-4 py-4 text-base font-medium"
+                className="flex items-center justify-between rounded-lg bg-secondary/40 px-4 py-2.5 text-sm font-medium"
               >
                 All Products <ChevronRight className="h-4 w-4 text-muted-foreground" />
               </Link>
               <Link
                 to="/find-my-fit"
                 onClick={onClose}
-                className="flex items-center justify-between rounded-lg bg-olive/10 border border-olive/20 px-4 py-4 text-base font-semibold text-olive"
+                className="flex items-center justify-between rounded-lg bg-olive/10 border border-olive/20 px-4 py-2.5 text-sm font-semibold text-olive"
               >
                 Find My Fit <ChevronRight className="h-4 w-4 text-olive" />
+              </Link>
+              <Link
+                to="/fit-tests"
+                onClick={onClose}
+                className="flex items-center justify-between rounded-lg bg-secondary/40 px-4 py-2.5 text-sm font-medium"
+              >
+                Fit Tests <ChevronRight className="h-4 w-4 text-muted-foreground" />
               </Link>
               <a
                 href="/#reviews"
                 onClick={onClose}
-                className="flex items-center justify-between rounded-lg bg-secondary/40 px-4 py-4 text-base font-medium"
+                className="flex items-center justify-between rounded-lg bg-secondary/40 px-4 py-2.5 text-sm font-medium"
               >
                 Customer Reviews <ChevronRight className="h-4 w-4 text-muted-foreground" />
               </a>
               <div className="grid grid-cols-2 gap-2">
-                <Link to="/men" onClick={onClose} className="rounded-lg border border-border px-4 py-3 text-sm font-medium">Men</Link>
-                <Link to="/women" onClick={onClose} className="rounded-lg border border-border px-4 py-3 text-sm font-medium">Women</Link>
-                <Link to="/unisex" onClick={onClose} className="rounded-lg border border-border px-4 py-3 text-sm font-medium">Unisex</Link>
-                <Link to="/combos" onClick={onClose} className="rounded-lg border border-border px-4 py-3 text-sm font-medium">Combos</Link>
+                <Link to="/men" onClick={onClose} className="rounded-lg border border-border px-4 py-2.5 text-center text-xs font-medium">Men</Link>
+                <Link to="/women" onClick={onClose} className="rounded-lg border border-border px-4 py-2.5 text-center text-xs font-medium">Women</Link>
+                <Link to="/unisex" onClick={onClose} className="rounded-lg border border-border px-4 py-2.5 text-center text-xs font-medium">Unisex</Link>
+                <Link to="/combos" onClick={onClose} className="rounded-lg border border-border px-4 py-2.5 text-center text-xs font-medium">Combos</Link>
               </div>
             </div>
           </div>
@@ -93,7 +100,7 @@ const MobileMenu = ({ isOpen, onClose }) => {
 
           <div className="pt-4">
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/osoul.in/"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 text-sm font-medium text-muted-foreground"
@@ -104,9 +111,9 @@ const MobileMenu = ({ isOpen, onClose }) => {
         </nav>
 
 
-        <div className="absolute bottom-10 left-6 right-6">
+        {/* <div className="absolute bottom-10 left-6 right-6">
           <p className="text-[11px] text-muted-foreground ">"If it makes you adjust, it failed."</p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

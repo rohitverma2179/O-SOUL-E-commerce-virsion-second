@@ -1,6 +1,13 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, PlayCircle } from 'lucide-react';
+import { PlayCircle } from 'lucide-react';
+
+// Video imports for Fit Tests
+import chairVideo from '../assets/fittest/the-chair-test.mp4';
+import walkVideo from '../assets/fittest/The-walk-test.mp4';
+import pocketVideo from '../assets/fittest/The-pocket-test.mp4';
+import waistbandVideo from '../assets/fittest/Waistband-recovery-test.mp4';
+import fabricVideo from '../assets/fittest/The-fabric-test.mp4';
 
 const FitTests = () => {
   useEffect(() => {
@@ -14,41 +21,46 @@ const FitTests = () => {
       action: "Sit down. Cross your legs. Lean forward. Stay seated for twenty minutes.",
       check: "crotch pull, waistband fold, fabric tension at the thigh, comfort after extended sitting. This is the test that most pants fail. It's the first one we run.",
       quote: "If it pulls when you sit, it failed.",
-      tile: "tile-charcoal"
+      tile: "tile-charcoal",
+      video: chairVideo
     },
     {
       num: "02",
       title: "The Walk Test",
       action: "Fast walk. Stairs. Uneven ground. Without stopping to adjust.",
       check: "does the fabric move with the body or resist it? Does the waistband stay in place? Do the seams pull? Does the silhouette change when you pick up speed?",
-      tile: "tile-olive"
+      tile: "tile-olive",
+      video: walkVideo
     },
     {
       num: "03",
       title: "The Pocket Test",
       action: "Phone in pocket. Keys in pocket. Walk, sit, stand.",
       check: "pocket bulge, fabric pull from weight, silhouette distortion. A pocket that makes the shorts look like a storage unit is a failed pocket.",
-      tile: "tile-sand"
+      tile: "tile-sand",
+      video: pocketVideo
     },
     {
       num: "04",
       title: "The Waistband Recovery Test",
       action: "10 full wears. 5 machine washes. Then — does the waistband sit where it started?",
       check: "elastic recovery, post-wash stability, roll resistance. Most waistbands start failing by week two. The O'Soul standard requires them to still perform after 10 wears and 5 washes.",
-      tile: "tile-clay"
+      tile: "tile-clay",
+      video: waistbandVideo
     },
     {
       num: "05",
       title: "The Fabric Test",
       action: "Stretch. Release. Repeat. In heat. Then wash. Then wear again.",
       check: "cling resistance, breathability, drape after stretch, post-wash shape retention. The fabric either keeps performing or it doesn't go into production.",
-      tile: "tile-charcoal"
+      tile: "tile-charcoal",
+      video: fabricVideo
     }
   ];
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="container-osoul max-w-4xl py-14 md:py-24">
+      <div className="container-osoul max-w-5xl py-14 md:py-24">
         <header className="mb-16 text-center">
           <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground font-bold">The O'Soul Movement Index</p>
           <h1 className="mt-4 font-serif text-4xl md:text-6xl tracking-tight leading-tight">If it can't pass this, <br /><span className="italic text-olive font-normal">it doesn't ship.</span></h1>
@@ -67,13 +79,23 @@ const FitTests = () => {
           {tests.map((test) => (
             <div key={test.num} className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all hover:shadow-md hover:border-olive/20">
               <div className="grid md:grid-cols-12">
-                <div className={`md:col-span-4 aspect-square ${test.tile} relative`}>
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className={`md:col-span-5 aspect-[3/4] ${test.tile} relative overflow-hidden`}>
+                  {test.video && (
+                    <video
+                      src={test.video}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  )}
+                  {/* <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10 pointer-events-none">
                     <PlayCircle className="h-12 w-12 text-ivory/50" />
-                  </div>
-                  <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div>
+                  </div> */}
+                  {/* <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #fff 0 1px, transparent 1px 8px)' }}></div> */}
                 </div>
-                <div className="md:col-span-8 p-8 md:p-10">
+                <div className="md:col-span-7 p-8 md:p-10 flex flex-col justify-center">
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-[10px] uppercase tracking-[0.2em] text-olive/60 font-bold">Test {test.num}</span>
                     <span className="h-px w-8 bg-olive/20"></span>

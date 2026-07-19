@@ -17,7 +17,16 @@ const orderSchema = new mongoose.Schema({
       quantity: { type: Number, required: true },
       size: { type: String },
       color: { type: String },
-      image: { type: String }
+      image: { type: String },
+      isCombo: { type: Boolean, default: false },
+      selectedItems: [
+        {
+          name: { type: String },
+          slug: { type: String },
+          size: { type: String },
+          color: { type: String }
+        }
+      ]
     }
   ],
   shippingDetails: {
