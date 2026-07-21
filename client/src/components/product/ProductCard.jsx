@@ -38,7 +38,7 @@ const ProductCard = ({ product }) => {
   return (
     <article className="group flex flex-col w-full">
       <Link to={`/products/${slug}`} className="block w-full text-inherit no-underline">
-        <div className={`relative aspect-[4/5] w-full overflow-hidden rounded-md ${tileClass} transition-transform duration-500 group-hover:scale-[1.02]`} aria-hidden="true">
+        <div className={`relative aspect-[4/5] w-full overflow-hidden rounded-md ${tileClass} transition-transform duration-500 md:group-hover:scale-[1.02]`} aria-hidden="true">
           {product.image && (
             <OptimizedImage 
               src={product.image} 

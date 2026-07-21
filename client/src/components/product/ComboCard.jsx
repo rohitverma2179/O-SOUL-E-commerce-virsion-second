@@ -191,7 +191,7 @@ const ComboCard = ({ combo }) => {
           <div 
             key={idx} 
             onClick={() => setActivePreviewImage(img)}
-            className="relative w-full overflow-hidden rounded-lg bg-secondary aspect-square shadow-sm transition-transform hover:scale-[1.02] cursor-pointer"
+            className="relative w-full overflow-hidden rounded-lg bg-secondary aspect-square shadow-sm transition-transform md:hover:scale-[1.02] cursor-pointer"
           >
             <OptimizedImage
               src={img} 

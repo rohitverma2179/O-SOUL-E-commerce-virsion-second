@@ -39,6 +39,7 @@ import AdminSignup from './pages/Admin/AdminSignup';
 import CatalogManagement from './pages/Admin/CatalogManagement';
 import PopupManagement from './pages/Admin/PopupManagement';
 import FooterManagement from './pages/Admin/FooterManagement';
+import CouponManagement from './pages/Admin/CouponManagement';
 
 function App() {
   return (
@@ -88,6 +89,7 @@ function App() {
             <Route index element={<Navigate to="/admin/catalog" replace />} />
             <Route path="users" element={<UserManagement />} />
             <Route path="catalog" element={<CatalogManagement />} />
+            <Route path="coupons" element={<CouponManagement />} />
             <Route path="popup" element={<PopupManagement />} />
             <Route path="footer" element={<FooterManagement />} />
           </Route>

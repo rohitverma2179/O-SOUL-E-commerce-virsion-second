@@ -11,7 +11,8 @@ import {
   ArrowRight,
   PackagePlus,
   Megaphone,
-  Info
+  Info,
+  Ticket
 } from 'lucide-react';
 import { API_BASE_URL } from '../../lib/api';
 
@@ -23,6 +24,7 @@ const AdminLayout = () => {
   const menuItems = [
     { name: 'Users', icon: <Users size={20} />, path: '/admin/users' },
     { name: 'Catalog', icon: <PackagePlus size={20} />, path: '/admin/catalog' },
+    { name: 'Coupons', icon: <Ticket size={20} />, path: '/admin/coupons' },
     { name: 'Promo Popup', icon: <Megaphone size={20} />, path: '/admin/popup' },
     { name: 'Footer Settings', icon: <Info size={20} />, path: '/admin/footer' },
     { name: 'Back to Site', icon: <ArrowRight size={20} />, path: '/' },

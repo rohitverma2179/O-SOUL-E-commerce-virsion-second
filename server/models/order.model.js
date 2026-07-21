@@ -42,6 +42,22 @@ const orderSchema = new mongoose.Schema({
     pincode: { type: String, required: true, trim: true },
     phone: { type: String, required: true, trim: true }
   },
+  couponCode: {
+    type: String,
+    uppercase: true,
+    trim: true
+  },
+  couponApplied: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Coupon"
+  },
+  discountAmount: {
+    type: Number,
+    default: 0
+  },
+  subtotal: {
+    type: Number
+  },
   totalAmount: {
     type: Number,
     required: true

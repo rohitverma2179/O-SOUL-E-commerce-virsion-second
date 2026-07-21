@@ -326,13 +326,13 @@ const Home = () => {
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <Link
               to="/shop"
-              className="h-12 md:h-14 inline-flex items-center justify-center rounded-md bg-olive px-8 md:px-10 text-[11px] font-bold uppercase tracking-widest text-ivory hover:bg-olive/90 transition-all duration-300 shadow-lg shadow-charcoal/20 hover:scale-[1.02]"
+              className="h-12 md:h-14 inline-flex items-center justify-center rounded-md bg-olive px-8 md:px-10 text-[11px] font-bold uppercase tracking-widest text-ivory hover:bg-olive/90 transition-all duration-300 shadow-lg shadow-charcoal/20 md:hover:scale-[1.02]"
             >
               Shop The First Drop →
             </Link>
             <Link
               to="/fit-tests"
-              className="h-12 md:h-14 inline-flex items-center justify-center rounded-md border border-ivory/40 bg-white/10 backdrop-blur-md px-8 md:px-10 text-[11px] font-bold uppercase tracking-widest text-ivory hover:bg-white hover:text-charcoal transition-all duration-300 hover:scale-[1.02]"
+              className="h-12 md:h-14 inline-flex items-center justify-center rounded-md border border-ivory/40 bg-white/10 backdrop-blur-md px-8 md:px-10 text-[11px] font-bold uppercase tracking-widest text-ivory hover:bg-white hover:text-charcoal transition-all duration-300 md:hover:scale-[1.02]"
             >
               See Fit Tests
             </Link>
@@ -410,7 +410,7 @@ const Home = () => {
                       src={slide.image}
                       alt={`O'Soul Collection Slide ${slide.id}`}
                       priority={groupIdx === 1 && slideIdx === 0}
-                      className="w-full h-full object-cover select-none pointer-events-none transition-transform duration-700 group-hover:scale-[1.02]"
+                      className="w-full h-full object-cover select-none pointer-events-none transition-transform duration-700 md:group-hover:scale-[1.02]"
                     />
 
                     {slide.showButtons && (
@@ -540,7 +540,7 @@ const Home = () => {
               <img
                 src={catImgMen}
                 alt="Men's Category"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                className="w-full h-full object-cover transition-transform duration-500 md:group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent"></div>
             </div>
@@ -558,7 +558,7 @@ const Home = () => {
               <img
                 src={catImgWomen}
                 alt="Women's Category"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                className="w-full h-full object-cover transition-transform duration-500 md:group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent"></div>
             </div>
@@ -575,7 +575,7 @@ const Home = () => {
               <img
                 src={catImgUnisex}
                 alt="Unisex Category"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                className="w-full h-full object-cover transition-transform duration-500 md:group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent"></div>
             </div>
@@ -591,7 +591,7 @@ const Home = () => {
               <img
                 src={catImgCombos}
                 alt="Combos Category"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                className="w-full h-full object-cover transition-transform duration-500 md:group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/30 to-transparent"></div>
             </div>
@@ -872,7 +872,7 @@ const Home = () => {
                 localStorage.setItem(dismissalKey, 'true');
                 setShowPopup(false);
               }}
-              className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-black/40 text-white hover:bg-black/60 hover:scale-105 transition-all outline-none"
+              className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-black/40 text-white hover:bg-black/60 md:hover:scale-105 transition-all outline-none"
               aria-label="Close popup"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

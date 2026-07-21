@@ -4,6 +4,9 @@ const Order = require("../models/order.model");
 const Cart = require("../models/cart.model");
 const Product = require("../models/product.model");
 const Combo = require("../models/combo.model");
+const Coupon = require("../models/coupon.model");
+const CouponUsage = require("../models/couponUsage.model");
+const { validateCouponInternal } = require("./coupon.controller");
 const { sendOrderConfirmationEmails } = require("../utils/send-email");
 
 const razorpay = new Razorpay({
@@ -13,11 +16,8 @@ const razorpay = new Razorpay({
 
 exports.createOrder = async (req, res, next) => {
   try {
-    const { amount, items, shippingDetails } = req.body;
+    const { amount, items, shippingDetails, couponCode } = req.body;
 
-    if (!amount || amount <= 0) {
-      return res.status(400).json({ success: false, message: "Invalid amount" });
-    }
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ success: false, message: "Cart items are required" });
     }
@@ -102,7 +102,39 @@ exports.createOrder = async (req, res, next) => {
       }
     }
 
-    const amountInPaise = Math.round(amount * 100);
+    // Calculate subtotal from products to be secure
+    let subtotal = 0;
+    const productIds = items.map(item => item.id || item.productId || item._id);
+    const products = await Product.find({ _id: { $in: productIds } });
+    
+    for (const item of items) {
+      const dbProd = products.find(p => p._id.toString() === (item.id || item.productId || item._id).toString());
+      const price = dbProd ? dbProd.price : item.price;
+      subtotal += Number(price) * item.quantity;
+    }
+
+    let discountAmount = 0;
+    let freeShipping = false;
+    let appliedCoupon = null;
+
+    if (couponCode) {
+      try {
+        const validationResult = await validateCouponInternal({
+          code: couponCode,
+          userId: req.user._id,
+          items
+        });
+        discountAmount = validationResult.discountAmount;
+        freeShipping = validationResult.freeShipping;
+        appliedCoupon = validationResult.coupon;
+      } catch (err) {
+        return res.status(400).json({ success: false, message: `Coupon Error: ${err.message}` });
+      }
+    }
+
+    const shippingFee = freeShipping ? 0 : 50;
+    const calculatedAmount = Math.max(0, subtotal + shippingFee - discountAmount);
+    const amountInPaise = Math.round(calculatedAmount * 100);
 
     const options = {
       amount: amountInPaise,
@@ -127,7 +159,11 @@ exports.createOrder = async (req, res, next) => {
         selectedItems: item.selectedItems || []
       })),
       shippingDetails,
-      totalAmount: amount,
+      subtotal,
+      couponCode: couponCode ? couponCode.toUpperCase().trim() : undefined,
+      couponApplied: appliedCoupon ? appliedCoupon._id : undefined,
+      discountAmount,
+      totalAmount: calculatedAmount,
       razorpayOrderId: razorpayOrder.id,
       status: "pending"
     });
@@ -181,6 +217,22 @@ exports.verifyPayment = async (req, res, next) => {
         order.razorpayPaymentId = razorpay_payment_id;
         order.razorpaySignature = razorpay_signature;
         await order.save();
+
+        // Log coupon usage if coupon was applied
+        if (order.couponApplied) {
+          try {
+            await Coupon.findByIdAndUpdate(order.couponApplied, { $inc: { usedCount: 1 } });
+            const usage = new CouponUsage({
+              couponId: order.couponApplied,
+              userId: order.user,
+              orderId: order._id,
+              discountAmount: order.discountAmount || 0
+            });
+            await usage.save();
+          } catch (couponErr) {
+            console.error("Error recording coupon usage:", couponErr.message);
+          }
+        }
 
         // Deduct stock for all items
         for (const item of order.items) {

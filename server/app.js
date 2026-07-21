@@ -15,6 +15,7 @@ const userRoutes = require("./routes/user.routes");
 const paymentRoutes = require("./routes/payment.routes");
 const popupRoutes = require("./routes/popup.routes");
 const footerRoutes = require("./routes/footer.routes");
+const couponRoutes = require("./routes/coupon.routes");
 
 const app = express();
 
@@ -55,6 +56,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/popup", popupRoutes);
 app.use("/api/footer", footerRoutes);
+app.use("/api/coupons", couponRoutes);
 
 app.use((_req, res) => res.status(404).json({ success: false, message: "Route not found" }));
 app.use(errorHandler);
